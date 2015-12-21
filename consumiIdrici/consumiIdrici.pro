@@ -13,8 +13,17 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    consumptionview.cpp \
+    consumptionanalysis.cpp \
+    consumptionquery.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    consumptionview.h \
+    consumptionanalysis.h \
+    consumptionquery.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    consumptionview.ui \
+    consumptionanalysis.ui \
+    consumptionquery.ui
