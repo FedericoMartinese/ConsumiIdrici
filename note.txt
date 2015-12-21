@@ -1,0 +1,5 @@
+- suddividere il consumo equamente tra le ore in caso di "buchi" nel file di input (stessa cosa per più registrazioni nell'arco di un'ora)
+
+- qdialogbuttonbox per i pulsanti (close?) nelle varie window
+
+- clustering nell'analisi dei consumi
