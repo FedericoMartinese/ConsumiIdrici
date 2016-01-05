@@ -3,3 +3,5 @@
 - qdialogbuttonbox per i pulsanti (close?) nelle varie window
 
 - clustering nell'analisi dei consumi
+
+- controllare l'organizzazine in classi delle funzioni

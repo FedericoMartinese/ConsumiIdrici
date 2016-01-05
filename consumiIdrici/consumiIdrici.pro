@@ -16,12 +16,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     consumptionview.cpp \
     consumptionanalysis.cpp \
-    consumptionquery.cpp
+    consumptionquery.cpp \
+    datautility.cpp
 
 HEADERS  += mainwindow.h \
     consumptionview.h \
     consumptionanalysis.h \
-    consumptionquery.h
+    consumptionquery.h \
+    datautility.h
 
 FORMS    += mainwindow.ui \
     consumptionview.ui \
