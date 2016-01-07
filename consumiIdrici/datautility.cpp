@@ -3,15 +3,17 @@
 #include <QTextStream>
 #include <QMessageBox>
 
+//ONLY FOR DEBUG AND TEST
 #define TESTFILENAME "consumption_some.csv"
 #define FILENAME "consumption_all.csv"
+//
 
-
-std::vector<record> readFile() {
+std::vector<record> readFile(QString fileName) {
     //legge il file di input e restituisce un vector di record
 
     std::vector<record> inputRecords;
-    QFile inputFile(FILENAME);
+
+    QFile inputFile(fileName);
     if (inputFile.open(QIODevice::ReadOnly)) {
 
         QTextStream in(&inputFile);

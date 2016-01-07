@@ -1,3 +1,6 @@
+#ifndef DATA_UTILITY_H
+#define DATA_UTILITY_H
+
 #include <qdatetime.h>
 #include <vector>
 #include <string>
@@ -9,4 +12,5 @@ struct record {
 };
 
 
-std::vector<record> readFile();
+std::vector<record> readFile(QString fileName);
+#endif

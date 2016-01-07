@@ -14,18 +14,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    consumptionview.cpp \
-    consumptionanalysis.cpp \
-    consumptionquery.cpp \
-    datautility.cpp
+    datautility.cpp \
+    consumptionswindow.cpp
 
 HEADERS  += mainwindow.h \
-    consumptionview.h \
-    consumptionanalysis.h \
-    consumptionquery.h \
-    datautility.h
+    datautility.h \
+    consumptionswindow.h
 
 FORMS    += mainwindow.ui \
-    consumptionview.ui \
-    consumptionanalysis.ui \
-    consumptionquery.ui
+    consumptionswindow.ui
+CONFIG += C++11

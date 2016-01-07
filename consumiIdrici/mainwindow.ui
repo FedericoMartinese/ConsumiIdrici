@@ -14,33 +14,18 @@
    <string>Consumi Idrici</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QSplitter" name="splitter">
+   <widget class="QPushButton" name="openFileDialog">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>50</y>
-      <width>181</width>
-      <height>161</height>
+      <x>160</x>
+      <y>120</y>
+      <width>91</width>
+      <height>41</height>
      </rect>
     </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
+    <property name="text">
+     <string>Apri file</string>
     </property>
-    <widget class="QPushButton" name="viewButton">
-     <property name="text">
-      <string>Visualizza consumi</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="queryButton">
-     <property name="text">
-      <string>Interrogazione</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="analysisButton">
-     <property name="text">
-      <string>Analisi consumi</string>
-     </property>
-    </widget>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
