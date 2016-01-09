@@ -14,13 +14,10 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    datautility.cpp \
-    consumptionswindow.cpp
+    datautility.cpp
 
 HEADERS  += mainwindow.h \
-    datautility.h \
-    consumptionswindow.h
+    datautility.h
 
-FORMS    += mainwindow.ui \
-    consumptionswindow.ui
+FORMS    += mainwindow.ui
 CONFIG += C++11
