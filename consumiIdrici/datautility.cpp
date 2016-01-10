@@ -8,6 +8,8 @@
 #define FILENAME "consumption_all.csv"
 //
 
+#define MINSECSPRECISION 60 //1 minuto di precisione minima
+
 std::vector<record> readFile(QString fileName) {
     //legge il file di input e restituisce un vector di record
 
@@ -122,11 +124,13 @@ bool getPeriodConsumption(QString clientID, const std::vector<record> *data, QDa
     double consAtLastDate = getConsAtDate(clientID, lastDate, data);
     periodConsumption = consAtLastDate - consAtFirstDate;
 
-    return consAtFirstDate < 0 || consAtLastDate < 0;
+    return consAtFirstDate >= 0 && consAtLastDate >= 0;
 }
 
 
 double getConsAtDate(QString clientID, QDateTime date, const std::vector<record> *data) {
+    if (data == NULL) return -1;
+
     record prev, next;
     bool found = false, inizialized = false;
 
@@ -138,6 +142,14 @@ double getConsAtDate(QString clientID, QDateTime date, const std::vector<record>
                 next = rec;
                 inizialized = true;
             }
+
+            //GESTIRE CONVERSIONE UTC GMT CET...
+
+
+            if (qAbs(rec.date.secsTo(date))<=MINSECSPRECISION) //se viene trovata una registrazione molto vicina è superfluo continuare la ricerca
+                return rec.value;
+
+
 
             /*
             PREV REC DATE   ->  REC

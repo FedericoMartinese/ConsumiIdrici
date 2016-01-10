@@ -7,7 +7,7 @@
 #define MONTH "Mensile"
 #define DAY "Giornaliero"
 #define ND "n.d."
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(std::vector<record> *data, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -25,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->firstDate->setDate(minDate);
     ui->lastDate->setDate(maxDate);
 
+    m_data = data;
+
 }
 
 MainWindow::~MainWindow()
@@ -35,13 +37,19 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_openFileDialog_clicked()
 {
+    this->ui->tabWidget->setEnabled(false); //disabilita l'interfaccia finché il caricamento non è completo
+    QString tmpFileLoaded = ui->loadedFileName->text();
+    ui->loadedFileName->setText("Apertura file in corso...");
+
+
     QString fileName = QFileDialog::getOpenFileName(this, "Open consumptions file", QDir::current().absolutePath(), "CSV Files (*.csv)"); //seleziona un file .csv da cui leggere i dati
 
     if (!fileName.isEmpty()) { //se il file è stato selezionato
-        m_data = readFile(fileName);
+        *m_data = readFile(fileName);
 
 
         //debug test
+
         /*for (int i=0; i<6;++i) {
         QString a1 = m_data->at(i).date.toString("yyyy-MM-dd HH:mm:ss");
         QMessageBox m1(QMessageBox::Critical, "date", a1, QMessageBox::Ok);
@@ -74,15 +82,18 @@ void MainWindow::on_openFileDialog_clicked()
         QMessageBox m3(QMessageBox::Critical, "clientID", a3, QMessageBox::Ok);
         m3.exec();*/
 
-        if (!m_data.empty()) {
+        if (!m_data->empty()) {
             QFileInfo fileInfo(fileName);
             this->ui->loadedFileName->setText(fileInfo.fileName());
+            hasReadFile = true;
         } else {
             this->ui->loadedFileName->setText("Apertura fallita");
         }
+    } else {
+        this->ui->loadedFileName->setText(tmpFileLoaded); //apertura annullata, torna com'era prima
     }
 
-    this->ui->tabWidget->setEnabled(!m_data.empty());
+    this->ui->tabWidget->setEnabled(!m_data->empty());
 
 
 }
@@ -132,9 +143,9 @@ void MainWindow::on_clientID_query_editingFinished()
 }
 
 void MainWindow::updateViewTab() {
-    if (m_data.empty()) return;
+    if (!hasReadFile || m_data == nullptr || m_data->empty()) return;
 
-    record totalCons = getLastRecord(ui->clientID_view->text(), &m_data);
+    record totalCons = getLastRecord(ui->clientID_view->text(), m_data);
 
     if (totalCons.value<0) {
         clearGraphic();
@@ -164,12 +175,12 @@ double MainWindow::avgDaysInMonth(int firstM, int lastM) {
 
 
 void MainWindow::updateQueryTab() {
-    if (m_data.empty()) return;
+    if (!hasReadFile || m_data == nullptr || m_data->empty()) return;
 
     QString clientID = ui->clientID_query->text();
     double periodCons;
     QDate firstDate = ui->firstDate->date(), lastDate = ui->lastDate->date();
-    if (getPeriodConsumption(clientID, &m_data, QDateTime(firstDate, QTime(0,0)), QDateTime(lastDate, QTime(23,59)), periodCons)) {
+    if (getPeriodConsumption(clientID, m_data, QDateTime(firstDate, QTime(0,0)), QDateTime(lastDate, QTime(23,59)), periodCons)) {
         double msecDiff = ui->lastDate->dateTime().toMSecsSinceEpoch() - ui->firstDate->dateTime().toMSecsSinceEpoch();
         ui->periodTotalCons->setText(QString::number(periodCons));
         ui->hourConsumption->setText(QString::number(periodCons / msecDiff *1000 * 60 * 60));

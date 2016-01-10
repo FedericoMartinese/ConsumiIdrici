@@ -13,7 +13,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(std::vector<record> *data, QWidget *parent = 0);
     ~MainWindow();
 
 private slots:
@@ -35,13 +35,14 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    std::vector<record> m_data;
+    std::vector<record> *m_data;
 
     void clearGraphic();
     void drawGraphic();
     void updateViewTab();
     void updateQueryTab();
     double avgDaysInMonth(int firstM, int lastM);
+    bool hasReadFile = false;
 
 };
 
