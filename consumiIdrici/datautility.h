@@ -3,6 +3,7 @@
 
 #include <QDateTime>
 #include <vector>
+#include <plotutility.h>
 
 struct record {
     QString clientID;   // identificativo univoco cliente
@@ -17,6 +18,7 @@ std::vector<record> readFile(QString fileName);
 record getLastRecord(QString clientID, const std::vector<record> *data);
 bool getPeriodConsumption(QString clientID, const std::vector<record> *data, QDateTime firstDate, QDateTime lastDate, double &periodConsumption);
 double getConsAtDate(QString clientID, QDateTime date, const std::vector<record> *data);
+std::vector<double> getHistogramData(QString clientID, const std::vector<record> *data, QDateTime firstDate, QDateTime lastDate, plotMode mode);
 
 
 #endif

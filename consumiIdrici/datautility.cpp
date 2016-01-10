@@ -198,3 +198,42 @@ double getConsAtDate(QString clientID, QDateTime date, const std::vector<record>
         return (date.toMSecsSinceEpoch() - prev.date.toMSecsSinceEpoch()) * (next.value - prev.value) / (next.date.toMSecsSinceEpoch() - prev.date.toMSecsSinceEpoch()) + prev.value;
 
 }
+
+std::vector<double> getHistogramData(QString clientID, const std::vector<record> *data, QDateTime firstDate, QDateTime lastDate, plotMode mode) {
+    std::vector<double> hdata;
+
+    int xNum; //numero di colonne
+
+    switch (mode) {
+    case YEAR: xNum = 12; break;
+    case MONTH_BY_DAYS:
+        xNum = firstDate.date().daysInMonth(); break;
+    case MONTH_BY_WEEKS:
+        xNum = lastDate.date().weekNumber() - firstDate.date().weekNumber() + 1; break;
+    case DAY:
+        xNum = 24; break;
+    default: return hdata;
+    }
+
+   if (!firstDate.isValid() || !lastDate.isValid())
+       return hdata;
+
+    for (int i=0; i<xNum; ++i) {
+        hdata.push_back(getConsAtDate(clientID, firstDate, data));
+        switch (mode) {
+        case YEAR: firstDate = firstDate.addMonths(1); break;
+        case MONTH_BY_DAYS: firstDate = firstDate.addDays(1); break;
+        case MONTH_BY_WEEKS:
+        {
+            int t = firstDate.date().weekNumber();
+            while (firstDate.date().weekNumber() == t)
+                firstDate = firstDate.addDays(1);
+        }
+            break;
+        case DAY:
+            firstDate = firstDate.addSecs(60*60); break; //1 hour
+        }
+    }
+
+    return hdata;
+}

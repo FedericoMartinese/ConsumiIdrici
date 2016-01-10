@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <datautility.h>
+#include <qcustomplot.h>
 
 namespace Ui {
 class MainWindow;
@@ -33,12 +34,12 @@ private slots:
 
     void on_lastDate_dateChanged(const QDate &date);
 
+    void on_histogramDate_dateChanged(const QDate &date);
+
 private:
     Ui::MainWindow *ui;
     std::vector<record> *m_data;
 
-    void clearGraphic();
-    void drawGraphic();
     void updateViewTab();
     void updateQueryTab();
     double avgDaysInMonth(int firstM, int lastM);

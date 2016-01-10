@@ -1,11 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QFileDialog>
+#include "plotutility.h"
 
 #include <QMessageBox>
-#define YEAR "Annuale"
-#define MONTH "Mensile"
-#define DAY "Giornaliero"
+#define SYEAR "Annuale"
+#define SMONTH_D "Mensile (giorni)"
+#define SMONTH_W "Mensile (settimane)"
+#define SDAY "Giornaliero"
 #define ND "n.d."
 MainWindow::MainWindow(std::vector<record> *data, QWidget *parent) :
     QMainWindow(parent),
@@ -14,9 +16,10 @@ MainWindow::MainWindow(std::vector<record> *data, QWidget *parent) :
     ui->setupUi(this);
     ui->tabWidget->setEnabled(false); //disabled fino a quando un file viene caricato correttamente
 
-    ui->histogramModeCombo->addItem(YEAR);
-    ui->histogramModeCombo->addItem(MONTH);
-    ui->histogramModeCombo->addItem(DAY);
+    ui->histogramModeCombo->addItem(SYEAR);
+    ui->histogramModeCombo->addItem(SMONTH_D);
+    ui->histogramModeCombo->addItem(SMONTH_W);
+    ui->histogramModeCombo->addItem(SDAY);
 
     ui->firstDate->setMinimumDate(minDate);
     ui->firstDate->setMaximumDate(maxDate);
@@ -24,6 +27,9 @@ MainWindow::MainWindow(std::vector<record> *data, QWidget *parent) :
     ui->lastDate->setMaximumDate(maxDate);
     ui->firstDate->setDate(minDate);
     ui->lastDate->setDate(maxDate);
+
+    ui->customPlot->xAxis->setVisible(false);
+    ui->customPlot->yAxis->setVisible(false);
 
     m_data = data;
 
@@ -100,31 +106,23 @@ void MainWindow::on_openFileDialog_clicked()
 
 void MainWindow::on_histogramModeCombo_currentIndexChanged(int index)
 {
-    QString mode = ui->histogramModeCombo->itemText(index);
-    if (mode == YEAR) {
-        ui->histogramDate->setDisplayFormat("yyyy");
-    } else if (mode == MONTH) {
-        ui->histogramDate->setDisplayFormat("MMMM yyyy");
-    } else if (mode == DAY) {
-        ui->histogramDate->setDisplayFormat("dd/MM/yyyy");
-    } else {
-        //errore da gestire
+    switch (index) {
+    case YEAR: ui->histogramDate->setDisplayFormat("yyyy"); break;
+    case MONTH_BY_DAYS:
+    case MONTH_BY_WEEKS:
+        ui->histogramDate->setDisplayFormat("MMMM yyyy"); break;
+    case DAY: ui->histogramDate->setDisplayFormat("dd/MM/yyyy"); break;
+    default:
+        ui->histogramDate->setEnabled(false);
+        return;
     }
+
     ui->histogramDate->setDate(minDate);
     ui->histogramDate->setMinimumDate(minDate);
     ui->histogramDate->setMaximumDate(maxDate);
+    ui->histogramDate->setEnabled(index != YEAR);
 
-    ui->histogramDate->setEnabled(mode != YEAR);
-}
-
-
-void MainWindow::clearGraphic() {
-    //...
-}
-
-void MainWindow::drawGraphic() {
-    clearGraphic();
-    //...
+    updateViewTab();
 }
 
 
@@ -148,14 +146,39 @@ void MainWindow::updateViewTab() {
     record totalCons = getLastRecord(ui->clientID_view->text(), m_data);
 
     if (totalCons.value<0) {
-        clearGraphic();
+        clearPlot(ui->customPlot);
         ui->totalConsumption->setText("n.d");
         ui->lastUpdated->setText("");
     } else {
         ui->totalConsumption->setText(QString::number(totalCons.value) + " m^3");
-        ui->lastUpdated->setText("(aggiornato al " + totalCons.date.toString("dd/MM/yyyy hh:mm:ss") + ")");
-        drawGraphic();
+        ui->lastUpdated->setText("(aggiornato al " + totalCons.date.toString("dd/MM/yyyy hh:mm:ss") + ")");        
     }
+
+    plotMode mode = (plotMode)ui->histogramModeCombo->currentIndex();
+    QDate first, last;
+    switch (mode) {
+    case YEAR:
+        first = minDate;
+        last = maxDate;
+        break;
+    case MONTH_BY_DAYS:
+    case MONTH_BY_WEEKS:
+        first.setDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), 1);
+        last.setDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), ui->histogramDate->date().daysInMonth());
+        break;
+    case DAY:
+        first = ui->histogramDate->date();
+        last = ui->histogramDate->date();
+        break;
+    default:
+        clearPlot(ui->customPlot);
+        return;
+    }
+    std::vector<double> hdata = getHistogramData(ui->clientID_view->text(), m_data, QDateTime(first, QTime(0,0)), QDateTime(last, QTime(23,59)), mode);
+    if (hdata.empty())
+        clearPlot(ui->customPlot);
+    else
+        drawPlot(ui->customPlot, mode, first, last, hdata);
 }
 
 double MainWindow::avgDaysInMonth(int firstM, int lastM) {
@@ -217,4 +240,9 @@ void MainWindow::on_lastDate_dateChanged(const QDate &date)
 {
     ui->firstDate->setMaximumDate(date);
     updateQueryTab();
+}
+
+void MainWindow::on_histogramDate_dateChanged(const QDate &date)
+{
+    updateViewTab();
 }
