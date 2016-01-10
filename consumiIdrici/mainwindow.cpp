@@ -1,14 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <consumptionswindow.h>
 #include <QFileDialog>
 
 #include <QMessageBox>
 #define YEAR "Annuale"
 #define MONTH "Mensile"
 #define DAY "Giornaliero"
-
-MainWindow::MainWindow(std::vector<record> *data, QWidget *parent) :
+#define ND "n.d."
+MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -19,7 +18,13 @@ MainWindow::MainWindow(std::vector<record> *data, QWidget *parent) :
     ui->histogramModeCombo->addItem(MONTH);
     ui->histogramModeCombo->addItem(DAY);
 
-    m_data = data;
+    ui->firstDate->setMinimumDate(minDate);
+    ui->firstDate->setMaximumDate(maxDate);
+    ui->lastDate->setMinimumDate(minDate);
+    ui->lastDate->setMaximumDate(maxDate);
+    ui->firstDate->setDate(minDate);
+    ui->lastDate->setDate(maxDate);
+
 }
 
 MainWindow::~MainWindow()
@@ -33,7 +38,7 @@ void MainWindow::on_openFileDialog_clicked()
     QString fileName = QFileDialog::getOpenFileName(this, "Open consumptions file", QDir::current().absolutePath(), "CSV Files (*.csv)"); //seleziona un file .csv da cui leggere i dati
 
     if (!fileName.isEmpty()) { //se il file è stato selezionato
-        *m_data = readFile(fileName);
+        m_data = readFile(fileName);
 
 
         //debug test
@@ -69,15 +74,136 @@ void MainWindow::on_openFileDialog_clicked()
         QMessageBox m3(QMessageBox::Critical, "clientID", a3, QMessageBox::Ok);
         m3.exec();*/
 
-
-        QFileInfo fileInfo(fileName);
-        this->ui->loadedFileName->setText(fileInfo.fileName());
-
-    } else {
-        this->ui->loadedFileName->setText("Apertura fallita");
+        if (!m_data.empty()) {
+            QFileInfo fileInfo(fileName);
+            this->ui->loadedFileName->setText(fileInfo.fileName());
+        } else {
+            this->ui->loadedFileName->setText("Apertura fallita");
+        }
     }
 
-    this->ui->tabWidget->setEnabled(!fileName.isEmpty());
+    this->ui->tabWidget->setEnabled(!m_data.empty());
 
 
+}
+
+void MainWindow::on_histogramModeCombo_currentIndexChanged(int index)
+{
+    QString mode = ui->histogramModeCombo->itemText(index);
+    if (mode == YEAR) {
+        ui->histogramDate->setDisplayFormat("yyyy");
+    } else if (mode == MONTH) {
+        ui->histogramDate->setDisplayFormat("MMMM yyyy");
+    } else if (mode == DAY) {
+        ui->histogramDate->setDisplayFormat("dd/MM/yyyy");
+    } else {
+        //errore da gestire
+    }
+    ui->histogramDate->setDate(minDate);
+    ui->histogramDate->setMinimumDate(minDate);
+    ui->histogramDate->setMaximumDate(maxDate);
+
+    ui->histogramDate->setEnabled(mode != YEAR);
+}
+
+
+void MainWindow::clearGraphic() {
+    //...
+}
+
+void MainWindow::drawGraphic() {
+    clearGraphic();
+    //...
+}
+
+
+void MainWindow::on_clientID_view_editingFinished()
+{
+    ui->clientID_query->setText(ui->clientID_view->text());
+    updateViewTab();
+    updateQueryTab();
+}
+
+void MainWindow::on_clientID_query_editingFinished()
+{
+    ui->clientID_view->setText(ui->clientID_query->text());
+    updateViewTab();
+    updateQueryTab();
+}
+
+void MainWindow::updateViewTab() {
+    if (m_data.empty()) return;
+
+    record totalCons = getLastRecord(ui->clientID_view->text(), &m_data);
+
+    if (totalCons.value<0) {
+        clearGraphic();
+        ui->totalConsumption->setText("n.d");
+        ui->lastUpdated->setText("");
+    } else {
+        ui->totalConsumption->setText(QString::number(totalCons.value) + " m^3");
+        ui->lastUpdated->setText("(aggiornato al " + totalCons.date.toString("dd/MM/yyyy hh:mm:ss") + ")");
+        drawGraphic();
+    }
+}
+
+double MainWindow::avgDaysInMonth(int firstM, int lastM) {
+    double avg = 0;
+    for (int i = firstM; i<=lastM; ++i)
+        switch (i) {
+        case 2: avg += 28; break; //si considera solo il 2015
+        case 11:
+        case 4:
+        case 6:
+        case 9: avg += 30; break;
+        default: avg += 31;
+        }
+    return avg / (lastM - firstM + 1) ;
+}
+
+
+
+void MainWindow::updateQueryTab() {
+    if (m_data.empty()) return;
+
+    QString clientID = ui->clientID_query->text();
+    double periodCons;
+    QDate firstDate = ui->firstDate->date(), lastDate = ui->lastDate->date();
+    if (getPeriodConsumption(clientID, &m_data, QDateTime(firstDate, QTime(0,0)), QDateTime(lastDate, QTime(23,59)), periodCons)) {
+        double msecDiff = ui->lastDate->dateTime().toMSecsSinceEpoch() - ui->firstDate->dateTime().toMSecsSinceEpoch();
+        ui->periodTotalCons->setText(QString::number(periodCons));
+        ui->hourConsumption->setText(QString::number(periodCons / msecDiff *1000 * 60 * 60));
+        ui->dayConsumption->setText(QString::number(periodCons / msecDiff * 1000 * 60 * 60 * 24));
+
+        //oppure si calcola il consumo giornaliero con la funzione getPeriodConsumption per ogni giorno e si mette in un vector
+        //poi si somma da lunedì a domenica in un altro vector e se ne fa la media
+        //stessa cosa sullo stesso vector dall'1 al 28/30/31 (QDate::dayofmonth() )
+
+        if (lastDate.dayOfYear() - firstDate.dayOfYear() >= 6) //dalle 00:00 di lunedì alle 23:59 di domenica sono 6 giorni interi, ma ha senso calcolare il consumo settimanale
+            ui->weekConsumption->setText(QString::number(periodCons / msecDiff * 1000 * 60 * 60 * 24 * 7)); //settimane comprese parzialmente non deviano la media ma contribuiscono in base a quanti giorni sono considerati
+        else
+            ui->weekConsumption->setText(ND);
+        if (lastDate.month() - firstDate.month() > 1 || (firstDate.day() == 1 && lastDate.day() == lastDate.daysInMonth()))
+            ui->monthConsumption->setText(QString::number(periodCons / msecDiff * 1000 * 60 * 60 * 24 * avgDaysInMonth(firstDate.month(), lastDate.month())));
+        else
+            ui->monthConsumption->setText(ND);
+    } else {
+        ui->periodTotalCons->setText("Dati non trovati");
+        ui->hourConsumption->setText(ND);
+        ui->dayConsumption->setText(ND);
+        ui->weekConsumption->setText(ND);
+        ui->monthConsumption->setText(ND);
+    }
+}
+
+
+void MainWindow::on_firstDate_dateChanged(const QDate &date)
+{
+    ui->lastDate->setMinimumDate(date);
+    updateQueryTab();
+}
+void MainWindow::on_lastDate_dateChanged(const QDate &date)
+{
+    ui->firstDate->setMaximumDate(date);
+    updateQueryTab();
 }

@@ -40,7 +40,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="viewTab">
      <attribute name="title">
@@ -97,29 +97,13 @@
         <string>--- m^3</string>
        </property>
       </widget>
-      <widget class="QLabel" name="label_3">
-       <property name="geometry">
-        <rect>
-         <x>210</x>
-         <y>20</y>
-         <width>91</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>(aggiornato al</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
       <widget class="QLabel" name="lastUpdated">
        <property name="geometry">
         <rect>
-         <x>310</x>
+         <x>220</x>
          <y>20</y>
-         <width>111</width>
-         <height>16</height>
+         <width>201</width>
+         <height>20</height>
         </rect>
        </property>
        <property name="text">
@@ -137,19 +121,6 @@
        </property>
        <property name="currentText">
         <string/>
-       </property>
-      </widget>
-      <widget class="QLabel" name="histogramModeLabel">
-       <property name="geometry">
-        <rect>
-         <x>180</x>
-         <y>50</y>
-         <width>46</width>
-         <height>13</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>y/m/d</string>
        </property>
       </widget>
       <widget class="QDateEdit" name="histogramDate">
@@ -173,7 +144,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QLineEdit" name="userID">
+     <widget class="QLineEdit" name="clientID_view">
       <property name="geometry">
        <rect>
         <x>130</x>
@@ -201,11 +172,11 @@
        <string>Codice utente:</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_5">
+     <widget class="QLabel" name="periodTotalCons">
       <property name="geometry">
        <rect>
         <x>180</x>
-        <y>60</y>
+        <y>150</y>
         <width>91</width>
         <height>21</height>
        </rect>
@@ -218,7 +189,7 @@
       <property name="geometry">
        <rect>
         <x>50</x>
-        <y>100</y>
+        <y>190</y>
         <width>261</width>
         <height>141</height>
        </rect>
@@ -331,7 +302,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QLineEdit" name="userID_2">
+     <widget class="QLineEdit" name="clientID_query">
       <property name="geometry">
        <rect>
         <x>140</x>
@@ -345,13 +316,59 @@
       <property name="geometry">
        <rect>
         <x>50</x>
-        <y>60</y>
+        <y>150</y>
         <width>111</width>
         <height>21</height>
        </rect>
       </property>
       <property name="text">
        <string>Consumo nel periodo</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>60</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Data inizio: </string>
+      </property>
+     </widget>
+     <widget class="QDateEdit" name="firstDate">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>60</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>90</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Data fine: </string>
+      </property>
+     </widget>
+     <widget class="QDateEdit" name="lastDate">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>90</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
       </property>
      </widget>
     </widget>
