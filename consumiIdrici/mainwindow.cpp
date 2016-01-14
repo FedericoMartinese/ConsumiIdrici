@@ -55,8 +55,8 @@ void MainWindow::on_openFileDialog_clicked()
 
 
         //debug test
-
-        /*for (int i=0; i<6;++i) {
+        /*
+        for (int i=0; i<6;++i) {
         QString a1 = m_data->at(i).date.toString("yyyy-MM-dd HH:mm:ss");
         QMessageBox m1(QMessageBox::Critical, "date", a1, QMessageBox::Ok);
         m1.exec();
@@ -84,7 +84,7 @@ void MainWindow::on_openFileDialog_clicked()
         QMessageBox m2(QMessageBox::Critical, "value", a2, QMessageBox::Ok);
         m2.exec();
 
-        QString a3 = QString::fromStdString(m_data->at(4).clientID);
+        QString a3 = m_data->at(4).clientID;
         QMessageBox m3(QMessageBox::Critical, "clientID", a3, QMessageBox::Ok);
         m3.exec();*/
 

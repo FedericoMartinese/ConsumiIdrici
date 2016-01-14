@@ -10,6 +10,10 @@
 
 #define MINSECSPRECISION 60 //1 minuto di precisione minima
 
+
+
+
+
 std::vector<record> readFile(QString fileName) {
     //legge il file di input e restituisce un vector di record
 
@@ -38,7 +42,7 @@ std::vector<record> readFile(QString fileName) {
             //converte la stringa in formato datetime. sono presenti " all'inizio e alla fine
             //toUTC è necessario per gestire ora legale/solare (ad esempio 29-03-2015 02:00)  <--- NO E' INDIETRO DI 1 ORA CON L'ORA INVERNALE E 2 CON QUELLA ESTIVA
             //CONTROLLARE!
-            rec.date = QDateTime::fromString(params[0], "\"yyyy-MM-dd HH:mm:ss\"").toUTC();
+            rec.date = UTCtoDayLightSavTime(QDateTime::fromString(params[0], "\"yyyy-MM-dd HH:mm:ss\"").toUTC());
             rec.value = params[1].toDouble(&ok);
             rec.clientID = params[2];
 
@@ -244,3 +248,19 @@ std::vector<double> getHistogramData(QString clientID, const std::vector<record>
 
     return hdata;
 }
+
+QDateTime UTCtoDayLightSavTime(QDateTime date, int UTC_offset /*fuso orario invernale default +1*/) {
+    if (date.secsTo(dstStartDay) > 0 || date.secsTo(dstEndDay) < 0)
+        return date.addSecs(UTC_offset * 3600);
+    else
+        return date.addSecs( (UTC_offset + 1) * 3600);
+}
+
+/* cercare di utilizzarla per dichiarare le const nel .h
+QDate getLastSunday(int month, int year) {
+    QDate sunday(year, month, QDate(year,month,1).daysInMonth());
+    while (sunday.dayOfWeek() != 7) {
+        sunday.addDays(-1);
+    }
+    return sunday;
+}*/

@@ -12,4 +12,16 @@
 
 - considerazioni su settimane/mesi compresi parzialmente
 
-- segmentation fault sulla dichiarazione dei record
+- segmentation fault sulla dichiarazione dei record (forse risolto)
+
+- colore blu grafico
+
+- legenda ?
+
+- controllare tick verticali in vari casi
+
+- controllare valori dei grafici
+
+- aggiungere un panel con i valori massimi, minimi e medi
+
+ 
