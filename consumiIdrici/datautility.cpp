@@ -218,8 +218,15 @@ std::vector<double> getHistogramData(QString clientID, const std::vector<record>
    if (!firstDate.isValid() || !lastDate.isValid())
        return hdata;
 
+   double consBefore = getConsAtDate(clientID, firstDate.addDays(-1), data); //consumo prima del periodo
+   if (consBefore<0) consBefore=0; //se non viene trovato
+
     for (int i=0; i<xNum; ++i) {
-        hdata.push_back(getConsAtDate(clientID, firstDate, data));
+
+        double test = getConsAtDate(clientID, firstDate, data);
+        double testm = (i == 0 ? consBefore : hdata[i-1]);
+
+        hdata.push_back(test - testm);
         switch (mode) {
         case YEAR: firstDate = firstDate.addMonths(1); break;
         case MONTH_BY_DAYS: firstDate = firstDate.addDays(1); break;

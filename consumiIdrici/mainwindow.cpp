@@ -178,7 +178,36 @@ void MainWindow::updateViewTab() {
     if (hdata.empty())
         clearPlot(ui->customPlot);
     else
-        drawPlot(ui->customPlot, mode, first, last, hdata);
+        drawPlot(ui->customPlot, mode, /*first, last, */ hdata);
+
+    ///TEST
+    /*QDateTime first, last;
+    switch (mode) {
+    case YEAR:
+        first = QDateTime(minDate.addMonths(1), QTime(0,0)); //la colonna di gennaio riporta il consumo alle 00:00 del 1° febbraio
+        last = QDateTime(minDate.addMonths(12), QTime(0,0));
+        break;
+    case MONTH_BY_DAYS:
+    case MONTH_BY_WEEKS:
+        first = QDateTime(QDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), 1), QTime(0,0));
+        last = QDateTime(QDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), 1),QTime(0,0));
+        first.addDays(1); //il conumo di un giorno si conclude alle 00:00 del giorno dopo
+        last.addDays(1);
+        break;
+    case DAY:
+        first = QDateTime(ui->histogramDate->date(),QTime(1,0));
+        last = QDateTime(ui->histogramDate->date().addDays(1),QTime(0,0));
+        break;
+    default:
+        clearPlot(ui->customPlot);
+        return;
+    }
+    std::vector<double> hdata = getHistogramData(ui->clientID_view->text(), m_data, first, last, mode);
+    if (hdata.empty())
+        clearPlot(ui->customPlot);
+    else
+        drawPlot(ui->customPlot, mode, hdata);
+    */
 }
 
 double MainWindow::avgDaysInMonth(int firstM, int lastM) {
