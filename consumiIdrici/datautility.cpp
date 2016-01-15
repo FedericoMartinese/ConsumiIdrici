@@ -11,9 +11,6 @@
 #define MINSECSPRECISION 60 //1 minuto di precisione minima
 
 
-
-
-
 std::vector<record> readFile(QString fileName) {
     //legge il file di input e restituisce un vector di record
 
@@ -40,8 +37,8 @@ std::vector<record> readFile(QString fileName) {
 
 
             //converte la stringa in formato datetime. sono presenti " all'inizio e alla fine
-            //toUTC è necessario per gestire ora legale/solare (ad esempio 29-03-2015 02:00)  <--- NO E' INDIETRO DI 1 ORA CON L'ORA INVERNALE E 2 CON QUELLA ESTIVA
-            //CONTROLLARE!
+            //toUTC è necessario per gestire ora legale/solare (ad esempio 29-03-2015 02:00)
+            //che viene poi convertita in CET dalla funzione UTCtoDayLightSavTime
             rec.date = UTCtoDayLightSavTime(QDateTime::fromString(params[0], "\"yyyy-MM-dd HH:mm:ss\"").toUTC());
             rec.value = params[1].toDouble(&ok);
             rec.clientID = params[2];
@@ -124,14 +121,58 @@ bool getPeriodConsumption(QString clientID, const std::vector<record> *data, QDa
 
     periodConsumption = consAtLDate - consAtFDate;*/
 
-    double consAtFirstDate = getConsAtDate(clientID, firstDate, data);
-    double consAtLastDate = getConsAtDate(clientID, lastDate, data);
+    double consAtFirstDate = getConsAtDateSorted(clientID, firstDate, data); //getConsAtDate(clientID, firstDate, data);
+    double consAtLastDate = getConsAtDateSorted(clientID, lastDate, data);   //getConsAtDate(clientID, lastDate, data);
     periodConsumption = consAtLastDate - consAtFirstDate;
 
     return consAtFirstDate >= 0 && consAtLastDate >= 0;
 }
 
+double getConsAtDateSorted(QString clientID, QDateTime date, const std::vector<record> *sortedData) {
+    if (sortedData == NULL) return -1;
 
+    record prev, next;
+    bool found = false, initialized = false;
+
+    for (record rec : *sortedData) {
+
+        if (rec.clientID > clientID)
+            break; //cliente non trovato
+        else if (rec.clientID == clientID) {
+            found = true;
+            if (!initialized) {
+                prev = rec;
+                next = rec;
+                initialized = true;
+            }
+
+            if (/*rec.date == date || */ qAbs(rec.date.secsTo(date))<=MINSECSPRECISION) { //se viene trovata una registrazione molto vicina è superfluo continuare la ricerca
+                return rec.value;
+            }
+
+            if (rec.date < date /* && rec.date > prev.date*/) {//inutile il secondo controllo perché file ordinato, rec sicuramente >= prev
+                prev = rec;
+                next = rec; //si spostano gli iteratori avanti
+            } else {
+                next = rec; //dato che è ordinato è sicuramente il primo dopo la data cercata
+                break;
+            }
+        }
+    }
+
+    if (!found) return -1;
+    if (prev == next) return prev.value; //non ci sono registrazioni prima (dopo) la data cercata. si suppone che fino a (da) quel momento non ci siano stati consumi
+
+    // se vengono trovate una registrazione precedene e una successiva alla data il consumo previsto al momento richiesto è
+    // consumo a una data = (differenza di tempo tra le registrazioni più vicine) * (differenza di consumi tra le registrazioni più vicine) /
+    // (differenza di tempo tra la data e la registrazione precedente più vicina) + (consumo alla registrazione precedente più vicina)
+    // se una delle due non viene trovata, la registrazione precedente e quella successiva coincidono, si presume che non ci siano stati consumi successivi o precedenti e restituisce il valore delle registrazioni
+    // si suppone consumo costante tra le due data
+    return (date.toMSecsSinceEpoch() - prev.date.toMSecsSinceEpoch()) * (next.value - prev.value) / (next.date.toMSecsSinceEpoch() - prev.date.toMSecsSinceEpoch()) + prev.value;
+}
+
+
+//se la sorted funziona questa va eliminata
 double getConsAtDate(QString clientID, QDateTime date, const std::vector<record> *data) {
     if (data == NULL) return -1;
 
@@ -222,15 +263,10 @@ std::vector<double> getHistogramData(QString clientID, const std::vector<record>
    if (!firstDate.isValid() || !lastDate.isValid())
        return hdata;
 
-   double consBefore = getConsAtDate(clientID, firstDate.addDays(-1), data); //consumo prima del periodo
+   double consBefore =getConsAtDateSorted(clientID, firstDate.addSecs(-1), data); // getConsAtDate(clientID, firstDate.addDays(-1), data); //consumo prima del periodo
    if (consBefore<0) consBefore=0; //se non viene trovato
 
     for (int i=0; i<xNum; ++i) {
-
-        double test = getConsAtDate(clientID, firstDate, data);
-        double testm = (i == 0 ? consBefore : hdata[i-1]);
-
-        hdata.push_back(test - testm);
         switch (mode) {
         case YEAR: firstDate = firstDate.addMonths(1); break;
         case MONTH_BY_DAYS: firstDate = firstDate.addDays(1); break;
@@ -244,6 +280,13 @@ std::vector<double> getHistogramData(QString clientID, const std::vector<record>
         case DAY:
             firstDate = firstDate.addSecs(60*60); break; //1 hour
         }
+
+        double test =getConsAtDateSorted(clientID, firstDate, data); getConsAtDate(clientID, firstDate, data);
+        //double testm = (i == 0 ? consBefore : hdata[i-1]);
+
+        hdata.push_back(test - consBefore);
+        consBefore = test;
+
     }
 
     return hdata;

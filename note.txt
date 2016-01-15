@@ -24,4 +24,20 @@
 
 - aggiungere un panel con i valori massimi, minimi e medi
 
+- maschera con barra di caricamento per l'apertura del file
+
+- provare a fare il sort con un bool operator< nella struct, se no come in consumption-file-extractor
+
+- sostituire tutti i qdatetime.secsto con i < > e verificarne il funzionamento
+
+- verificare funzionamento operatore == della struct
+
+- testare quanto è conveniente ordinare e usare la sorted rispetto a non ordinare e usare solo la getconsatdate
  
+ - controllare il calcolo del caso più difficile della getconsatdatesorted (modificando file magari)
+ 
+ - controllare giorni cambio ora
+ 
+ - guardare l'utente NULL il 7 e l'8 luglio
+
+- controllare variabili test (ce n'è nella costruzione dei dati del grafico gethistogramdata)

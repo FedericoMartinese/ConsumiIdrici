@@ -53,6 +53,7 @@ void MainWindow::on_openFileDialog_clicked()
     if (!fileName.isEmpty()) { //se il file è stato selezionato
         *m_data = readFile(fileName);
 
+        std::sort(m_data->begin(), m_data->end());
 
         //debug test
         /*
@@ -174,7 +175,7 @@ void MainWindow::updateViewTab() {
         clearPlot(ui->customPlot);
         return;
     }
-    std::vector<double> hdata = getHistogramData(ui->clientID_view->text(), m_data, QDateTime(first, QTime(0,0)), QDateTime(last, QTime(23,59)), mode);
+    std::vector<double> hdata = getHistogramData(ui->clientID_view->text(), m_data, QDateTime(first, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(last, QTime(23,59), Qt::TimeSpec::UTC), mode);
     if (hdata.empty())
         clearPlot(ui->customPlot);
     else

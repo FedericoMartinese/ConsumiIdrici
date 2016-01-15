@@ -40,7 +40,7 @@ void drawPlot(QCustomPlot *customPlot, plotMode mode, std::vector<double> data) 
         case YEAR: labels << QDate(2015,i,1).toString("MMMM"); break;
         case MONTH_BY_DAYS:
         case MONTH_BY_WEEKS: labels << QString::number(i); break;
-        case DAY: labels << QString::number(i).rightJustified(2, '0'); break;
+        case DAY: labels << QString::number(i-1).rightJustified(2, '0'); break; //-1 perché 00-23
         }
 
         if (i<xNum) {
@@ -64,8 +64,13 @@ void drawPlot(QCustomPlot *customPlot, plotMode mode, std::vector<double> data) 
     customPlot->xAxis->setRange(0, xNum + 1); //+1 spazio a dx
 
     // prepare y axis:
-    customPlot->yAxis->setRange(0, maxValue);
-    customPlot->yAxis->setLabel("Consumi");
+    customPlot->yAxis->setRange(0, maxValue);    
+    switch (mode) {
+    case YEAR:  customPlot->yAxis->setLabel("Consumo annuale"); break;
+    case MONTH_BY_DAYS: customPlot->yAxis->setLabel("Consumo mensile"); break;
+    case MONTH_BY_WEEKS:  customPlot->yAxis->setLabel("Consumo settimanale"); break;
+    case DAY:   customPlot->yAxis->setLabel("Consumo orario"); break;
+    }
     customPlot->yAxis->grid()->setSubGridVisible(true);
     QPen gridPen;
     gridPen.setStyle(Qt::SolidLine);
