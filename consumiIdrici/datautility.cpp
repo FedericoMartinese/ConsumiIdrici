@@ -79,6 +79,7 @@ record getLastRecord(QString clientID, const std::vector<record> *data) { //retu
     return last;
 }
 
+// SE FUNZIONA LA PERIOD SORTED VA CANCELLATA
 bool getPeriodConsumption(QString clientID, const std::vector<record> *data, QDateTime firstDate, QDateTime lastDate, double &periodConsumption) {
     if (data == NULL || !firstDate.isValid() || !lastDate.isValid() || firstDate.secsTo(lastDate) < 0) return false;
 
@@ -127,6 +128,81 @@ bool getPeriodConsumption(QString clientID, const std::vector<record> *data, QDa
 
     return consAtFirstDate >= 0 && consAtLastDate >= 0;
 }
+
+double getConsAtPeriodSorted(QString clientID, QDateTime firstDate, QDateTime lastDate, const std::vector<record> *sortedData) {
+    if (sortedData == NULL) return -1;
+    if (firstDate > lastDate) return -1;
+
+    record fPrev, fNext, lPrev, lNext;
+    double fCons = -1, lCons = -1;
+    bool found = false, initialized = false, fNextFound = false;
+
+    for (record rec : *sortedData) {
+
+        if (rec.clientID > clientID)
+            break; //cliente non trovato
+        else if (rec.clientID == clientID) {
+            found = true;
+            if (!initialized) {
+                fPrev = rec;
+                fNext = rec;
+                lPrev = rec;
+                lNext = rec;
+                initialized = true;
+            }
+
+            if (qAbs(rec.date.secsTo(firstDate))<=MINSECSPRECISION) { //se viene trovata una registrazione molto vicina è superfluo continuare la ricerca
+                fCons = rec.value;
+            }
+            if (qAbs(rec.date.secsTo(lastDate))<=MINSECSPRECISION) {
+                lCons = rec.value;
+            }
+
+            if (rec.date < firstDate) {
+                fPrev = rec;
+                fNext = rec; //si spostano gli iteratori avanti
+            } else if (!fNextFound){
+                fNext = rec; //dato che è ordinato è sicuramente il primo dopo la data cercata
+                fNextFound = true; //essendo ordinati viene preso solo il primo
+            }
+
+            if (rec.date < lastDate) {
+                lPrev = rec;
+                lNext = rec;
+            } else {
+                lNext = rec;
+                break;
+            }
+        }
+
+        if (fCons >= 0 && lCons >=0)
+            break; //trovate entrambe le date
+    }
+
+    if (!found) return -1;
+
+    if (fCons < 0) { //se non trovato
+        if (fPrev == fNext) //non ci sono registrazioni prima (dopo) la data cercata. si suppone che fino a (da) quel momento non ci siano stati consumi
+            fCons = fPrev.value;
+        else
+            fCons = (firstDate.toMSecsSinceEpoch() - fPrev.date.toMSecsSinceEpoch()) * (fNext.value - fPrev.value) / (fNext.date.toMSecsSinceEpoch() - fPrev.date.toMSecsSinceEpoch()) + fPrev.value;
+    }
+
+    if (lCons < 0) {
+        if (lPrev == lNext)
+            lCons = lPrev.value;
+        else
+            lCons = (lastDate.toMSecsSinceEpoch() - lPrev.date.toMSecsSinceEpoch()) * (lNext.value - lPrev.value) / (lNext.date.toMSecsSinceEpoch() - lPrev.date.toMSecsSinceEpoch()) + lPrev.value;
+    }
+    // se vengono trovate una registrazione precedene e una successiva alla data il consumo previsto al momento richiesto è
+    // consumo a una data = (differenza di tempo tra le registrazioni più vicine) * (differenza di consumi tra le registrazioni più vicine) /
+    // (differenza di tempo tra la data e la registrazione precedente più vicina) + (consumo alla registrazione precedente più vicina)
+    // se una delle due non viene trovata, la registrazione precedente e quella successiva coincidono, si presume che non ci siano stati consumi successivi o precedenti e restituisce il valore delle registrazioni
+    // si suppone consumo costante tra le due data
+
+    return lCons - fCons;
+}
+
 
 double getConsAtDateSorted(QString clientID, QDateTime date, const std::vector<record> *sortedData) {
     if (sortedData == NULL) return -1;
@@ -281,11 +357,10 @@ std::vector<double> getHistogramData(QString clientID, const std::vector<record>
             firstDate = firstDate.addSecs(60*60); break; //1 hour
         }
 
-        double test =getConsAtDateSorted(clientID, firstDate, data); getConsAtDate(clientID, firstDate, data);
-        //double testm = (i == 0 ? consBefore : hdata[i-1]);
+        double totCons =getConsAtDateSorted(clientID, firstDate, data); //getConsAtDate(clientID, firstDate, data);
 
-        hdata.push_back(test - consBefore);
-        consBefore = test;
+        hdata.push_back(totCons - consBefore);
+        consBefore = totCons;
 
     }
 
@@ -307,3 +382,5 @@ QDate getLastSunday(int month, int year) {
     }
     return sunday;
 }*/
+
+

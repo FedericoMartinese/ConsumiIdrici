@@ -6,11 +6,9 @@
 
 - controllare l'organizzazine in classi delle funzioni
 
-- non funziona la conversione di una data (riga 6720 nel file piccolo), del 29/03/2015 alle 02:00 ora legale
-
 - ricontrollare TUTTI i commenti, tradurli in inglese (?) e metterli dove servono
 
-- considerazioni su settimane/mesi compresi parzialmente
+- considerazioni su settimane/mesi compresi parzialmente (tab interrogazione)
 
 - segmentation fault sulla dichiarazione dei record (forse risolto)
 
@@ -41,3 +39,7 @@
  - guardare l'utente NULL il 7 e l'8 luglio
 
 - controllare variabili test (ce n'è nella costruzione dei dati del grafico gethistogramdata)
+
+- unire la getperiodsorted e la getconssorted (verificare che servano entrambe!!!)
+
+- utilizzare tipo apposito per variabili che contengono size di vector (se quei valori vengono memorizzati)

@@ -31,6 +31,7 @@ MainWindow::MainWindow(std::vector<record> *data, QWidget *parent) :
     ui->customPlot->xAxis->setVisible(false);
     ui->customPlot->yAxis->setVisible(false);
 
+    ui->tabWidget->setCurrentIndex(0);
     m_data = data;
 
 }
@@ -152,7 +153,7 @@ void MainWindow::updateViewTab() {
         ui->lastUpdated->setText("");
     } else {
         ui->totalConsumption->setText(QString::number(totalCons.value) + " m^3");
-        ui->lastUpdated->setText("(aggiornato al " + totalCons.date.toString("dd/MM/yyyy hh:mm:ss") + ")");        
+        ui->lastUpdated->setText("(aggiornato al " + totalCons.date.toString("dd/MM/yyyy hh:mm:ss") + ")");
     }
 
     plotMode mode = (plotMode)ui->histogramModeCombo->currentIndex();
@@ -230,10 +231,11 @@ double MainWindow::avgDaysInMonth(int firstM, int lastM) {
 void MainWindow::updateQueryTab() {
     if (!hasReadFile || m_data == nullptr || m_data->empty()) return;
 
-    QString clientID = ui->clientID_query->text();
-    double periodCons;
+    QString clientID = ui->clientID_query->text();    
     QDate firstDate = ui->firstDate->date(), lastDate = ui->lastDate->date();
-    if (getPeriodConsumption(clientID, m_data, QDateTime(firstDate, QTime(0,0)), QDateTime(lastDate, QTime(23,59)), periodCons)) {
+    double periodCons= getConsAtPeriodSorted(clientID, QDateTime(firstDate, QTime(0,0)), QDateTime(lastDate, QTime(23,59)), m_data);
+
+    if (periodCons >= 0) {
         double msecDiff = ui->lastDate->dateTime().toMSecsSinceEpoch() - ui->firstDate->dateTime().toMSecsSinceEpoch();
         ui->periodTotalCons->setText(QString::number(periodCons));
         ui->hourConsumption->setText(QString::number(periodCons / msecDiff *1000 * 60 * 60));
@@ -276,3 +278,109 @@ void MainWindow::on_histogramDate_dateChanged(const QDate &date)
 {
     updateViewTab();
 }
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    if (index < 2) return;
+
+    qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch();    
+
+    //TROPPO LUNGO
+
+    /*
+    const double threshold = 0.2;
+
+    struct perdita {
+        QDate date;
+        double value;
+    };
+
+    struct clientePerdita {
+        QString clientID;
+        std::vector<perdita> perdite;
+    };
+    std::vector<clientePerdita> clients;
+
+    QString clientID = "";
+
+    for (record rec : *m_data) {
+        if (rec.clientID > clientID || clientID.isEmpty()) { //nuovo cliente
+            clientID = rec.clientID;
+            QDateTime fIterator = QDateTime(minDate, QTime(0,0));
+            QDateTime lIterator = QDateTime(minDate, QTime(5,0));
+            while (fIterator.date() <= maxDate) {
+                double cons = getConsAtPeriodSorted(clientID, fIterator, lIterator, m_data);
+                //qDebug() << cons;
+                if (cons >= threshold) {
+                    if (clients.size() == 0 || clients[clients.size()-1].clientID != clientID) {
+                        clientePerdita cp;
+                        cp.clientID = clientID;
+                        clients.push_back(cp);
+                    }
+                    perdita p;
+                    p.date = fIterator.date();
+                    p.value = cons;
+                    clients[clients.size()-1].perdite.push_back(p);
+
+                    //qDebug() << QString::number(clients.size()-1) + " - " + QString::number(clients[clients.size()-1].perdite.size()-1);
+                }
+                fIterator = fIterator.addDays(1);
+                lIterator = lIterator.addDays(1);
+            }
+
+        }
+    }
+
+    qDebug()<<clients.size();*/
+
+
+/*
+    struct perdita {
+        QDate date;
+        double value;
+    };
+
+    struct clientePerdita {
+        QString clientID;
+        std::vector<perdita> perdite;
+    };
+
+
+    QString curClient = "";
+    QDate dateIterator = minDate;
+    std::vector<clientePerdita> clients;
+    for (record rec : *m_data) {
+        if (rec.clientID > curClient || curClient.isEmpty()) { //prossimo cliente
+            curClient = rec.clientID;
+            while (dateIterator <= maxDate) {
+                double v;
+                if (getPeriodConsumption(curClient, m_data, QDateTime(dateIterator, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(dateIterator, QTime(0,0), Qt::TimeSpec::UTC), v))
+                    if (v >= threshold) {
+                        if (clients[clients.size()-1].clientID != curClient) {
+                            clientePerdita cp;
+                            cp.clientID = curClient;
+                            clients.push_back(cp);
+                        }
+
+                        perdita p;
+                        p.date = dateIterator;
+                        p.value = v;
+
+                        clients[clients.size()-1].perdite.push_back(p);
+                    }
+            }
+        }
+    }*/
+
+    while (true)
+    qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch();
+
+
+}
+
+
+
+
+
+
+

@@ -35,5 +35,6 @@ double getConsAtDateSorted(QString clientID, QDateTime date, const std::vector<r
 std::vector<double> getHistogramData(QString clientID, const std::vector<record> *data, QDateTime firstDate, QDateTime lastDate, plotMode mode);
 QDateTime UTCtoDayLightSavTime(QDateTime date, int UTC_offset = 1);
 QDate getLastSunday(int month, int year);
+double getConsAtPeriodSorted(QString clientID, QDateTime firstdate, QDateTime lastDate, const std::vector<record> *sortedData);
 
 #endif

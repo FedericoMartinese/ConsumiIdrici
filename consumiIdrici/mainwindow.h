@@ -36,6 +36,8 @@ private slots:
 
     void on_histogramDate_dateChanged(const QDate &date);
 
+    void on_tabWidget_currentChanged(int index);
+
 private:
     Ui::MainWindow *ui;
     std::vector<record> *m_data;
