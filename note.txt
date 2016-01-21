@@ -42,4 +42,20 @@
 
 - unire la getperiodsorted e la getconssorted (verificare che servano entrambe!!!)
 
-- utilizzare tipo apposito per variabili che contengono size di vector (se quei valori vengono memorizzati)
+- utilizzare tipo apposito per variabili che contengono size di vector (se quei valori vengono memorizzati)  (size_t)
+
+- in ogni costruttore qdatetime passare il parametro Qt::TimeSpec::UTC
+
+- const correctness
+
+- spostare verifiche correttezza file dalla readFile al posto giusto (come/dove??? eccezione nel costruttore di clientconsumptions??)
+- rinominare recordObj in record e eliminare la struct record (ELIMINARLO SE SI USANO LE CLASSI CLIENTCONS E CONSUMPTION)
+
+- eliminare operatori inutili/non usati
+
+- getlastrecord, getperiodconsumption e getconsatdate sono diventate membri della clientconsumption
+
+- il gethistogramdata funziona per step costanti. il month_by_week non ha step costante (andando non ogni 7 giorni ma da lunedì a domenica possono esserci settimane incomplete).
+	viene chiamato con uno step di 1 giorno e il cliente si somma i consumi giornalieri come preferice
+
+- quando spostata la findclient sarà const

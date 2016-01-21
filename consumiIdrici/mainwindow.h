@@ -14,7 +14,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(std::vector<record> *data, QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 private slots:
@@ -40,7 +40,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    std::vector<record> *m_data;
+    std::vector<clientConsumptions> m_data;
 
     void updateViewTab();
     void updateQueryTab();

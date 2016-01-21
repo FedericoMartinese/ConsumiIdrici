@@ -6,9 +6,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);   
 
-    std::vector<record> data;
-
-    MainWindow w(&data);
+    MainWindow w;
     w.show();
 
     return a.exec();

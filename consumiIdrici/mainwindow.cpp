@@ -9,7 +9,7 @@
 #define SMONTH_W "Mensile (settimane)"
 #define SDAY "Giornaliero"
 #define ND "n.d."
-MainWindow::MainWindow(std::vector<record> *data, QWidget *parent) :
+MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -32,8 +32,6 @@ MainWindow::MainWindow(std::vector<record> *data, QWidget *parent) :
     ui->customPlot->yAxis->setVisible(false);
 
     ui->tabWidget->setCurrentIndex(0);
-    m_data = data;
-
 }
 
 MainWindow::~MainWindow()
@@ -52,9 +50,9 @@ void MainWindow::on_openFileDialog_clicked()
     QString fileName = QFileDialog::getOpenFileName(this, "Open consumptions file", QDir::current().absolutePath(), "CSV Files (*.csv)"); //seleziona un file .csv da cui leggere i dati
 
     if (!fileName.isEmpty()) { //se il file è stato selezionato
-        *m_data = readFile(fileName);
+        m_data = readFile(fileName);
 
-        std::sort(m_data->begin(), m_data->end());
+        std::sort(m_data.begin(), m_data.end());
 
         //debug test
         /*
@@ -90,7 +88,7 @@ void MainWindow::on_openFileDialog_clicked()
         QMessageBox m3(QMessageBox::Critical, "clientID", a3, QMessageBox::Ok);
         m3.exec();*/
 
-        if (!m_data->empty()) {
+        if (!m_data.empty()) {
             QFileInfo fileInfo(fileName);
             this->ui->loadedFileName->setText(fileInfo.fileName());
             hasReadFile = true;
@@ -101,7 +99,7 @@ void MainWindow::on_openFileDialog_clicked()
         this->ui->loadedFileName->setText(tmpFileLoaded); //apertura annullata, torna com'era prima
     }
 
-    this->ui->tabWidget->setEnabled(!m_data->empty());
+    this->ui->tabWidget->setEnabled(!m_data.empty());
 
 
 }
@@ -143,74 +141,70 @@ void MainWindow::on_clientID_query_editingFinished()
 }
 
 void MainWindow::updateViewTab() {
-    if (!hasReadFile || m_data == nullptr || m_data->empty()) return;
+    if (!hasReadFile || m_data.empty()) return;
 
-    record totalCons = getLastRecord(ui->clientID_view->text(), m_data);
+    std::size_t i = findClient(m_data, ui->clientID_view->text());
 
-    if (totalCons.value<0) {
+    if (i == m_data.size()) { //non trovato
         clearPlot(ui->customPlot);
         ui->totalConsumption->setText("n.d");
         ui->lastUpdated->setText("");
+        clearPlot(ui->customPlot);
     } else {
-        ui->totalConsumption->setText(QString::number(totalCons.value) + " m^3");
-        ui->lastUpdated->setText("(aggiornato al " + totalCons.date.toString("dd/MM/yyyy hh:mm:ss") + ")");
+        consumption totalCons = m_data[i].getLast();
+        ui->totalConsumption->setText(QString::number(totalCons.value()) + " m^3");
+        ui->lastUpdated->setText("(aggiornato al " + totalCons.date().toString("dd/MM/yyyy hh:mm:ss") + ")");
+
+
+        plotMode mode = (plotMode)ui->histogramModeCombo->currentIndex();
+        clientConsumptions::histogramStep step;
+        QDate first, last;
+        switch (mode) {
+        case YEAR:
+            first = minDate;
+            last = maxDate;
+            step = clientConsumptions::histogramStep::MONTH;
+            break;
+        case MONTH_BY_DAYS:
+        case MONTH_BY_WEEKS:
+            first.setDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), 1);
+            last.setDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), ui->histogramDate->date().daysInMonth());
+            step = clientConsumptions::histogramStep::DAY;
+            break;
+        case DAY:
+            first = ui->histogramDate->date();
+            last = ui->histogramDate->date();
+            step = clientConsumptions::histogramStep::HOUR;
+            break;
+        default:
+            clearPlot(ui->customPlot);
+            return;
+        }
+
+        std::vector<double> hdata = m_data[i].getHistogramData(QDateTime(first, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(last, QTime(23,59), Qt::TimeSpec::UTC), step);
+
+        // somma i consumi da lunedì a domenica per la visualizzazione a settimane
+        if (mode == MONTH_BY_WEEKS) {
+            std::vector<double> temp;
+            double t = 0;
+            for (std::size_t i = 0; i < hdata.size(); ++i) {
+                t += hdata[i];
+                if (first.addDays(i).dayOfWeek() == 7) {
+                    temp.push_back(t);
+                    t = 0;
+                }
+            }
+            hdata = temp;
+        }
+
+        if (hdata.empty())
+            clearPlot(ui->customPlot);
+        else
+            drawPlot(ui->customPlot, mode, /*first, last, */ hdata);
     }
 
-    plotMode mode = (plotMode)ui->histogramModeCombo->currentIndex();
-    QDate first, last;
-    switch (mode) {
-    case YEAR:
-        first = minDate;
-        last = maxDate;
-        break;
-    case MONTH_BY_DAYS:
-    case MONTH_BY_WEEKS:
-        first.setDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), 1);
-        last.setDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), ui->histogramDate->date().daysInMonth());
-        break;
-    case DAY:
-        first = ui->histogramDate->date();
-        last = ui->histogramDate->date();
-        break;
-    default:
-        clearPlot(ui->customPlot);
-        return;
-    }
-    std::vector<double> hdata = getHistogramData(ui->clientID_view->text(), m_data, QDateTime(first, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(last, QTime(23,59), Qt::TimeSpec::UTC), mode);
-    if (hdata.empty())
-        clearPlot(ui->customPlot);
-    else
-        drawPlot(ui->customPlot, mode, /*first, last, */ hdata);
-
-    ///TEST
-    /*QDateTime first, last;
-    switch (mode) {
-    case YEAR:
-        first = QDateTime(minDate.addMonths(1), QTime(0,0)); //la colonna di gennaio riporta il consumo alle 00:00 del 1° febbraio
-        last = QDateTime(minDate.addMonths(12), QTime(0,0));
-        break;
-    case MONTH_BY_DAYS:
-    case MONTH_BY_WEEKS:
-        first = QDateTime(QDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), 1), QTime(0,0));
-        last = QDateTime(QDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), 1),QTime(0,0));
-        first.addDays(1); //il conumo di un giorno si conclude alle 00:00 del giorno dopo
-        last.addDays(1);
-        break;
-    case DAY:
-        first = QDateTime(ui->histogramDate->date(),QTime(1,0));
-        last = QDateTime(ui->histogramDate->date().addDays(1),QTime(0,0));
-        break;
-    default:
-        clearPlot(ui->customPlot);
-        return;
-    }
-    std::vector<double> hdata = getHistogramData(ui->clientID_view->text(), m_data, first, last, mode);
-    if (hdata.empty())
-        clearPlot(ui->customPlot);
-    else
-        drawPlot(ui->customPlot, mode, hdata);
-    */
 }
+
 
 double MainWindow::avgDaysInMonth(int firstM, int lastM) {
     double avg = 0;
@@ -229,13 +223,16 @@ double MainWindow::avgDaysInMonth(int firstM, int lastM) {
 
 
 void MainWindow::updateQueryTab() {
-    if (!hasReadFile || m_data == nullptr || m_data->empty()) return;
+    if (!hasReadFile || m_data.empty()) return;
 
-    QString clientID = ui->clientID_query->text();    
+    QString clientID = ui->clientID_query->text();
     QDate firstDate = ui->firstDate->date(), lastDate = ui->lastDate->date();
-    double periodCons= getConsAtPeriodSorted(clientID, QDateTime(firstDate, QTime(0,0)), QDateTime(lastDate, QTime(23,59)), m_data);
 
-    if (periodCons >= 0) {
+    std::size_t i = findClient(m_data, clientID);
+    double periodCons = 0;
+
+    if (i < m_data.size()) {
+        periodCons = m_data[i].getPeriodConsumption(QDateTime(firstDate, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(lastDate, QTime(23,59), Qt::TimeSpec::UTC));
         double msecDiff = ui->lastDate->dateTime().toMSecsSinceEpoch() - ui->firstDate->dateTime().toMSecsSinceEpoch();
         ui->periodTotalCons->setText(QString::number(periodCons));
         ui->hourConsumption->setText(QString::number(periodCons / msecDiff *1000 * 60 * 60));
@@ -253,7 +250,9 @@ void MainWindow::updateQueryTab() {
             ui->monthConsumption->setText(QString::number(periodCons / msecDiff * 1000 * 60 * 60 * 24 * avgDaysInMonth(firstDate.month(), lastDate.month())));
         else
             ui->monthConsumption->setText(ND);
-    } else {
+    }
+
+    if (i == m_data.size() || periodCons < 0) {
         ui->periodTotalCons->setText("Dati non trovati");
         ui->hourConsumption->setText(ND);
         ui->dayConsumption->setText(ND);
@@ -283,7 +282,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 {
     if (index < 2) return;
 
-    qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch();    
+    qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch();
 
     //TROPPO LUNGO
 
@@ -334,7 +333,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     qDebug()<<clients.size();*/
 
 
-/*
+    /*
     struct perdita {
         QDate date;
         double value;
@@ -373,7 +372,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     }*/
 
     while (true)
-    qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch();
+        qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch();
 
 
 }
