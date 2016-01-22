@@ -32,7 +32,7 @@ public:
     double getPeriodConsumption(QDateTime firstDate, QDateTime lastDate) const;
     double getConsAtDate(QDateTime date) const;
     std::vector<double> getHistogramData(QDateTime begin, QDateTime end, histogramStep step) const;
-
+    std::vector<consumption> getNightLeaks(double threshold) const;
 
     //get valore medio per ...
 

@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include "plotutility.h"
 
+
 #include <QMessageBox>
 #define SYEAR "Annuale"
 #define SMONTH_D "Mensile (giorni)"
@@ -11,7 +12,8 @@
 #define ND "n.d."
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    model(parent)
 {
     ui->setupUi(this);
     ui->tabWidget->setEnabled(false); //disabled fino a quando un file viene caricato correttamente
@@ -32,6 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->customPlot->yAxis->setVisible(false);
 
     ui->tabWidget->setCurrentIndex(0);
+
+    ui->leaksTable->verticalHeader()->hide();
 }
 
 MainWindow::~MainWindow()
@@ -99,6 +103,8 @@ void MainWindow::on_openFileDialog_clicked()
 
     this->ui->tabWidget->setEnabled(!m_data.empty());
 
+    m_leaks.clear();
+    ui->leaksClient->clear();
 
 }
 
@@ -281,102 +287,37 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
     qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch();
 
-    //TROPPO LUNGO
+    if (m_leaks.empty()) {
+        const double threshold = 0.2;
 
-    /*
-    const double threshold = 0.2;
-
-    struct perdita {
-        QDate date;
-        double value;
-    };
-
-    struct clientePerdita {
-        QString clientID;
-        std::vector<perdita> perdite;
-    };
-    std::vector<clientePerdita> clients;
-
-    QString clientID = "";
-
-    for (record rec : *m_data) {
-        if (rec.clientID > clientID || clientID.isEmpty()) { //nuovo cliente
-            clientID = rec.clientID;
-            QDateTime fIterator = QDateTime(minDate, QTime(0,0));
-            QDateTime lIterator = QDateTime(minDate, QTime(5,0));
-            while (fIterator.date() <= maxDate) {
-                double cons = getConsAtPeriodSorted(clientID, fIterator, lIterator, m_data);
-                //qDebug() << cons;
-                if (cons >= threshold) {
-                    if (clients.size() == 0 || clients[clients.size()-1].clientID != clientID) {
-                        clientePerdita cp;
-                        cp.clientID = clientID;
-                        clients.push_back(cp);
-                    }
-                    perdita p;
-                    p.date = fIterator.date();
-                    p.value = cons;
-                    clients[clients.size()-1].perdite.push_back(p);
-
-                    //qDebug() << QString::number(clients.size()-1) + " - " + QString::number(clients[clients.size()-1].perdite.size()-1);
-                }
-                fIterator = fIterator.addDays(1);
-                lIterator = lIterator.addDays(1);
-            }
-
-        }
-    }
-
-    qDebug()<<clients.size();*/
-
-
-    /*
-    struct perdita {
-        QDate date;
-        double value;
-    };
-
-    struct clientePerdita {
-        QString clientID;
-        std::vector<perdita> perdite;
-    };
-
-
-    QString curClient = "";
-    QDate dateIterator = minDate;
-    std::vector<clientePerdita> clients;
-    for (record rec : *m_data) {
-        if (rec.clientID > curClient || curClient.isEmpty()) { //prossimo cliente
-            curClient = rec.clientID;
-            while (dateIterator <= maxDate) {
-                double v;
-                if (getPeriodConsumption(curClient, m_data, QDateTime(dateIterator, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(dateIterator, QTime(0,0), Qt::TimeSpec::UTC), v))
-                    if (v >= threshold) {
-                        if (clients[clients.size()-1].clientID != curClient) {
-                            clientePerdita cp;
-                            cp.clientID = curClient;
-                            clients.push_back(cp);
-                        }
-
-                        perdita p;
-                        p.date = dateIterator;
-                        p.value = v;
-
-                        clients[clients.size()-1].perdite.push_back(p);
-                    }
+        for (clientConsumptions client : m_data) {
+            std::vector<consumption> nights = client.getNightLeaks(threshold);
+            if (!nights.empty()) {
+                nightLeaks nl;
+                nl.clientID = client.clientID();
+                nl.nights = nights;
+                m_leaks.push_back(nl);
+                ui->leaksClient->addItem(nl.clientID);
             }
         }
-    }*/
 
-    while (true)
         qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch();
-
-
+    }
 }
 
 
-
-
-
-
-
+void MainWindow::on_leaksClient_currentIndexChanged(const QString &arg1)
+{
+    nightLeaks leaks;
+    leaks.clientID = arg1;
+    std::vector<nightLeaks>::iterator pLeaks = std::find(m_leaks.begin(), m_leaks.end(), leaks);
+    if (pLeaks == m_leaks.end()) {
+        //clear
+    } else {
+        leaks = *pLeaks;
+        model = leaks.nights;
+        ui->leaksTable->reset();
+        ui->leaksTable->setModel(&model);
+        ui->leaksTable->repaint();
+    }
+}

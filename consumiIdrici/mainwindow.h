@@ -5,7 +5,7 @@
 #include <datautility.h>
 #include <qcustomplot.h>
 #include <set>
-
+#include <tablemodel.h>
 namespace Ui {
 class MainWindow;
 }
@@ -39,9 +39,21 @@ private slots:
 
     void on_tabWidget_currentChanged(int index);
 
+    void on_leaksClient_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     std::set<clientConsumptions, clientConsCompare> m_data;
+
+    struct nightLeaks {
+        QString clientID;
+        std::vector<consumption> nights;
+        bool operator == (nightLeaks other) {
+            return clientID == other.clientID;
+        }
+    };
+    std::vector<nightLeaks> m_leaks;
+    tableModel model;
 
     void updateViewTab();
     void updateQueryTab();
