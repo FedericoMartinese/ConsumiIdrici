@@ -59,3 +59,13 @@
 	viene chiamato con uno step di 1 giorno e il cliente si somma i consumi giornalieri come preferice
 
 - quando spostata la findclient sarà const
+
+- mettere nella documentazione le prove col set del progetto set_test_myclass (in documenti/qt)
+
+- mutable http://stackoverflow.com/questions/2217878/c-stl-set-update-is-tedious-i-cant-change-an-element-in-place
+	(la set vuole dati costanti perché permettere all'utente di cambiarli può rovinare l'ordine. l'ordine dei clientconsumptions è stabilito solo dal clientID e non dai consumi che quindi sono mutable.
+	questo permette di aggiungere consumi in ordine all'oggetto dentro la struttura set perché ciò non ne cambia l'ordine)
+
+- mettere typedef per i tipi lunghissimi del set? (set in sé e iterato)
+
+- ottimizzare l'aggiunta di clientconsumption a clients nella readFile tenendo un std::set<qstring> dei clienti già inseriti??? adesso viene usata la insert SEMPRE che cerca e se non trova aggiunge. vedere differenza in termini di tempo

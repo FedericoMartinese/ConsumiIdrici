@@ -52,8 +52,6 @@ void MainWindow::on_openFileDialog_clicked()
     if (!fileName.isEmpty()) { //se il file è stato selezionato
         m_data = readFile(fileName);
 
-        std::sort(m_data.begin(), m_data.end());
-
         //debug test
         /*
         for (int i=0; i<6;++i) {
@@ -143,15 +141,15 @@ void MainWindow::on_clientID_query_editingFinished()
 void MainWindow::updateViewTab() {
     if (!hasReadFile || m_data.empty()) return;
 
-    std::size_t i = findClient(m_data, ui->clientID_view->text());
+    std::set<clientConsumptions, clientConsCompare>::iterator it = m_data.find(clientConsumptions(ui->clientID_view->text()));
 
-    if (i == m_data.size()) { //non trovato
+    if (it == m_data.end()) { //non trovato
         clearPlot(ui->customPlot);
         ui->totalConsumption->setText("n.d");
         ui->lastUpdated->setText("");
         clearPlot(ui->customPlot);
     } else {
-        consumption totalCons = m_data[i].getLast();
+        consumption totalCons = it->getLast();
         ui->totalConsumption->setText(QString::number(totalCons.value()) + " m^3");
         ui->lastUpdated->setText("(aggiornato al " + totalCons.date().toString("dd/MM/yyyy hh:mm:ss") + ")");
 
@@ -181,7 +179,7 @@ void MainWindow::updateViewTab() {
             return;
         }
 
-        std::vector<double> hdata = m_data[i].getHistogramData(QDateTime(first, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(last, QTime(23,59), Qt::TimeSpec::UTC), step);
+        std::vector<double> hdata = it->getHistogramData(QDateTime(first, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(last, QTime(23,59), Qt::TimeSpec::UTC), step);
 
         // somma i consumi da lunedì a domenica per la visualizzazione a settimane
         if (mode == MONTH_BY_WEEKS) {
@@ -225,14 +223,13 @@ double MainWindow::avgDaysInMonth(int firstM, int lastM) {
 void MainWindow::updateQueryTab() {
     if (!hasReadFile || m_data.empty()) return;
 
-    QString clientID = ui->clientID_query->text();
     QDate firstDate = ui->firstDate->date(), lastDate = ui->lastDate->date();
 
-    std::size_t i = findClient(m_data, clientID);
+    std::set<clientConsumptions, clientConsCompare>::iterator it = m_data.find(clientConsumptions(ui->clientID_query->text()));
     double periodCons = 0;
 
-    if (i < m_data.size()) {
-        periodCons = m_data[i].getPeriodConsumption(QDateTime(firstDate, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(lastDate, QTime(23,59), Qt::TimeSpec::UTC));
+    if (it == m_data.end()) {
+        periodCons = it->getPeriodConsumption(QDateTime(firstDate, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(lastDate, QTime(23,59), Qt::TimeSpec::UTC));
         double msecDiff = ui->lastDate->dateTime().toMSecsSinceEpoch() - ui->firstDate->dateTime().toMSecsSinceEpoch();
         ui->periodTotalCons->setText(QString::number(periodCons));
         ui->hourConsumption->setText(QString::number(periodCons / msecDiff *1000 * 60 * 60));
@@ -252,7 +249,7 @@ void MainWindow::updateQueryTab() {
             ui->monthConsumption->setText(ND);
     }
 
-    if (i == m_data.size() || periodCons < 0) {
+    if (it == m_data.end() || periodCons < 0) {
         ui->periodTotalCons->setText("Dati non trovati");
         ui->hourConsumption->setText(ND);
         ui->dayConsumption->setText(ND);

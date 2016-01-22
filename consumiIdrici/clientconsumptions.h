@@ -3,24 +3,22 @@
 
 #include <vector>
 #include <consumption.h>
+#include <set>
 
 class clientConsumptions
 {
 private:
     QString m_clientID;
-    std::vector<consumption> m_cons;
-    bool m_sorted = false;
-
-    void sort();
+    mutable std::set<consumption, consCompare> m_cons;
 
 public:
     clientConsumptions();
     clientConsumptions(QString clientID);
 
-    void addCons(consumption cons);
+    void addCons(consumption cons) const;
 
     QString clientID() const;
-    std::vector<consumption> cons() const;
+    std::set<consumption, consCompare> cons() const;
 
     bool isValid() const;
 
@@ -30,10 +28,10 @@ public:
         MONTH
     };
 
-    consumption getLast();
-    double getPeriodConsumption(QDateTime firstDate, QDateTime lastDate);
-    double getConsAtDate(QDateTime date);
-    std::vector<double> getHistogramData(QDateTime begin, QDateTime end, histogramStep step);
+    consumption getLast() const;
+    double getPeriodConsumption(QDateTime firstDate, QDateTime lastDate) const;
+    double getConsAtDate(QDateTime date) const;
+    std::vector<double> getHistogramData(QDateTime begin, QDateTime end, histogramStep step) const;
 
 
     //get valore medio per ...
@@ -49,4 +47,8 @@ public:
 
 };
 
+struct clientConsCompare {
+  bool operator() (const clientConsumptions& lhs, const clientConsumptions& rhs) const
+  {return lhs<rhs;}
+};
 #endif // CLIENTCONSUMPTIONS_H

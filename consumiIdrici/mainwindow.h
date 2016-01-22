@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <datautility.h>
 #include <qcustomplot.h>
+#include <set>
 
 namespace Ui {
 class MainWindow;
@@ -40,7 +41,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    std::vector<clientConsumptions> m_data;
+    std::set<clientConsumptions, clientConsCompare> m_data;
 
     void updateViewTab();
     void updateQueryTab();

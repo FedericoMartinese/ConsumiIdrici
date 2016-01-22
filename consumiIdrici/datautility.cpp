@@ -9,11 +9,10 @@
 //
 
 
-std::vector<clientConsumptions> readFile(QString fileName) {
+std::set<clientConsumptions, clientConsCompare> readFile(QString fileName) {
     //legge il file di input e restituisce un vector di record
 
-    INSERT SORT ALL^INTERNO DEL VETTORE INPUTRECORDS E INSERT SORT ALL^INTERNO DI OGNI VETTORE CONS
-    std::vector<clientConsumptions> inputRecords;
+    std::set<clientConsumptions, clientConsCompare> clients;
 
     QFile inputFile(fileName);
     if (inputFile.open(QIODevice::ReadOnly)) {
@@ -27,8 +26,8 @@ std::vector<clientConsumptions> readFile(QString fileName) {
                 QMessageBox msg(QMessageBox::Critical, "Consumi idrici", "Errore nella lettura dei dati. Formato dati errati (riga " + QString::number(c) + ")." , QMessageBox::Abort | QMessageBox::Ignore);
                 if (msg.exec() == QMessageBox::Abort) {
                     inputFile.close();
-                    inputRecords.clear();
-                    return inputRecords;
+                    clients.clear();
+                    return clients;
                 }
             }          
 
@@ -43,16 +42,14 @@ std::vector<clientConsumptions> readFile(QString fileName) {
                 QMessageBox msg(QMessageBox::Critical, "Consumi idrici", "Errore nella lettura dei dati. Dati errati (riga " + QString::number(c) + ")." , QMessageBox::Abort | QMessageBox::Ignore);
                 if (msg.exec() == QMessageBox::Abort) {
                     inputFile.close();
-                    inputRecords.clear();
-                    return inputRecords;
+                    clients.clear();
+                    return clients;
                 }
             }
 
-            std::size_t clientPosition = findClient(inputRecords, clientID); //cerca il client nel vector. nel caso in cui non ci sia lo aggiunge
-            if (clientPosition == inputRecords.size()) //se non trovato
-                inputRecords.push_back(clientConsumptions(clientID)); //lo aggiunge
-
-            inputRecords[clientPosition].addCons(cons); //aggiunta record al vettore
+            //lo inserisce in ordine solo se non è già presente. restituisce la posizione di quello inserito/trovato
+            std::set<clientConsumptions, clientConsCompare>::iterator it = clients.insert(clientConsumptions(clientID)).first;
+            it->addCons(cons); //aggiunge consumi al cliente
 
             ++c;
         }
@@ -62,18 +59,7 @@ std::vector<clientConsumptions> readFile(QString fileName) {
         QMessageBox msg(QMessageBox::Critical, "Consumi idrici", "Errore nell'apertura del file." , QMessageBox::Ok);
         msg.exec();
     }
-    return inputRecords;
-}
-
-std::size_t findClient(std::vector<clientConsumptions> v, QString clientID) { // return v.size() if not found
-    size_t i = 0;
-    for (clientConsumptions cc : v) {
-        if (cc.clientID() == clientID)
-            break; //trovato
-        ++i;
-    }
-
-    return i;
+    return clients;
 }
 
 QDateTime UTCtoDayLightSavTime(QDateTime date, int UTC_offset /*fuso orario invernale default +1*/) {

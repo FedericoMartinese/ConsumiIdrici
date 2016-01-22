@@ -8,16 +8,15 @@ clientConsumptions::clientConsumptions()
 clientConsumptions::clientConsumptions(QString clientID) : m_clientID(clientID) {}
 
 
-void clientConsumptions::addCons(consumption cons) {
-    m_cons.push_back(cons);
-    m_sorted = false;
+void clientConsumptions::addCons(consumption cons) const {
+    m_cons.insert(cons);
 }
 
 QString clientConsumptions::clientID() const {
     return m_clientID;
 }
 
-std::vector<consumption> clientConsumptions::cons() const {
+std::set<consumption, consCompare> clientConsumptions::cons() const {
     return m_cons;
 }
 
@@ -25,30 +24,19 @@ bool clientConsumptions::isValid() const {
     return !m_clientID.isEmpty();
 }
 
-void clientConsumptions::sort() {
-    std::sort(m_cons.begin(), m_cons.end());
-    m_sorted = true;
-}
-
-consumption clientConsumptions::getLast() {
+consumption clientConsumptions::getLast() const {
     if (m_cons.size() == 0)
         return consumption();
 
-    if (!m_sorted)
-        sort();
-
-    return m_cons[m_cons.size()-1];
+    return *--m_cons.end();
 }
 
 
-double clientConsumptions::getPeriodConsumption(QDateTime firstDate, QDateTime lastDate) {
-    if (!m_sorted)
-        sort();
-
+double clientConsumptions::getPeriodConsumption(QDateTime firstDate, QDateTime lastDate) const {
     if (firstDate > lastDate) return -1;
     if (m_cons.size() == 0) return 0;
 
-    consumption fPrev(m_cons[0]), fNext(m_cons[0]), lPrev(m_cons[0]), lNext(m_cons[0]);
+    consumption fPrev(*m_cons.begin()), fNext(*m_cons.begin()), lPrev(*m_cons.begin()), lNext(*m_cons.begin());
     double fCons = -1, lCons = -1;
     bool fNextFound = false;
 
@@ -103,13 +91,10 @@ double clientConsumptions::getPeriodConsumption(QDateTime firstDate, QDateTime l
     return lCons - fCons;
 }
 
-double clientConsumptions::getConsAtDate(QDateTime date) {
-    if (!m_sorted)
-        sort();
-
+double clientConsumptions::getConsAtDate(QDateTime date) const{
     if (m_cons.size() == 0) return 0;
 
-    consumption prev(m_cons[0]), next(m_cons[0]);
+    consumption prev(*m_cons.begin()), next(*m_cons.begin());
 
     for (consumption rec : m_cons) {
 
@@ -136,7 +121,7 @@ double clientConsumptions::getConsAtDate(QDateTime date) {
     return (date.toMSecsSinceEpoch() - prev.date().toMSecsSinceEpoch()) * (next.value() - prev.value()) / (next.date().toMSecsSinceEpoch() - prev.date().toMSecsSinceEpoch()) + prev.value();
 }
 
-std::vector<double> clientConsumptions::getHistogramData(QDateTime begin, QDateTime end, histogramStep step) {
+std::vector<double> clientConsumptions::getHistogramData(QDateTime begin, QDateTime end, histogramStep step) const {
     std::vector<double> hdata;
 
    if (!begin.isValid() || !end.isValid() || begin >= end)
@@ -161,31 +146,25 @@ std::vector<double> clientConsumptions::getHistogramData(QDateTime begin, QDateT
 }
 
 bool clientConsumptions::operator < (clientConsumptions const& other) const {
-    if (m_clientID == other.clientID())
-        return m_cons < other.cons();
-
     return m_clientID < other.clientID();
 }
 
 bool clientConsumptions::operator <= (clientConsumptions const& other) const {
-    return *this < other || *this == other;
+    return m_clientID <= other.clientID(); //*this < other || *this == other;
 }
 
 bool clientConsumptions::operator > (clientConsumptions const& other) const {
-    if (m_clientID == other.clientID())
-        return m_cons > other.cons();
-
     return m_clientID > other.clientID();
 }
 
 bool clientConsumptions::operator >= (clientConsumptions const& other) const {
-    return *this > other || *this == other;
+    return m_clientID >= other.clientID(); //*this > other || *this == other;
 }
 
 bool clientConsumptions::operator==(clientConsumptions const& other) const {
-    return m_clientID == other.clientID() && m_cons == other.cons();
+    return m_clientID == other.clientID();
 }
 
 bool clientConsumptions::operator!=(clientConsumptions const& other) const {
-    return !(*this == other);
+    return m_clientID != other.clientID(); //!(*this == other);
 }

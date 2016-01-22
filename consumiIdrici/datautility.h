@@ -2,7 +2,7 @@
 #define DATA_UTILITY_H
 
 #include <QDateTime>
-#include <vector>
+#include <set>
 #include <plotutility.h>
 #include <clientconsumptions.h>
 #include <consumption.h>
@@ -12,8 +12,7 @@ const QDate maxDate(2015,12,31);
 const QDateTime dstStartDay(QDate(2015,3,29), QTime(1,0), Qt::UTC); //il passaggio avviene alle 01:00 UTC ultima domenica di marzo e ottobre //  dstStartDay(getLastSunday(3, 2015), QTime(1,0));
 const QDateTime dstEndDay(QDate(2015,10,25), QTime(1,0), Qt::UTC);   //  dstEndDay(getLastSunday(10, 2015), QTime(1,0));
 
-std::vector<clientConsumptions> readFile(QString fileName);
-std::size_t findClient(std::vector<clientConsumptions> v, QString clientID);
+std::set<clientConsumptions, clientConsCompare> readFile(QString fileName);
 
 QDateTime UTCtoDayLightSavTime(QDateTime date, int UTC_offset = 1);
 QDate getLastSunday(int month, int year);

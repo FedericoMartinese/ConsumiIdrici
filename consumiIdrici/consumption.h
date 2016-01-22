@@ -2,6 +2,7 @@
 #define CONSUMPTION_H
 
 #include <QDateTime>
+
 class consumption
 {
 private:
@@ -28,4 +29,8 @@ public:
     bool operator >= (consumption const& other) const;
 };
 
+struct consCompare {
+  bool operator() (const consumption& lhs, const consumption& rhs) const
+  {return lhs<rhs;}
+};
 #endif // CONSUMPTION_H
