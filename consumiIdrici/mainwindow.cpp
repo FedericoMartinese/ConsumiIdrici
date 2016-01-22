@@ -185,9 +185,9 @@ void MainWindow::updateViewTab() {
         if (mode == MONTH_BY_WEEKS) {
             std::vector<double> temp;
             double t = 0;
-            for (std::size_t i = 0; i < hdata.size(); ++i) {
+            for (int i = 0; i < hdata.size(); ++i) {
                 t += hdata[i];
-                if (first.addDays(i).dayOfWeek() == 7) {
+                if (first.addDays(i).dayOfWeek() == 7 || i == hdata.size() - 1) { //alla domenica e alla fine del mese aggiunge
                     temp.push_back(t);
                     t = 0;
                 }
@@ -228,7 +228,7 @@ void MainWindow::updateQueryTab() {
     std::set<clientConsumptions, clientConsCompare>::iterator it = m_data.find(clientConsumptions(ui->clientID_query->text()));
     double periodCons = 0;
 
-    if (it == m_data.end()) {
+    if (it != m_data.end()) {
         periodCons = it->getPeriodConsumption(QDateTime(firstDate, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(lastDate, QTime(23,59), Qt::TimeSpec::UTC));
         double msecDiff = ui->lastDate->dateTime().toMSecsSinceEpoch() - ui->firstDate->dateTime().toMSecsSinceEpoch();
         ui->periodTotalCons->setText(QString::number(periodCons));
