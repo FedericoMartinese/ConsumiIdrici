@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QFileDialog>
-#include "plotutility.h"
 
 
 #include <QMessageBox>
@@ -23,15 +22,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->histogramModeCombo->addItem(SMONTH_W);
     ui->histogramModeCombo->addItem(SDAY);
 
+    plot = new Plot(ui->customPlot);
+
     ui->firstDate->setMinimumDate(minDate);
     ui->firstDate->setMaximumDate(maxDate);
     ui->lastDate->setMinimumDate(minDate);
     ui->lastDate->setMaximumDate(maxDate);
     ui->firstDate->setDate(minDate);
     ui->lastDate->setDate(maxDate);
-
-    ui->customPlot->xAxis->setVisible(false);
-    ui->customPlot->yAxis->setVisible(false);
 
     ui->tabWidget->setCurrentIndex(0);
 
@@ -43,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete plot;
     delete ui;
 }
 
@@ -108,17 +107,26 @@ void MainWindow::on_openFileDialog_clicked()
 
     ui->leaksClient->clear();
     ui->leaksTable->setModel(NULL); //pulisce la tabella perdite per prepararla al nuovo file
+    ui->leaksClient->clear();
+    clientMap.clear();
+    ui->clientID_query->clear();
+    ui->clientID_view->clear();
+    updateViewTab();
+    updateQueryTab();
+    if (ui->tabWidget->currentIndex() == 2)
+        updateAnalysisTab();
+
 
 }
 
 void MainWindow::on_histogramModeCombo_currentIndexChanged(int index)
 {
     switch (index) {
-    case YEAR: ui->histogramDate->setDisplayFormat("yyyy"); break;
-    case MONTH_BY_DAYS:
-    case MONTH_BY_WEEKS:
+    case Plot::YEAR: ui->histogramDate->setDisplayFormat("yyyy"); break;
+    case Plot::MONTH_BY_DAYS:
+    case Plot::MONTH_BY_WEEKS:
         ui->histogramDate->setDisplayFormat("MMMM yyyy"); break;
-    case DAY: ui->histogramDate->setDisplayFormat("dd/MM/yyyy"); break;
+    case Plot::DAY: ui->histogramDate->setDisplayFormat("dd/MM/yyyy"); break;
     default:
         ui->histogramDate->setEnabled(false);
         return;
@@ -127,7 +135,7 @@ void MainWindow::on_histogramModeCombo_currentIndexChanged(int index)
     ui->histogramDate->setDate(minDate);
     ui->histogramDate->setMinimumDate(minDate);
     ui->histogramDate->setMaximumDate(maxDate);
-    ui->histogramDate->setEnabled(index != YEAR);
+    ui->histogramDate->setEnabled(index != Plot::plotMode::YEAR);
 
     updateViewTab();
 }
@@ -153,48 +161,47 @@ void MainWindow::updateViewTab() {
     std::set<clientConsumptions, clientConsCompare>::iterator it = m_data.find(clientConsumptions(ui->clientID_view->text()));
 
     if (it == m_data.end()) { //non trovato
-        clearPlot(ui->customPlot);
         ui->totalConsumption->setText("n.d");
         ui->lastUpdated->setText("");
-        clearPlot(ui->customPlot);
+        plot->clear();
     } else {
         consumption totalCons = it->getLast();
         ui->totalConsumption->setText(QString::number(totalCons.value()) + " m^3");
         ui->lastUpdated->setText("(aggiornato al " + totalCons.date().toString("dd/MM/yyyy hh:mm:ss") + ")");
 
 
-        plotMode mode = (plotMode)ui->histogramModeCombo->currentIndex();
+        Plot::plotMode mode = (Plot::plotMode)ui->histogramModeCombo->currentIndex();
         clientConsumptions::histogramStep step;
         QDate first, last;
         switch (mode) {
-        case YEAR:
+        case Plot::YEAR:
             first = minDate;
             last = maxDate;
             step = clientConsumptions::histogramStep::MONTH;
             break;
-        case MONTH_BY_DAYS:
-        case MONTH_BY_WEEKS:
+        case Plot::MONTH_BY_DAYS:
+        case Plot::MONTH_BY_WEEKS:
             first.setDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), 1);
             last.setDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), ui->histogramDate->date().daysInMonth());
             step = clientConsumptions::histogramStep::DAY;
             break;
-        case DAY:
+        case Plot::DAY:
             first = ui->histogramDate->date();
             last = ui->histogramDate->date();
             step = clientConsumptions::histogramStep::HOUR;
             break;
         default:
-            clearPlot(ui->customPlot);
+            plot->clear();
             return;
         }
 
         std::vector<double> hdata = it->getHistogramData(QDateTime(first, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(last, QTime(23,59), Qt::TimeSpec::UTC), step);
 
         // somma i consumi da lunedì a domenica per la visualizzazione a settimane
-        if (mode == MONTH_BY_WEEKS) {
+        if (mode == Plot::MONTH_BY_WEEKS) {
             std::vector<double> temp;
             double t = 0;
-            for (int i = 0; i < hdata.size(); ++i) {
+            for (std::size_t i = 0; i < hdata.size(); ++i) {
                 t += hdata[i];
                 if (first.addDays(i).dayOfWeek() == 7 || i == hdata.size() - 1) { //alla domenica e alla fine del mese aggiunge
                     temp.push_back(t);
@@ -205,9 +212,9 @@ void MainWindow::updateViewTab() {
         }
 
         if (hdata.empty())
-            clearPlot(ui->customPlot);
+            plot->clear();
         else
-            drawPlot(ui->customPlot, mode, /*first, last, */ hdata);
+            plot->draw(mode, hdata);
     }
 
 }
@@ -286,8 +293,11 @@ void MainWindow::on_histogramDate_dateChanged(const QDate &date)
 
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
-    if (index < 2) return;
+    if (index == 2)
+        updateAnalysisTab();
+}
 
+void MainWindow::updateAnalysisTab() {
     qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch();
 
     if (ui->leaksTable->model() == NULL) {

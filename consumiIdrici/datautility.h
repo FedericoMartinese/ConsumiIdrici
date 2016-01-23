@@ -3,7 +3,6 @@
 
 #include <QDateTime>
 #include <set>
-#include <plotutility.h>
 #include <clientconsumptions.h>
 #include <consumption.h>
 

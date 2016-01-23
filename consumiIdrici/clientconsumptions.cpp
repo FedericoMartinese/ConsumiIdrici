@@ -100,6 +100,7 @@ std::vector<consumption> clientConsumptions::getNightLeaks(double threshold) con
 
        date = date.addDays(1);
    }
+   return nights;
 }
 
 bool clientConsumptions::operator < (clientConsumptions const& other) const {

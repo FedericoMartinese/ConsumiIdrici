@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <datautility.h>
-#include <qcustomplot.h>
+#include <plot.h>
 #include <set>
 #include <tablemodel.h>
 namespace Ui {
@@ -43,9 +43,10 @@ private:
 
     tableModel model;
     std::vector<int> clientMap;
-
+    Plot* plot;
     void updateViewTab();
     void updateQueryTab();
+    void updateAnalysisTab();
     double avgDaysInMonth(int firstM, int lastM);
     bool hasReadFile = false;
 

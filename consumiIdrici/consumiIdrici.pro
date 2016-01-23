@@ -16,10 +16,10 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     datautility.cpp \
     qcustomplot.cpp \
-    plotutility.cpp \
     clientconsumptions.cpp \
     consumption.cpp \
-    tablemodel.cpp
+    tablemodel.cpp \
+    plot.cpp
 
 HEADERS  += mainwindow.h \
     datautility.h \
@@ -27,7 +27,8 @@ HEADERS  += mainwindow.h \
     plotutility.h \
     clientconsumptions.h \
     consumption.h \
-    tablemodel.h
+    tablemodel.h \
+    plot.h
 
 FORMS    += mainwindow.ui
 CONFIG += C++11

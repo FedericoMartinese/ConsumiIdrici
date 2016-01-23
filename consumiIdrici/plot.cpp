@@ -1,18 +1,24 @@
-#include "plotutility.h"
+#include "plot.h"
 
-void drawPlot(QCustomPlot *customPlot, plotMode mode, std::vector<double> data) {
-    clearPlot(customPlot);
+Plot::Plot(QCustomPlot* plot): m_plot(plot)
+{
+    m_plot->xAxis->setVisible(false);
+    m_plot->yAxis->setVisible(false);
+}
 
-    customPlot->xAxis->setVisible(true);
-    customPlot->yAxis->setVisible(true);
+void Plot::draw(plotMode mode, std::vector<double> data) {
+    clear();
 
-    if (customPlot == nullptr || data.empty())
+    if (m_plot == nullptr || data.empty())
         return;
 
-    // create empty bar chart objects:
-    QCPBars *consumptions = new QCPBars(customPlot->xAxis, customPlot->yAxis);
+    m_plot->xAxis->setVisible(true);
+    m_plot->yAxis->setVisible(true);
 
-    customPlot->addPlottable(consumptions);
+    // create empty bar chart objects:
+    QCPBars *consumptions = new QCPBars(m_plot->xAxis, m_plot->yAxis);
+
+    m_plot->addPlottable(consumptions);
     // set names and colors:
     QPen pen;
     pen.setWidthF(1.2);
@@ -32,9 +38,9 @@ void drawPlot(QCustomPlot *customPlot, plotMode mode, std::vector<double> data) 
     QVector<double> ticks;
     QVector<QString> labels;
 
-    int xNum = data.size(), i = 1;
+    int xNum = data.size(), i;
     double minValue = data[0], medValue = data[0], maxValue = data[0];
-    for (i; i<=xNum; ++i) {
+    for (i = 1; i<=xNum; ++i) {
         ticks << i;
         switch (mode) {
         case YEAR: labels << QDate(2015,i,1).toString("MMMM"); break;
@@ -53,59 +59,59 @@ void drawPlot(QCustomPlot *customPlot, plotMode mode, std::vector<double> data) 
     }
     medValue/=i;
 
-    customPlot->xAxis->setAutoTicks(false);
-    customPlot->xAxis->setAutoTickLabels(false);
-    customPlot->xAxis->setTickVector(ticks);
-    customPlot->xAxis->setTickVectorLabels(labels);
+    m_plot->xAxis->setAutoTicks(false);
+    m_plot->xAxis->setAutoTickLabels(false);
+    m_plot->xAxis->setTickVector(ticks);
+    m_plot->xAxis->setTickVectorLabels(labels);
 
-    //customPlot->xAxis->setSubTickCount(0);
-    //customPlot->xAxis->setTickLength(0, 4);
-    customPlot->xAxis->grid()->setVisible(true);
-    customPlot->xAxis->setRange(0, xNum + 1); //+1 spazio a dx
+    //m_plot->xAxis->setSubTickCount(0);
+    //m_plot->xAxis->setTickLength(0, 4);
+    m_plot->xAxis->grid()->setVisible(true);
+    m_plot->xAxis->setRange(0, xNum + 1); //+1 spazio a dx
 
     // prepare y axis:
-    customPlot->yAxis->setRange(0, maxValue);    
+    m_plot->yAxis->setRange(0, maxValue);
     switch (mode) {
-    case YEAR:  customPlot->yAxis->setLabel("Consumo annuale"); break;
-    case MONTH_BY_DAYS: customPlot->yAxis->setLabel("Consumo mensile"); break;
-    case MONTH_BY_WEEKS:  customPlot->yAxis->setLabel("Consumo settimanale"); break;
-    case DAY:   customPlot->yAxis->setLabel("Consumo orario"); break;
+    case YEAR:  m_plot->yAxis->setLabel("Consumo annuale"); break;
+    case MONTH_BY_DAYS: m_plot->yAxis->setLabel("Consumo mensile"); break;
+    case MONTH_BY_WEEKS:  m_plot->yAxis->setLabel("Consumo settimanale"); break;
+    case DAY:   m_plot->yAxis->setLabel("Consumo orario"); break;
     }
-    customPlot->yAxis->grid()->setSubGridVisible(true);
+    m_plot->yAxis->grid()->setSubGridVisible(true);
     QPen gridPen;
     gridPen.setStyle(Qt::SolidLine);
     gridPen.setColor(QColor(0, 0, 0, 25));
-    customPlot->yAxis->grid()->setPen(gridPen);
+    m_plot->yAxis->grid()->setPen(gridPen);
     gridPen.setStyle(Qt::DotLine);
-    customPlot->yAxis->grid()->setSubGridPen(gridPen);
+    m_plot->yAxis->grid()->setSubGridPen(gridPen);
 
     // Add data:
     consumptions->setData(ticks, QVector<double>::fromStdVector(data));
 
     // setup legend:
-    customPlot->legend->setVisible(true);
-    customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignHCenter);
-    customPlot->legend->setBrush(QColor(255, 255, 255, 200));
+    m_plot->legend->setVisible(true);
+    m_plot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignHCenter);
+    m_plot->legend->setBrush(QColor(255, 255, 255, 200));
     QPen legendPen;
     legendPen.setColor(QColor(130, 130, 130, 200));
-    customPlot->legend->setBorderPen(legendPen);
+    m_plot->legend->setBorderPen(legendPen);
     QFont legendFont;
     legendFont.setPointSize(10);
-    customPlot->legend->setFont(legendFont);
-    customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    m_plot->legend->setFont(legendFont);
+    m_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
 
 
     // configure bottom axis to show date and time instead of number:
-    customPlot->xAxis->setTickLabelType(QCPAxis::ltDateTime);
-    customPlot->xAxis->setDateTimeFormat("MMMM\nyyyy");
+    m_plot->xAxis->setTickLabelType(QCPAxis::ltDateTime);
+    m_plot->xAxis->setDateTimeFormat("MMMM\nyyyy");
     // set a more compact font size for bottom and left axis tick labels:
-    customPlot->xAxis->setTickLabelFont(QFont(QFont().family(), 8));
-    customPlot->yAxis->setTickLabelFont(QFont(QFont().family(), 8));
+    m_plot->xAxis->setTickLabelFont(QFont(QFont().family(), 8));
+    m_plot->yAxis->setTickLabelFont(QFont(QFont().family(), 8));
 
     // apply manual tick and tick label for left axis:
-    customPlot->yAxis->setAutoTicks(false);
-    customPlot->yAxis->setAutoTickLabels(false);
-    customPlot->yAxis->setAutoSubTicks(false);
+    m_plot->yAxis->setAutoTicks(false);
+    m_plot->yAxis->setAutoTickLabels(false);
+    m_plot->yAxis->setAutoSubTicks(false);
 
     const int k = 5;
     QVector<double> tickValues;
@@ -142,17 +148,20 @@ void drawPlot(QCustomPlot *customPlot, plotMode mode, std::vector<double> data) 
     tickValues.push_back(maxValue);
     tickNames.push_back("Max");
 
-    customPlot->yAxis->setTickVector(tickValues);
-    customPlot->yAxis->setTickVectorLabels(tickNames);
-    customPlot->yAxis->setSubTickCount(0);
+    m_plot->yAxis->setTickVector(tickValues);
+    m_plot->yAxis->setTickVectorLabels(tickNames);
+    m_plot->yAxis->setSubTickCount(0);
 
 
-    customPlot->replot();
+    m_plot->replot();
 
 }
 
-void clearPlot(QCustomPlot *customPlot) {
-    customPlot->clearItems();
-    customPlot->clearPlottables();
+void Plot::clear() {
+    m_plot->clearItems();
+    m_plot->clearPlottables();
+    m_plot->xAxis->setVisible(false);
+    m_plot->yAxis->setVisible(false);
+    m_plot->replot();
 }
 

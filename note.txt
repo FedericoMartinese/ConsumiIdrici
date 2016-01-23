@@ -73,3 +73,5 @@
 - controllare 21/03/15 dell'utente 11. consumi orari strani (tutti uguali)
 
 - sistemare tabella consumi notturni (larghezza colonne, crash se si cambia utente e si scorre)
+
+- nomi classi iniziale maiuscola
