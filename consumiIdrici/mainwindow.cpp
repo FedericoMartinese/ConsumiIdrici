@@ -36,6 +36,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tabWidget->setCurrentIndex(0);
 
     ui->leaksTable->verticalHeader()->hide();
+    ui->leaksTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);   //larghezza colonne non modificabile
+    ui->leaksTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); //larghezza colonne streched
+
 }
 
 MainWindow::~MainWindow()
@@ -103,8 +106,8 @@ void MainWindow::on_openFileDialog_clicked()
 
     this->ui->tabWidget->setEnabled(!m_data.empty());
 
-    m_leaks.clear();
     ui->leaksClient->clear();
+    ui->leaksTable->setModel(NULL); //pulisce la tabella perdite per prepararla al nuovo file
 
 }
 
@@ -287,37 +290,41 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
     qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch();
 
-    if (m_leaks.empty()) {
+    if (ui->leaksTable->model() == NULL) {
         const double threshold = 0.2;
+        std::vector<consumption> leaks;
 
         for (clientConsumptions client : m_data) {
             std::vector<consumption> nights = client.getNightLeaks(threshold);
             if (!nights.empty()) {
-                nightLeaks nl;
-                nl.clientID = client.clientID();
-                nl.nights = nights;
-                m_leaks.push_back(nl);
-                ui->leaksClient->addItem(nl.clientID);
+                clientMap.push_back(leaks.size()); //inizio del nuovo cliente, fine del precedente
+                leaks.insert(leaks.end(), nights.begin(), nights.end());
+                ui->leaksClient->addItem(client.clientID());
+
+                qDebug() << client.clientID() << " - " << nights.size();
             }
         }
+        clientMap.push_back(leaks.size()); //fine dell'ultimo cliente
+
+        model = leaks;
+        ui->leaksTable->setModel(&model);
+
+        if (ui->leaksClient->count() > 0)
+            ui->leaksClient->setCurrentIndex(0);
 
         qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch();
     }
 }
 
-
-void MainWindow::on_leaksClient_currentIndexChanged(const QString &arg1)
+void MainWindow::on_leaksClient_currentIndexChanged(int index)
 {
-    nightLeaks leaks;
-    leaks.clientID = arg1;
-    std::vector<nightLeaks>::iterator pLeaks = std::find(m_leaks.begin(), m_leaks.end(), leaks);
-    if (pLeaks == m_leaks.end()) {
-        //clear
-    } else {
-        leaks = *pLeaks;
-        model = leaks.nights;
-        ui->leaksTable->reset();
-        ui->leaksTable->setModel(&model);
-        ui->leaksTable->repaint();
+    if (ui->leaksTable->model()!=NULL) {
+        for (int i=0; i<ui->leaksTable->model()->rowCount(); ++i) {
+            if (i<clientMap[index] || i>=clientMap[index+1])
+                ui->leaksTable->hideRow(i);
+            else
+                ui->leaksTable->showRow(i);
+        }
     }
+
 }

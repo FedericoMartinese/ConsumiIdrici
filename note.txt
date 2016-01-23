@@ -69,3 +69,7 @@
 - mettere typedef per i tipi lunghissimi del set? (set in sé e iterato)
 
 - ottimizzare l'aggiunta di clientconsumption a clients nella readFile tenendo un std::set<qstring> dei clienti già inseriti??? adesso viene usata la insert SEMPRE che cerca e se non trova aggiunge. vedere differenza in termini di tempo
+
+- controllare 21/03/15 dell'utente 11. consumi orari strani (tutti uguali)
+
+- sistemare tabella consumi notturni (larghezza colonne, crash se si cambia utente e si scorre)
