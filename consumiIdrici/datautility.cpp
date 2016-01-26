@@ -9,10 +9,10 @@
 //
 
 
-std::set<clientConsumptions, clientConsCompare> readFile(QString fileName) {
+std::map<QString, clientConsumptions> readFile(QString fileName) {
     //legge il file di input e restituisce un vector di record
 
-    std::set<clientConsumptions, clientConsCompare> clients;
+    std::map<QString, clientConsumptions> clients;
 
     QFile inputFile(fileName);
     if (inputFile.open(QIODevice::ReadOnly)) {
@@ -47,9 +47,9 @@ std::set<clientConsumptions, clientConsCompare> readFile(QString fileName) {
                 }
             }
 
-            //lo inserisce in ordine solo se non è già presente. restituisce la posizione di quello inserito/trovato
-            std::set<clientConsumptions, clientConsCompare>::iterator it = clients.insert(clientConsumptions(clientID)).first;
-            it->addCons(cons); //aggiunge consumi al cliente
+            //aggiunge consumi al cliente (se non è presente il cliente lo crea e posiziona in ordine)
+            clients[clientID].insert(cons);
+
 
             ++c;
         }

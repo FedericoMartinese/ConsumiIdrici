@@ -1,28 +1,20 @@
 #include "clientconsumptions.h"
 #define MINSECSPRECISION 60 //1 minuto di precisione minima
 
-clientConsumptions::clientConsumptions()
+clientConsumptions::clientConsumptions() : m_cons()
 {
 }
 
-clientConsumptions::clientConsumptions(QString clientID) : m_clientID(clientID) {}
-
-
-void clientConsumptions::addCons(consumption cons) const {
+void clientConsumptions::insert(consumption cons) {
     m_cons.insert(cons);
 }
 
-QString clientConsumptions::clientID() const {
-    return m_clientID;
-}
-
-std::set<consumption, consCompare> clientConsumptions::cons() const {
+/*std::set<consumption> clientConsumptions::cons() const {
     return m_cons;
 }
-
-bool clientConsumptions::isValid() const {
-    return !m_clientID.isEmpty();
-}
+bool clientConsumptions::isEmpty() const {
+    return m_cons.empty();
+}*/
 
 consumption clientConsumptions::getLast() const {
     if (m_cons.empty())
@@ -101,28 +93,4 @@ std::vector<consumption> clientConsumptions::getNightLeaks(double threshold) con
        date = date.addDays(1);
    }
    return nights;
-}
-
-bool clientConsumptions::operator < (clientConsumptions const& other) const {
-    return m_clientID < other.clientID();
-}
-
-bool clientConsumptions::operator <= (clientConsumptions const& other) const {
-    return m_clientID <= other.clientID(); //*this < other || *this == other;
-}
-
-bool clientConsumptions::operator > (clientConsumptions const& other) const {
-    return m_clientID > other.clientID();
-}
-
-bool clientConsumptions::operator >= (clientConsumptions const& other) const {
-    return m_clientID >= other.clientID(); //*this > other || *this == other;
-}
-
-bool clientConsumptions::operator==(clientConsumptions const& other) const {
-    return m_clientID == other.clientID();
-}
-
-bool clientConsumptions::operator!=(clientConsumptions const& other) const {
-    return m_clientID != other.clientID(); //!(*this == other);
 }

@@ -19,32 +19,38 @@ bool consumption::isValid() const {
     return m_date.isValid() && m_value >= 0;
 }
 
-bool consumption::operator < (consumption const& other) const {
+bool consumption::operator < (const consumption& other) const {
     if (m_date == other.date())
         return m_value < other.value();
 
     return m_date < other.date();
 }
 
-bool consumption::operator <= (consumption const& other) const {
-    return *this < other || *this == other;
+bool consumption::operator <= (const consumption& other) const {
+    return !(other < *this);
+
+    //return *this < other || *this == other;
 }
 
-bool consumption::operator > (consumption const& other) const {
-    if (m_date == other.date())
+bool consumption::operator > (const consumption& other) const {
+    return other < *this;
+
+    /*if (m_date == other.date())
         return m_value > other.value();
 
-    return m_date > other.date();
+    return m_date > other.date();*/
 }
 
-bool consumption::operator >= (consumption const& other) const {
-    return *this > other || *this == other;
+bool consumption::operator >= (const consumption& other) const {
+    return !(*this < other);
+
+    //return *this > other || *this == other;
 }
 
-bool consumption::operator==(consumption const& other) const {
+bool consumption::operator==(const consumption& other) const {
     return m_date == other.date() && m_value == other.value();
 }
 
-bool consumption::operator!=(consumption const& other) const {
+bool consumption::operator!=(const consumption& other) const {
     return !(*this == other);
 }

@@ -159,14 +159,12 @@ void MainWindow::on_clientID_query_editingFinished()
 void MainWindow::updateViewTab() {
     if (!hasReadFile || m_data.empty()) return;
 
-    std::set<clientConsumptions, clientConsCompare>::iterator it = m_data.find(clientConsumptions(ui->clientID_view->text()));
-
-    if (it == m_data.end()) { //non trovato
+    if (m_data.find(ui->clientID_view->text()) == m_data.end()) { //non trovato quindi vuoto
         ui->totalConsumption->setText("n.d");
         ui->lastUpdated->setText("");
         plot->clear();
     } else {
-        consumption totalCons = it->getLast();
+        consumption totalCons = m_data[ui->clientID_view->text()].getLast();
         ui->totalConsumption->setText(QString::number(totalCons.value()) + " m^3");
         ui->lastUpdated->setText("(aggiornato al (" + totalCons.date().toString("dd/MM/yyyy hh:mm:ss") + ")");
 
@@ -196,7 +194,7 @@ void MainWindow::updateViewTab() {
             return;
         }
 
-        std::vector<double> hdata = it->getHistogramData(QDateTime(first, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(last, QTime(23,59), Qt::TimeSpec::UTC), step);
+        std::vector<double> hdata = m_data[ui->clientID_view->text()].getHistogramData(QDateTime(first, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(last, QTime(23,59), Qt::TimeSpec::UTC), step);
 
         // somma i consumi da lunedì a domenica per la visualizzazione a settimane
         if (mode == Plot::MONTH_BY_WEEKS) {
@@ -242,11 +240,11 @@ void MainWindow::updateQueryTab() {
 
     QDate firstDate = ui->firstDate->date(), lastDate = ui->lastDate->date();
 
-    std::set<clientConsumptions, clientConsCompare>::iterator it = m_data.find(clientConsumptions(ui->clientID_query->text()));
+
     double periodCons = 0;
 
-    if (it != m_data.end()) {
-        periodCons = it->getPeriodConsumption(QDateTime(firstDate, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(lastDate, QTime(23,59), Qt::TimeSpec::UTC));
+    if (m_data.find(ui->clientID_query->text()) != m_data.end()) {
+        periodCons = m_data[ui->clientID_query->text()].getPeriodConsumption(QDateTime(firstDate, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(lastDate, QTime(23,59), Qt::TimeSpec::UTC));
         double msecDiff = ui->lastDate->dateTime().toMSecsSinceEpoch() - ui->firstDate->dateTime().toMSecsSinceEpoch();
         ui->periodTotalCons->setText(QString::number(periodCons));
         ui->hourConsumption->setText(QString::number(periodCons / msecDiff *1000 * 60 * 60));
@@ -266,7 +264,7 @@ void MainWindow::updateQueryTab() {
             ui->monthConsumption->setText(ND);
     }
 
-    if (it == m_data.end() || periodCons < 0) {
+    if (m_data.find(ui->clientID_query->text()) == m_data.end() || periodCons < 0) {
         ui->periodTotalCons->setText("Dati non trovati");
         ui->hourConsumption->setText(ND);
         ui->dayConsumption->setText(ND);
@@ -306,19 +304,19 @@ void MainWindow::updateAnalysisTab() {
         std::vector<consumption> leaks;
 
         //SPOSTARE COME FUNZIONE MEMBRO DI CLIENTCONSUMPTIONS CHE RESTITUISCE I DUE VECTOR DI CONSUMPTION E CLIENTI ?
-        for (clientConsumptions client : m_data) {
-            std::vector<consumption> nights = client.getNightLeaks(threshold);
+        for (std::pair<const QString, clientConsumptions> client : m_data) {
+            std::vector<consumption> nights = client.second.getNightLeaks(threshold);
             if (!nights.empty()) {
                 clientMap.push_back(leaks.size()); //inizio del nuovo cliente, fine del precedente
                 leaks.insert(leaks.end(), nights.begin(), nights.end());
-                ui->leaksClient->addItem(client.clientID());
+                ui->leaksClient->addItem(client.first);
 
-                qDebug() << client.clientID() << " - " << nights.size();
+                qDebug() << client.first << " - " << nights.size();
             }
         }
         clientMap.push_back(leaks.size()); //fine dell'ultimo cliente
 
-        model = leaks;
+        model.load(leaks);
         ui->leaksTable->setModel(&model);
 
         if (ui->leaksClient->count() > 0)

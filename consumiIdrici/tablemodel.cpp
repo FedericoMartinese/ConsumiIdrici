@@ -47,6 +47,6 @@ QVariant tableModel::headerData(int section, Qt::Orientation orientation, int ro
     return QVariant();
 }
 
-void tableModel::operator = (std::vector<consumption> cons) {
+void tableModel::load(const std::vector<consumption>& cons) { //riferimento costante perché potenzialmente sono molti dati
     m_cons = cons;
 }

@@ -20,17 +20,13 @@ public:
 
     //operatore = (assegnamento) usato ma va bene quello di default
 
-    bool operator == (consumption const& other) const; // usato!
-    bool operator != (consumption const& other) const; // non necessario ma messo per rispettare la logica (se esiste == deve esistere !=)
+    bool operator == (const consumption& other) const; // usato!
+    bool operator != (const consumption& other) const; // non necessario ma messo per rispettare la logica (se esiste == deve esistere !=)
 
-    bool operator <  (consumption const& other) const; //operatore < per ordinamento
-    bool operator <= (consumption const& other) const;  //non necessari ma messi per rispettare la logica (se esistono < e == devono esistere >, <= e >=)
-    bool operator >  (consumption const& other) const;
-    bool operator >= (consumption const& other) const;
+    bool operator <  (const consumption& other) const; //operatore < per ordinamento
+    bool operator <= (const consumption& other) const;  //non necessari ma messi per rispettare la logica (se esistono < e == devono esistere >, <= e >=)
+    bool operator >  (const consumption& other) const;
+    bool operator >= (const consumption& other) const;
 };
 
-struct consCompare {
-  bool operator() (const consumption& lhs, const consumption& rhs) const
-  {return lhs<rhs;}
-};
 #endif // CONSUMPTION_H

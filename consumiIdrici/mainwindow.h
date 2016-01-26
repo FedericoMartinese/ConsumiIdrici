@@ -39,7 +39,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    std::set<clientConsumptions, clientConsCompare> m_data;
+    std::map<QString, clientConsumptions> m_data;
 
     tableModel model;
     std::vector<int> clientMap;

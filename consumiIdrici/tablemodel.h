@@ -15,7 +15,7 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    void operator =(std::vector<consumption> cons);
+    void load(const std::vector<consumption> &cons);
 };
 
 #endif // TABLEMODEL_H
