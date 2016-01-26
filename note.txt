@@ -75,3 +75,5 @@
 - sistemare tabella consumi notturni (larghezza colonne, crash se si cambia utente e si scorre)
 
 - nomi classi iniziale maiuscola
+
+- provare a sostituire l'editing finished delle due caselle clientID con un evento più in tempo reale. dovrebbe essere abbastanza veloce da poterlo fare

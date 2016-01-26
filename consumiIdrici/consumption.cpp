@@ -1,6 +1,6 @@
 #include "consumption.h"
 
-consumption::consumption() : m_date(), m_value(-1)
+consumption::consumption() : m_date(), m_value(0)
 {
 }
 

@@ -31,6 +31,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->firstDate->setDate(minDate);
     ui->lastDate->setDate(maxDate);
 
+    ui->histogramDate->setMinimumDate(minDate);
+    ui->histogramDate->setMaximumDate(maxDate);
+
     ui->tabWidget->setCurrentIndex(0);
 
     ui->leaksTable->verticalHeader()->hide();
@@ -133,8 +136,6 @@ void MainWindow::on_histogramModeCombo_currentIndexChanged(int index)
     }
 
     ui->histogramDate->setDate(minDate);
-    ui->histogramDate->setMinimumDate(minDate);
-    ui->histogramDate->setMaximumDate(maxDate);
     ui->histogramDate->setEnabled(index != Plot::plotMode::YEAR);
 
     updateViewTab();
@@ -167,7 +168,7 @@ void MainWindow::updateViewTab() {
     } else {
         consumption totalCons = it->getLast();
         ui->totalConsumption->setText(QString::number(totalCons.value()) + " m^3");
-        ui->lastUpdated->setText("(aggiornato al " + totalCons.date().toString("dd/MM/yyyy hh:mm:ss") + ")");
+        ui->lastUpdated->setText("(aggiornato al (" + totalCons.date().toString("dd/MM/yyyy hh:mm:ss") + ")");
 
 
         Plot::plotMode mode = (Plot::plotMode)ui->histogramModeCombo->currentIndex();
@@ -304,6 +305,7 @@ void MainWindow::updateAnalysisTab() {
         const double threshold = 0.2;
         std::vector<consumption> leaks;
 
+        //SPOSTARE COME FUNZIONE MEMBRO DI CLIENTCONSUMPTIONS CHE RESTITUISCE I DUE VECTOR DI CONSUMPTION E CLIENTI ?
         for (clientConsumptions client : m_data) {
             std::vector<consumption> nights = client.getNightLeaks(threshold);
             if (!nights.empty()) {
@@ -324,6 +326,15 @@ void MainWindow::updateAnalysisTab() {
 
         qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch();
     }
+
+
+
+
+
+
+
+
+
 }
 
 void MainWindow::on_leaksClient_currentIndexChanged(int index)
