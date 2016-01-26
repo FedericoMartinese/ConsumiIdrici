@@ -37,6 +37,8 @@ private slots:
 
     void on_leaksClient_currentIndexChanged(int index);
 
+    void on_thresholdSpinbox_editingFinished();
+
 private:
     Ui::MainWindow *ui;
     std::map<QString, clientConsumptions> m_data;

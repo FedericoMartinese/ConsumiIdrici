@@ -40,6 +40,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->leaksTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);   //larghezza colonne non modificabile
     ui->leaksTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); //larghezza colonne streched
 
+    ui->thresholdSpinbox->setSingleStep(0.05);
+    ui->thresholdSpinbox->setMinimum(0);
+    ui->thresholdSpinbox->setMaximum(99.99);
+    ui->thresholdSpinbox->setValue(0.2);
+
 }
 
 MainWindow::~MainWindow()
@@ -108,7 +113,6 @@ void MainWindow::on_openFileDialog_clicked()
 
     this->ui->tabWidget->setEnabled(!m_data.empty());
 
-    ui->leaksClient->clear();
     ui->leaksTable->setModel(NULL); //pulisce la tabella perdite per prepararla al nuovo file
     ui->leaksClient->clear();
     clientMap.clear();
@@ -166,7 +170,7 @@ void MainWindow::updateViewTab() {
     } else {
         consumption totalCons = m_data[ui->clientID_view->text()].getLast();
         ui->totalConsumption->setText(QString::number(totalCons.value()) + " m^3");
-        ui->lastUpdated->setText("(aggiornato al (" + totalCons.date().toString("dd/MM/yyyy hh:mm:ss") + ")");
+        ui->lastUpdated->setText("aggiornato al (" + totalCons.date().toString("dd/MM/yyyy hh:mm:ss") + ")");
 
 
         Plot::plotMode mode = (Plot::plotMode)ui->histogramModeCombo->currentIndex();
@@ -297,21 +301,20 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 }
 
 void MainWindow::updateAnalysisTab() {
-    qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch();
+    qint64 temp = QDateTime::currentDateTime().toMSecsSinceEpoch();
 
     if (ui->leaksTable->model() == NULL) {
-        const double threshold = 0.2;
         std::vector<consumption> leaks;
 
         //SPOSTARE COME FUNZIONE MEMBRO DI CLIENTCONSUMPTIONS CHE RESTITUISCE I DUE VECTOR DI CONSUMPTION E CLIENTI ?
         for (std::pair<const QString, clientConsumptions> client : m_data) {
-            std::vector<consumption> nights = client.second.getNightLeaks(threshold);
+            std::vector<consumption> nights = client.second.getNightLeaks(ui->thresholdSpinbox->value());
             if (!nights.empty()) {
                 clientMap.push_back(leaks.size()); //inizio del nuovo cliente, fine del precedente
                 leaks.insert(leaks.end(), nights.begin(), nights.end());
                 ui->leaksClient->addItem(client.first);
 
-                qDebug() << client.first << " - " << nights.size();
+                //qDebug() << client.first << " - " << nights.size();
             }
         }
         clientMap.push_back(leaks.size()); //fine dell'ultimo cliente
@@ -322,7 +325,7 @@ void MainWindow::updateAnalysisTab() {
         if (ui->leaksClient->count() > 0)
             ui->leaksClient->setCurrentIndex(0);
 
-        qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch();
+        qDebug() << (QDateTime::currentDateTime().toMSecsSinceEpoch() - temp);
     }
 
 
@@ -346,4 +349,12 @@ void MainWindow::on_leaksClient_currentIndexChanged(int index)
         }
     }
 
+}
+
+void MainWindow::on_thresholdSpinbox_editingFinished()
+{
+    ui->leaksTable->setModel(NULL); //pulisce la tabella perdite per prepararla al nuovo file
+    ui->leaksClient->clear();
+    clientMap.clear();
+    updateAnalysisTab();
 }

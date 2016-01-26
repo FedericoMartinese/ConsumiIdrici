@@ -76,4 +76,10 @@
 
 - nomi classi iniziale maiuscola
 
-- provare a sostituire l'editing finished delle due caselle clientID con un evento più in tempo reale. dovrebbe essere abbastanza veloce da poterlo fare
+- provare a sostituire l'editing finished delle due caselle clientID e della threshold_spinbox con un evento più in tempo reale. per i primi due dovrebbe essere abbastanza veloce da poterlo fare
+
+- tutte le qstring a std::string
+- nuovo tipo per i datetime
+- cambiare la lettura da file da qt a quella normale del c++?
+
+- utente 319 e 323 consumi strani ad agosto (threshold > 15 e si vedono)
