@@ -12,7 +12,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    model(parent)
+    leaksModel(parent),
+    avgModel(parent)
 {
     ui->setupUi(this);
     ui->tabWidget->setEnabled(false); //disabled fino a quando un file viene caricato correttamente
@@ -40,11 +41,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->leaksTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);   //larghezza colonne non modificabile
     ui->leaksTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); //larghezza colonne streched
 
+    ui->avgTable->verticalHeader()->hide();
+    ui->avgTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);   //larghezza colonne non modificabile
+    ui->avgTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); //larghezza colonne streched
+
     ui->thresholdSpinbox->setSingleStep(0.05);
     ui->thresholdSpinbox->setMinimum(0);
     ui->thresholdSpinbox->setMaximum(99.99);
     ui->thresholdSpinbox->setValue(0.2);
-
 }
 
 MainWindow::~MainWindow()
@@ -116,6 +120,7 @@ void MainWindow::on_openFileDialog_clicked()
     ui->leaksTable->setModel(NULL); //pulisce la tabella perdite per prepararla al nuovo file
     ui->leaksClient->clear();
     clientMap.clear();
+    ui->avgTable->setModel(NULL);
     ui->clientID_query->clear();
     ui->clientID_view->clear();
     updateViewTab();
@@ -303,6 +308,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 void MainWindow::updateAnalysisTab() {
     qint64 temp = QDateTime::currentDateTime().toMSecsSinceEpoch();
 
+    //PERDITE NOTTURNE ~20 SECONDI PER FILE GRANDE. 1,1 SECONDI FILE PICCOLO
     if (ui->leaksTable->model() == NULL) {
         std::vector<consumption> leaks;
 
@@ -319,23 +325,56 @@ void MainWindow::updateAnalysisTab() {
         }
         clientMap.push_back(leaks.size()); //fine dell'ultimo cliente
 
-        model.load(leaks);
-        ui->leaksTable->setModel(&model);
+        leaksModel.load(leaks);
+        ui->leaksTable->setModel(&leaksModel);
 
         if (ui->leaksClient->count() > 0)
             ui->leaksClient->setCurrentIndex(0);
 
-        qDebug() << (QDateTime::currentDateTime().toMSecsSinceEpoch() - temp);
+        qDebug() << "Perdite notturne: " << (QDateTime::currentDateTime().toMSecsSinceEpoch() - temp);
     }
 
+    //UTENZE DEVIANTI ~0.8 SECONDI PER FILE GRANDE. IRRIVELANTE FILE PICCOLO
+    if (ui->avgTable->model() == NULL) {
 
 
+        //almeno un ciclo si può spostare all'interno di quello sopra
+        temp = QDateTime::currentDateTime().toMSecsSinceEpoch();
 
+        QDateTime min(minDate, QTime(0,0), Qt::TimeSpec::UTC), max(maxDate, QTime(23,59,59), Qt::TimeSpec::UTC);
+        double avg = 0;
+        int i = 0;
+        for (std::pair<const QString, clientConsumptions> client : m_data) {
+            double c = client.second.getPeriodConsumption(min ,max);
+            if (c>=0) {
+                avg += c;
+                ++i;
+            }
 
+        }
+        avg /= i; //non m_data.size() perché solo utenti con consumo reale (>=0)
 
+        std::vector<std::vector<QString>> devusers;
+        int days = min.daysTo(max) + 1;
+        int weeks = max.date().weekNumber() - min.date().weekNumber() + 1;
+        int months = max.date().month() - min.date().month() + 1;
 
+        for (std::pair<const QString, clientConsumptions> client : m_data) {
+            double c = client.second.getPeriodConsumption(min, max);
+            if (c >= (2*avg)) {
+                devusers.push_back({client.first, QString::number(c/days, 'f', 3), QString::number(c/weeks, 'f', 3), QString::number(c/months, 'f', 3)});
+            }
+        }
 
+        avgModel.load(devusers);
+        ui->avgTable->setModel(&avgModel);
 
+        ui->dailyAvg->setText(QString::number(avg/days, 'f', 3));
+        ui->weeklyAvg->setText(QString::number(avg/weeks, 'f', 3));
+        ui->monthlyAvg->setText(QString::number(avg/months, 'f', 3));
+
+        qDebug() << "Utenze devianti: " << devusers.size() << " - " << (QDateTime::currentDateTime().toMSecsSinceEpoch() - temp);
+    }
 }
 
 void MainWindow::on_leaksClient_currentIndexChanged(int index)

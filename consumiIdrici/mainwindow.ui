@@ -404,7 +404,7 @@
        <rect>
         <x>30</x>
         <y>110</y>
-        <width>141</width>
+        <width>361</width>
         <height>16</height>
        </rect>
       </property>
@@ -436,12 +436,12 @@
        <rect>
         <x>30</x>
         <y>20</y>
-        <width>46</width>
-        <height>13</height>
+        <width>61</width>
+        <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>TextLabel</string>
+       <string>Threshold</string>
       </property>
      </widget>
      <widget class="QDoubleSpinBox" name="thresholdSpinbox">
@@ -461,6 +461,90 @@
       </property>
       <property name="value">
        <double>0.200000000000000</double>
+      </property>
+     </widget>
+     <widget class="QTableView" name="avgTable">
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>140</y>
+        <width>361</width>
+        <height>231</height>
+       </rect>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
+      </property>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+     </widget>
+     <widget class="QLabel" name="label_15">
+      <property name="geometry">
+       <rect>
+        <x>420</x>
+        <y>110</y>
+        <width>361</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Utenze devianti</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_16">
+      <property name="geometry">
+       <rect>
+        <x>430</x>
+        <y>380</y>
+        <width>46</width>
+        <height>13</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Media:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="dailyAvg">
+      <property name="geometry">
+       <rect>
+        <x>520</x>
+        <y>380</y>
+        <width>46</width>
+        <height>13</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="weeklyAvg">
+      <property name="geometry">
+       <rect>
+        <x>610</x>
+        <y>380</y>
+        <width>46</width>
+        <height>13</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="monthlyAvg">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>380</y>
+        <width>46</width>
+        <height>13</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
       </property>
      </widget>
     </widget>

@@ -34,6 +34,7 @@ public:
 
     //get valore medio per ...
 
+
 };
 
 #endif // CLIENTCONSUMPTIONS_H

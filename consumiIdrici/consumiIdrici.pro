@@ -18,8 +18,9 @@ SOURCES += main.cpp\
     qcustomplot.cpp \
     clientconsumptions.cpp \
     consumption.cpp \
-    tablemodel.cpp \
-    plot.cpp
+    leakstablemodel.cpp \
+    plot.cpp \
+    avgtablemodel.cpp
 
 HEADERS  += mainwindow.h \
     datautility.h \
@@ -27,8 +28,9 @@ HEADERS  += mainwindow.h \
     plotutility.h \
     clientconsumptions.h \
     consumption.h \
-    tablemodel.h \
-    plot.h
+    leakstablemodel.h \
+    plot.h \
+    avgtablemodel.h
 
 FORMS    += mainwindow.ui
 CONFIG += C++11

@@ -1,26 +1,26 @@
-#include "tablemodel.h"
+#include "leakstablemodel.h"
 
-tableModel::tableModel(QObject *parent, std::vector<consumption> cons)
+leaksTableModel::leaksTableModel(QObject *parent, std::vector<consumption> cons)
     :QAbstractTableModel(parent), m_cons(cons)
 {
 }
 
-tableModel::tableModel(QObject *parent)
+leaksTableModel::leaksTableModel(QObject *parent)
     :QAbstractTableModel(parent)
 {
 }
 
-int tableModel::rowCount(const QModelIndex & /*parent*/) const
+int leaksTableModel::rowCount(const QModelIndex & /*parent*/) const
 {
    return m_cons.size();
 }
 
-int tableModel::columnCount(const QModelIndex & /*parent*/) const
+int leaksTableModel::columnCount(const QModelIndex & /*parent*/) const
 {
     return 2;
 }
 
-QVariant tableModel::data(const QModelIndex &index, int role) const
+QVariant leaksTableModel::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole)
     {
@@ -33,7 +33,7 @@ QVariant tableModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant tableModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant leaksTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role == Qt::DisplayRole)
     {
@@ -47,6 +47,6 @@ QVariant tableModel::headerData(int section, Qt::Orientation orientation, int ro
     return QVariant();
 }
 
-void tableModel::load(const std::vector<consumption>& cons) { //riferimento costante perché potenzialmente sono molti dati
+void leaksTableModel::load(const std::vector<consumption> &cons) { //riferimento costante perché potenzialmente sono molti dati
     m_cons = cons;
 }

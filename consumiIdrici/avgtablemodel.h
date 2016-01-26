@@ -1,21 +1,21 @@
-#ifndef TABLEMODEL_H
-#define TABLEMODEL_H
+#ifndef AVGTABLEMODEL_H
+#define AVGTABLEMODEL_H
+
 #include <QAbstractTableModel>
-#include <vector>
-#include <consumption.h>
-class tableModel : public QAbstractTableModel
+
+class avgTableModel : public QAbstractTableModel
 {
     Q_OBJECT
 private:
-    std::vector<consumption> m_cons;
+    std::vector<std::vector<QString>> m_cons;
 public:
-    tableModel(QObject *parent, std::vector<consumption> cons);
-    tableModel(QObject *parent);
+    avgTableModel(QObject *parent, std::vector<std::vector<QString>> cons);
+    avgTableModel(QObject *parent);
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    void load(const std::vector<consumption> &cons);
+    void load(const std::vector<std::vector<QString>> &cons);
 };
 
-#endif // TABLEMODEL_H
+#endif // AVGTABLEMODEL_H

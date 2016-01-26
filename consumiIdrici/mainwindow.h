@@ -5,7 +5,9 @@
 #include <datautility.h>
 #include <plot.h>
 #include <set>
-#include <tablemodel.h>
+#include <leakstablemodel.h>
+#include <avgtablemodel.h>
+
 namespace Ui {
 class MainWindow;
 }
@@ -42,10 +44,11 @@ private slots:
 private:
     Ui::MainWindow *ui;
     std::map<QString, clientConsumptions> m_data;
-
-    tableModel model;
+    leaksTableModel leaksModel;
+    avgTableModel avgModel;
     std::vector<int> clientMap;
     Plot* plot;
+
     void updateViewTab();
     void updateQueryTab();
     void updateAnalysisTab();

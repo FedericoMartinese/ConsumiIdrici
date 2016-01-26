@@ -83,3 +83,7 @@
 - cambiare la lettura da file da qt a quella normale del c++?
 
 - utente 319 e 323 consumi strani ad agosto (threshold > 15 e si vedono)
+- utente 191 DATI SBAGLIATI
+- controllare che non vengano aggiunti elementi vuoti alla mappa qstring-clientconsumptions
+
+togliere funzione avgdaysinmonth

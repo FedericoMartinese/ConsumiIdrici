@@ -14,7 +14,6 @@ double consumption::value() const {
     return m_value;
 }
 
-
 bool consumption::isValid() const {
     return m_date.isValid() && m_value >= 0;
 }
