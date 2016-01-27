@@ -17,7 +17,7 @@ public:
         DAY = 3
     };
 
-    void draw(plotMode plotMode, std::vector<double> data);
+    void draw(plotMode plotMode, std::vector<double> data, bool showLegend = false, bool setInteractions = false);
     void clear();
 };
 

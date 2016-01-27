@@ -1,20 +1,14 @@
 - suddividere il consumo equamente tra le ore in caso di "buchi" nel file di input (stessa cosa per più registrazioni nell'arco di un'ora)
 
-- qdialogbuttonbox per i pulsanti (close?) nelle varie window
-
 - clustering nell'analisi dei consumi
 
-- controllare l'organizzazine in classi delle funzioni
+- controllare l'organizzazine in classi delle funzioni (in particolare datautility)
 
 - ricontrollare TUTTI i commenti, tradurli in inglese (?) e metterli dove servono
 
 - considerazioni su settimane/mesi compresi parzialmente (tab interrogazione)
 
 - segmentation fault sulla dichiarazione dei record (forse risolto)
-
-- colore blu grafico
-
-- legenda ?
 
 - controllare tick verticali in vari casi
 
@@ -24,11 +18,7 @@
 
 - maschera con barra di caricamento per l'apertura del file
 
-- provare a fare il sort con un bool operator< nella struct, se no come in consumption-file-extractor
-
 - sostituire tutti i qdatetime.secsto con i < > e verificarne il funzionamento
-
-- verificare funzionamento operatore == della struct
 
 - testare quanto è conveniente ordinare e usare la sorted rispetto a non ordinare e usare solo la getconsatdate
  
@@ -49,30 +39,19 @@
 - const correctness
 
 - spostare verifiche correttezza file dalla readFile al posto giusto (come/dove??? eccezione nel costruttore di clientconsumptions??)
-- rinominare recordObj in record e eliminare la struct record (ELIMINARLO SE SI USANO LE CLASSI CLIENTCONS E CONSUMPTION)
 
 - eliminare operatori inutili/non usati
 
-- getlastrecord, getperiodconsumption e getconsatdate sono diventate membri della clientconsumption
-
 - il gethistogramdata funziona per step costanti. il month_by_week non ha step costante (andando non ogni 7 giorni ma da lunedì a domenica possono esserci settimane incomplete).
-	viene chiamato con uno step di 1 giorno e il cliente si somma i consumi giornalieri come preferice
-
-- quando spostata la findclient sarà const
+	viene chiamato con uno step di 1 giorno e il cliente si somma i consumi giornalieri come preferice (fatto metterlo nella documentazione)
 
 - mettere nella documentazione le prove col set del progetto set_test_myclass (in documenti/qt)
 
-- mutable http://stackoverflow.com/questions/2217878/c-stl-set-update-is-tedious-i-cant-change-an-element-in-place
-	(la set vuole dati costanti perché permettere all'utente di cambiarli può rovinare l'ordine. l'ordine dei clientconsumptions è stabilito solo dal clientID e non dai consumi che quindi sono mutable.
-	questo permette di aggiungere consumi in ordine all'oggetto dentro la struttura set perché ciò non ne cambia l'ordine)
-
-- mettere typedef per i tipi lunghissimi del set? (set in sé e iterato)
-
-- ottimizzare l'aggiunta di clientconsumption a clients nella readFile tenendo un std::set<qstring> dei clienti già inseriti??? adesso viene usata la insert SEMPRE che cerca e se non trova aggiunge. vedere differenza in termini di tempo
+- mettere typedef per i tipi lunghissimi del set? (set in sé e iterato) non serve più?
 
 - controllare 21/03/15 dell'utente 11. consumi orari strani (tutti uguali)
 
-- sistemare tabella consumi notturni (larghezza colonne, crash se si cambia utente e si scorre)
+- sistemare tabella consumi notturni (larghezza colonne, crash se si cambia utente e si scorre)		RISOLTO
 
 - nomi classi iniziale maiuscola
 
@@ -87,3 +66,5 @@
 - controllare che non vengano aggiunti elementi vuoti alla mappa qstring-clientconsumptions
 
 togliere funzione avgdaysinmonth
+
+- incoerenza nomi asse verticale/combobox dei tipi di consumi nel grafico

@@ -6,7 +6,7 @@ Plot::Plot(QCustomPlot* plot): m_plot(plot)
     m_plot->yAxis->setVisible(false);
 }
 
-void Plot::draw(plotMode mode, std::vector<double> data) {
+void Plot::draw(plotMode mode, std::vector<double> data, bool showLegend, bool setInteractions) {
     clear();
 
     if (m_plot == nullptr || data.empty())
@@ -30,9 +30,9 @@ void Plot::draw(plotMode mode, std::vector<double> data) {
     case DAY:   consumptions->setName("Consumo orario"); break;
     }
 
-    pen.setColor(QColor(255, 131, 0));
+    pen.setColor(QColor(255, 0, 0));
     consumptions->setPen(pen);
-    consumptions->setBrush(QColor(255, 131, 0, 50));
+    consumptions->setBrush(QColor(0, 240, 255, 150));
 
     // prepare x axis with country labels:
     QVector<double> ticks;
@@ -89,17 +89,21 @@ void Plot::draw(plotMode mode, std::vector<double> data) {
     consumptions->setData(ticks, QVector<double>::fromStdVector(data));
 
     // setup legend:
-    m_plot->legend->setVisible(true);
-    m_plot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignHCenter);
-    m_plot->legend->setBrush(QColor(255, 255, 255, 200));
-    QPen legendPen;
-    legendPen.setColor(QColor(130, 130, 130, 200));
-    m_plot->legend->setBorderPen(legendPen);
-    QFont legendFont;
-    legendFont.setPointSize(10);
-    m_plot->legend->setFont(legendFont);
-    m_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    m_plot->legend->setVisible(showLegend);
+    if (showLegend) {
+        m_plot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignHCenter);
+        m_plot->legend->setBrush(QColor(255, 255, 255, 200));
+        QPen legendPen;
+        legendPen.setColor(QColor(130, 130, 130, 200));
+        m_plot->legend->setBorderPen(legendPen);
+        QFont legendFont;
+        legendFont.setPointSize(10);
+        m_plot->legend->setFont(legendFont);
 
+    }
+    if (setInteractions) {
+        m_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    }
 
     // configure bottom axis to show date and time instead of number:
     m_plot->xAxis->setTickLabelType(QCPAxis::ltDateTime);
@@ -118,7 +122,7 @@ void Plot::draw(plotMode mode, std::vector<double> data) {
     QVector<QString> tickNames;
     bool min = false, med = false;
     double d = maxValue/k;
-    int j = 1, digit;
+    int digit;
     if (d>=5)
         digit = 0;
     else if (d>=2)
@@ -127,8 +131,9 @@ void Plot::draw(plotMode mode, std::vector<double> data) {
         digit = 2;
     else
         digit = 3;
-    while (maxValue - d*j > 0) {
-        double tickValue = d*j;
+
+    double tickValue = d;
+    while ((maxValue - tickValue) > 0) {
         if (minValue < tickValue && !min) {
             tickValues.push_back(minValue);
             min = true;
@@ -141,7 +146,7 @@ void Plot::draw(plotMode mode, std::vector<double> data) {
         } else {
             tickValues.push_back(tickValue);
             tickNames.push_back(QString::number(tickValue, 'f', digit));
-            ++j;
+            tickValue += d;
         }
 
     }
