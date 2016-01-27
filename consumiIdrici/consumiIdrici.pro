@@ -16,7 +16,7 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     datautility.cpp \
     qcustomplot.cpp \
-    clientconsumptions.cpp \
+    consumptionset.cpp \
     consumption.cpp \
     leakstablemodel.cpp \
     plot.cpp \
@@ -26,7 +26,7 @@ HEADERS  += mainwindow.h \
     datautility.h \
     qcustomplot.h \
     plotutility.h \
-    clientconsumptions.h \
+    consumptionset.h \
     consumption.h \
     leakstablemodel.h \
     plot.h \

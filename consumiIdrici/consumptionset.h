@@ -7,13 +7,13 @@
 
 //std::set wrapper with extended functions
 
-class clientConsumptions
+class consumptionSet
 {
 private:
     std::set<consumption> m_cons;
 
 public:
-    clientConsumptions();
+    consumptionSet();
 
     void insert(consumption cons);
 

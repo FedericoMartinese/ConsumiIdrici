@@ -43,7 +43,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    std::map<QString, clientConsumptions> m_data;
+    std::map<QString, consumptionSet> m_data;
     leaksTableModel leaksModel;
     avgTableModel avgModel;
     std::vector<int> clientMap;

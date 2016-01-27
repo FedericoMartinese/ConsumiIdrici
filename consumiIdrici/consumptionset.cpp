@@ -1,22 +1,22 @@
-#include "clientconsumptions.h"
+#include "consumptionset.h"
 #define MINSECSPRECISION 60 //1 minuto di precisione minima
 
-clientConsumptions::clientConsumptions() : m_cons()
+consumptionSet::consumptionSet() : m_cons()
 {
 }
 
-void clientConsumptions::insert(consumption cons) {
+void consumptionSet::insert(consumption cons) {
     m_cons.insert(cons);
 }
 
-/*std::set<consumption> clientConsumptions::cons() const {
+/*std::set<consumption> consumptionSet::cons() const {
     return m_cons;
 }
-bool clientConsumptions::isEmpty() const {
+bool consumptionSet::isEmpty() const {
     return m_cons.empty();
 }*/
 
-consumption clientConsumptions::getLast() const {
+consumption consumptionSet::getLast() const {
     if (m_cons.empty())
         return consumption();
 
@@ -24,14 +24,14 @@ consumption clientConsumptions::getLast() const {
 }
 
 
-double clientConsumptions::getPeriodConsumption(QDateTime firstDate, QDateTime lastDate) const {
+double consumptionSet::getPeriodConsumption(QDateTime firstDate, QDateTime lastDate) const {
     if (firstDate > lastDate) return -1;
     if (m_cons.empty()) return 0;
 
     return getConsAtDate(lastDate) - getConsAtDate(firstDate);
 }
 
-double clientConsumptions::getConsAtDate(QDateTime date) const{
+double consumptionSet::getConsAtDate(QDateTime date) const{
     if (m_cons.empty()) return 0;
 
     std::set<consumption>::iterator cons = std::lower_bound(m_cons.begin(), m_cons.end(), consumption(date,0));
@@ -54,7 +54,7 @@ double clientConsumptions::getConsAtDate(QDateTime date) const{
 
 }
 
-std::vector<double> clientConsumptions::getHistogramData(QDateTime begin, QDateTime end, histogramStep step) const {
+std::vector<double> consumptionSet::getHistogramData(QDateTime begin, QDateTime end, histogramStep step) const {
     std::vector<double> hdata;
 
    if (!begin.isValid() || !end.isValid() || begin >= end)
@@ -78,7 +78,7 @@ std::vector<double> clientConsumptions::getHistogramData(QDateTime begin, QDateT
     return hdata;
 }
 
-std::vector<consumption> clientConsumptions::getNightLeaks(double threshold) const {
+std::vector<consumption> consumptionSet::getNightLeaks(double threshold) const {
     std::vector<consumption> nights;
    if (m_cons.empty()) return nights;
    QTime start(0,0), end(5,0);

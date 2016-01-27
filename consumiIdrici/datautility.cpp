@@ -9,10 +9,10 @@
 //
 
 
-std::map<QString, clientConsumptions> readFile(QString fileName) {
+std::map<QString, consumptionSet> readFile(QString fileName) {
     //legge il file di input e restituisce un vector di record
 
-    std::map<QString, clientConsumptions> clients;
+    std::map<QString, consumptionSet> clients;
 
     QFile inputFile(fileName);
     if (inputFile.open(QIODevice::ReadOnly)) {

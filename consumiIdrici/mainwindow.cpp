@@ -179,24 +179,24 @@ void MainWindow::updateViewTab() {
 
 
         Plot::plotMode mode = (Plot::plotMode)ui->histogramModeCombo->currentIndex();
-        clientConsumptions::histogramStep step;
+        consumptionSet::histogramStep step;
         QDate first, last;
         switch (mode) {
         case Plot::YEAR:
             first = minDate;
             last = maxDate;
-            step = clientConsumptions::histogramStep::MONTH;
+            step = consumptionSet::MONTH;
             break;
         case Plot::MONTH_BY_DAYS:
         case Plot::MONTH_BY_WEEKS:
             first.setDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), 1);
             last.setDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), ui->histogramDate->date().daysInMonth());
-            step = clientConsumptions::histogramStep::DAY;
+            step = consumptionSet::DAY;
             break;
         case Plot::DAY:
             first = ui->histogramDate->date();
             last = ui->histogramDate->date();
-            step = clientConsumptions::histogramStep::HOUR;
+            step = consumptionSet::HOUR;
             break;
         default:
             plot->clear();
@@ -313,7 +313,7 @@ void MainWindow::updateAnalysisTab() {
         std::vector<consumption> leaks;
 
         //SPOSTARE COME FUNZIONE MEMBRO DI CLIENTCONSUMPTIONS CHE RESTITUISCE I DUE VECTOR DI CONSUMPTION E CLIENTI ?
-        for (std::pair<const QString, clientConsumptions> client : m_data) {
+        for (std::pair<const QString, consumptionSet> client : m_data) {
             std::vector<consumption> nights = client.second.getNightLeaks(ui->thresholdSpinbox->value());
             if (!nights.empty()) {
                 clientMap.push_back(leaks.size()); //inizio del nuovo cliente, fine del precedente
@@ -344,7 +344,7 @@ void MainWindow::updateAnalysisTab() {
         QDateTime min(minDate, QTime(0,0), Qt::TimeSpec::UTC), max(maxDate, QTime(23,59,59), Qt::TimeSpec::UTC);
         double avg = 0;
         int i = 0;
-        for (std::pair<const QString, clientConsumptions> client : m_data) {
+        for (std::pair<const QString, consumptionSet> client : m_data) {
             double c = client.second.getPeriodConsumption(min ,max);
             if (c>=0) {
                 avg += c;
@@ -359,7 +359,7 @@ void MainWindow::updateAnalysisTab() {
         int weeks = max.date().weekNumber() - min.date().weekNumber() + 1;
         int months = max.date().month() - min.date().month() + 1;
 
-        for (std::pair<const QString, clientConsumptions> client : m_data) {
+        for (std::pair<const QString, consumptionSet> client : m_data) {
             double c = client.second.getPeriodConsumption(min, max);
             if (c >= (2*avg)) {
                 devusers.push_back({client.first, QString::number(c/days, 'f', 3), QString::number(c/weeks, 'f', 3), QString::number(c/months, 'f', 3)});
