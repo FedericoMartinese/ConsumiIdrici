@@ -20,9 +20,19 @@ std::map<QString, consumptionSet> readFile(QString fileName) {
         QTextStream in(&inputFile);
         int c = 1;
         while (!in.atEnd()) {
-            QString line = in.readLine();
-            QStringList params = line.split(',');
-            if (params.length() != 3) { //parametri non suddivisi correttamente o in numero errato
+            std::string line = in.readLine().toStdString();
+
+            QString params[3];
+            //QStringList params = line.split(',');
+
+            try {
+                int v1,v2;
+                v1 = line.find(',');
+                v2 = line.find(',', v1+1);
+                params[0] = QString::fromStdString(line.substr(0,v1));
+                params[1] = QString::fromStdString(line.substr(v1+1, v2-v1-1));
+                params[2] = QString::fromStdString(line.substr(v2+1));
+            } catch (...) { //parametri non suddivisi correttamente o in numero errato
                 QMessageBox msg(QMessageBox::Critical, "Consumi idrici", "Errore nella lettura dei dati. Formato dati errati (riga " + QString::number(c) + ")." , QMessageBox::Abort | QMessageBox::Ignore);
                 if (msg.exec() == QMessageBox::Abort) {
                     inputFile.close();
@@ -36,9 +46,14 @@ std::map<QString, consumptionSet> readFile(QString fileName) {
             //che viene poi convertita in CET dalla funzione UTCtoDayLightSavTime
             QString clientID = params[2];
             bool ok;
-            consumption cons(UTCtoDayLightSavTime(QDateTime::fromString(params[0], "\"yyyy-MM-dd HH:mm:ss\"").toUTC()), params[1].toDouble(&ok));
+            try {
+                consumption cons(UTCtoDayLightSavTime(QDateTime::fromString(params[0], "\"yyyy-MM-dd HH:mm:ss\"").toUTC()), params[1].toDouble(&ok));
 
-            if (!cons.isValid() || !ok) { //conversioni ai tipi non riuscite
+                if (!ok) throw "Cast failed";
+
+                //aggiunge consumi al cliente (se non è presente il cliente nella mappa lo crea e posiziona in ordine)
+                clients[clientID].insert(cons);
+            } catch (...) {
                 QMessageBox msg(QMessageBox::Critical, "Consumi idrici", "Errore nella lettura dei dati. Dati errati (riga " + QString::number(c) + ")." , QMessageBox::Abort | QMessageBox::Ignore);
                 if (msg.exec() == QMessageBox::Abort) {
                     inputFile.close();
@@ -46,10 +61,6 @@ std::map<QString, consumptionSet> readFile(QString fileName) {
                     return clients;
                 }
             }
-
-            //aggiunge consumi al cliente (se non è presente il cliente lo crea e posiziona in ordine)
-            clients[clientID].insert(cons);
-
 
             ++c;
         }

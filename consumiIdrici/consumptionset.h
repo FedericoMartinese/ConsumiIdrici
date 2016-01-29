@@ -15,7 +15,7 @@ private:
 public:
     consumptionSet();
 
-    void insert(consumption cons);
+    bool insert(consumption cons);
 
     //std::set<consumption> cons() const;
     //bool isEmpty() const;

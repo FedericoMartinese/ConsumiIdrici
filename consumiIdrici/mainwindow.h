@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include <datautility.h>
 #include <plot.h>
-#include <set>
 #include <leakstablemodel.h>
 #include <avgtablemodel.h>
 

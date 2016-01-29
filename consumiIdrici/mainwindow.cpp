@@ -23,7 +23,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->histogramModeCombo->addItem(SMONTH_W);
     ui->histogramModeCombo->addItem(SDAY);
 
-    plot = new Plot(ui->customPlot);
+    try {
+        plot = new Plot(ui->customPlot);
+    } catch (...) {
+        plot = nullptr;
+    }
 
     ui->firstDate->setMinimumDate(minDate);
     ui->firstDate->setMaximumDate(maxDate);
@@ -53,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete plot;
+    delete plot; //se nullptr non crea problemi
     delete ui;
 }
 
@@ -171,11 +175,11 @@ void MainWindow::updateViewTab() {
     if (m_data.find(ui->clientID_view->text()) == m_data.end()) { //non trovato quindi vuoto
         ui->totalConsumption->setText("n.d");
         ui->lastUpdated->setText("");
-        plot->clear();
+        if (plot != nullptr) plot->clear();
     } else {
         consumption totalCons = m_data[ui->clientID_view->text()].getLast();
         ui->totalConsumption->setText(QString::number(totalCons.value()) + " m^3");
-        ui->lastUpdated->setText("aggiornato al (" + totalCons.date().toString("dd/MM/yyyy hh:mm:ss") + ")");
+        ui->lastUpdated->setText("aggiornato al " + totalCons.date().toString("dd/MM/yyyy hh:mm:ss"));
 
 
         Plot::plotMode mode = (Plot::plotMode)ui->histogramModeCombo->currentIndex();
@@ -199,7 +203,7 @@ void MainWindow::updateViewTab() {
             step = consumptionSet::HOUR;
             break;
         default:
-            plot->clear();
+            if (plot != nullptr) plot->clear();
             return;
         }
 
@@ -219,10 +223,12 @@ void MainWindow::updateViewTab() {
             hdata = temp;
         }
 
-        if (hdata.empty())
-            plot->clear();
-        else
-            plot->draw(mode, hdata);
+        if (plot != nullptr) {
+            if (hdata.empty())
+                plot->clear();
+            else
+                plot->draw(mode, hdata);
+        }
     }
 
 }

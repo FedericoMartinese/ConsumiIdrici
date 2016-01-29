@@ -1,10 +1,15 @@
 #include "consumption.h"
-
+#include <QMessageBox>
 consumption::consumption() : m_date(), m_value(0)
 {
 }
 
-consumption::consumption(QDateTime date, double value) : m_date(date), m_value(value) {}
+consumption::consumption(QDateTime date, double value) : m_date(date), m_value(value) {
+    if (!m_date.isValid())
+        throw "Date is invalid";
+    if (m_value < 0)
+        throw "Consumption value is invalid";
+}
 
 QDateTime consumption::date() const {
     return m_date;

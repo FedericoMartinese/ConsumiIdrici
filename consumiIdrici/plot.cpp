@@ -2,6 +2,9 @@
 
 Plot::Plot(QCustomPlot* plot): m_plot(plot)
 {
+    if (plot == nullptr)
+        throw "Null pointer";
+
     m_plot->xAxis->setVisible(false);
     m_plot->yAxis->setVisible(false);
 }

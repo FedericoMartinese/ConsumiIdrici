@@ -5,8 +5,19 @@ consumptionSet::consumptionSet() : m_cons()
 {
 }
 
-void consumptionSet::insert(consumption cons) {
+bool consumptionSet::insert(consumption cons) {
+
+    if (!m_cons.empty()) { //non vuoto
+
+        std::set<consumption>::iterator next = m_cons.lower_bound(cons);
+        double prev = next == m_cons.begin() ? 0 : std::prev(next)->value(); //se cons va messo per primo prev = 0
+
+        if (prev > cons.value() || (next != m_cons.end() && next->value() > cons.value()))
+            return false; //se i consumi non sono crescenti (prev <= cons <= next) non viene inserito
+    }
+
     m_cons.insert(cons);
+    return true;
 }
 
 /*std::set<consumption> consumptionSet::cons() const {
@@ -17,6 +28,7 @@ bool consumptionSet::isEmpty() const {
 }*/
 
 consumption consumptionSet::getLast() const {
+    //std max/ last???
     if (m_cons.empty())
         return consumption();
 

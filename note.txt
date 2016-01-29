@@ -68,3 +68,8 @@
 togliere funzione avgdaysinmonth
 
 - incoerenza nomi asse verticale/combobox dei tipi di consumi nel grafico
+
+eccezioni nel costruttore e liste di inizializzazione
+http://stackoverflow.com/questions/810839/throwing-exceptions-from-constructors
+
+- controllare grafico utente 191 (assi da 0 a 0)
