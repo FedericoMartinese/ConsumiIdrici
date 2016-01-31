@@ -19,6 +19,9 @@ std::map<QString, consumptionSet> readFile(QString fileName) {
 
         QTextStream in(&inputFile);
         int c = 1;
+
+        qint64 temp = QDateTime::currentDateTime().toMSecsSinceEpoch();;
+
         while (!in.atEnd()) {
             QString line = in.readLine();
             QStringList params = line.split(',');
@@ -54,6 +57,10 @@ std::map<QString, consumptionSet> readFile(QString fileName) {
             ++c;
         }
         inputFile.close();
+
+        temp = QDateTime::currentDateTime().toMSecsSinceEpoch() - temp;
+        QMessageBox msg(QMessageBox::Information, "Lettura", QString::number(temp) );
+        msg.exec();
 
     } else {
         QMessageBox msg(QMessageBox::Critical, "Consumi idrici", "Errore nell'apertura del file." , QMessageBox::Ok);

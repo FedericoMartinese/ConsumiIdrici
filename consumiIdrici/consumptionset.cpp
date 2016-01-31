@@ -28,17 +28,16 @@ bool consumptionSet::isEmpty() const {
 }*/
 
 consumption consumptionSet::getLast() const {
-    //std max/ last???
     if (m_cons.empty())
         return consumption();
 
-    return *--m_cons.end();
+    return *m_cons.rbegin(); //*--m_cons.end();
 }
 
 
 double consumptionSet::getPeriodConsumption(QDateTime firstDate, QDateTime lastDate) const {
-    if (firstDate > lastDate) return -1;
     if (m_cons.empty()) return 0;
+    if (firstDate > lastDate) std::swap(firstDate, lastDate);
 
     return getConsAtDate(lastDate) - getConsAtDate(firstDate);
 }
@@ -49,7 +48,7 @@ double consumptionSet::getConsAtDate(QDateTime date) const{
     std::set<consumption>::iterator cons = std::lower_bound(m_cons.begin(), m_cons.end(), consumption(date,0));
 
     if (cons == m_cons.end()) //non ci sono registrazioni successive. si suppone che dall'ultima registrazione non ci siano stati consumi ulteriori
-        return (--m_cons.end())->value(); //il consumo a quella data equivale a quello dell'ultima registrazione
+        return /*--m_cons.end()*/ m_cons.rbegin()->value(); //il consumo a quella data equivale a quello dell'ultima registrazione
 
     if (cons == m_cons.begin()) //non ci sono registrazioni precedenti. si suppone che fino alla prima registrazione non ci siano stati consumi
         return cons->value();  //il consimo a quella data equivale a quello della prima registrazione

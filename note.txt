@@ -1,5 +1,3 @@
-- suddividere il consumo equamente tra le ore in caso di "buchi" nel file di input (stessa cosa per più registrazioni nell'arco di un'ora)
-
 - clustering nell'analisi dei consumi
 
 - controllare l'organizzazine in classi delle funzioni (in particolare datautility)
@@ -7,8 +5,6 @@
 - ricontrollare TUTTI i commenti, tradurli in inglese (?) e metterli dove servono
 
 - considerazioni su settimane/mesi compresi parzialmente (tab interrogazione)
-
-- segmentation fault sulla dichiarazione dei record (forse risolto)
 
 - controllare tick verticali in vari casi
 
@@ -19,10 +15,8 @@
 - maschera con barra di caricamento per l'apertura del file
 
 - sostituire tutti i qdatetime.secsto con i < > e verificarne il funzionamento
-
-- testare quanto è conveniente ordinare e usare la sorted rispetto a non ordinare e usare solo la getconsatdate
  
- - controllare il calcolo del caso più difficile della getconsatdatesorted (modificando file magari)
+ - controllare il calcolo del caso più difficile della getconsatdatesorted (modificando file magari) (quello della proporzione)
  
  - controllare giorni cambio ora
  
@@ -30,9 +24,7 @@
 
 - controllare variabili test (ce n'è nella costruzione dei dati del grafico gethistogramdata)
 
-- unire la getperiodsorted e la getconssorted (verificare che servano entrambe!!!)
-
-- utilizzare tipo apposito per variabili che contengono size di vector (se quei valori vengono memorizzati)  (size_t)
+- utilizzare tipo apposito per variabili che contengono size di set/vector (se quei valori vengono memorizzati)  (size_t)
 
 - in ogni costruttore qdatetime passare il parametro Qt::TimeSpec::UTC
 
@@ -50,8 +42,6 @@
 - mettere typedef per i tipi lunghissimi del set? (set in sé e iterato) non serve più?
 
 - controllare 21/03/15 dell'utente 11. consumi orari strani (tutti uguali)
-
-- sistemare tabella consumi notturni (larghezza colonne, crash se si cambia utente e si scorre)		RISOLTO
 
 - nomi classi iniziale maiuscola
 
@@ -73,3 +63,5 @@ eccezioni nel costruttore e liste di inizializzazione
 http://stackoverflow.com/questions/810839/throwing-exceptions-from-constructors
 
 - controllare grafico utente 191 (assi da 0 a 0)
+
+- controllare i controlli sull'insert nella consSet (impossibile che metà dei dati siano sbagliati - vedi benchmark.txt)
