@@ -8,17 +8,28 @@
 #define FILENAME "consumption_all.csv"
 //
 
+#include <QProgressDialog>
+#include <QFileInfo>
+#include <QApplication>
 
-std::map<QString, consumptionSet> readFile(QString fileName) {
+std::map<QString, consumptionSet> readFile(QString fileName, QWidget *parent) {
     //legge il file di input e restituisce un vector di record
 
     std::map<QString, consumptionSet> clients;
 
-    QFile inputFile(fileName);
+    QFile inputFile(fileName);  
     if (inputFile.open(QIODevice::ReadOnly)) {
 
+        QProgressDialog progress(parent);
+        progress.setLabelText("Lettura file: " + QFileInfo(fileName).fileName());
+        progress.setRange(0, inputFile.size());
+        progress.setModal(true);
+        progress.setCancelButton(0); //elimina il pulsante annulla
+        progress.show();
+        qApp->processEvents();
+
         QTextStream in(&inputFile);
-        int c = 1;
+        size_t c = 1;
 
         qint64 temp = QDateTime::currentDateTime().toMSecsSinceEpoch();;
 
@@ -54,6 +65,15 @@ std::map<QString, consumptionSet> readFile(QString fileName) {
                 }
             }
 
+            progress.setValue(inputFile.pos()); //essendo modale chiama già processEvents (vedi documentazione).
+            //chiamare la processEvents allunga di ~10 secondi l'apertura del file grande
+
+
+            /*if (progress.wasCanceled()) { pulsante annulla tolto
+                inputFile.close();
+                clients.clear();
+                return clients;
+            }*/
             ++c;
         }
         inputFile.close();
@@ -67,6 +87,7 @@ std::map<QString, consumptionSet> readFile(QString fileName) {
         msg.exec();
     }
     return clients;
+
 }
 
 QDateTime UTCtoDayLightSavTime(QDateTime date, int UTC_offset /*fuso orario invernale default +1*/) {

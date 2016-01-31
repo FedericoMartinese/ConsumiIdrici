@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QFileDialog>
-
+#include <QProgressDialog>
 
 #include <QMessageBox>
 #define SYEAR "Annuale"
@@ -72,7 +72,7 @@ void MainWindow::on_openFileDialog_clicked()
     QString fileName = QFileDialog::getOpenFileName(this, "Open consumptions file", QDir::current().absolutePath(), "CSV Files (*.csv)"); //seleziona un file .csv da cui leggere i dati
 
     if (!fileName.isEmpty()) { //se il file è stato selezionato
-        m_data = readFile(fileName);
+        m_data = readFile(fileName, this);
 
         //debug test
         /*
@@ -109,8 +109,7 @@ void MainWindow::on_openFileDialog_clicked()
         m3.exec();*/
 
         if (!m_data.empty()) {
-            QFileInfo fileInfo(fileName);
-            this->ui->loadedFileName->setText(fileInfo.fileName());
+            this->ui->loadedFileName->setText(QFileInfo(fileName).fileName());
             hasReadFile = true;
         } else {
             this->ui->loadedFileName->setText("Apertura fallita");
@@ -314,7 +313,17 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 void MainWindow::updateAnalysisTab() {
     qint64 temp = QDateTime::currentDateTime().toMSecsSinceEpoch();
 
-    //PERDITE NOTTURNE ~20 SECONDI PER FILE GRANDE. 1,1 SECONDI FILE PICCOLO
+    QProgressDialog progress(this);
+    progress.setLabelText("Analisi consumi...");
+    progress.setRange(0, m_data.size()*3); //quando i due cicli verranno uniti va sistemato il range
+    progress.setModal(true);
+    progress.setCancelButton(0);
+    progress.show();
+    qApp->processEvents();
+
+    size_t i = 0;
+
+    //PERDITE NOTTURNE ~20 SECONDI PER FILE GRANDE. 1,1 SECONDI FILE PICCOLO (DEBUG)
     if (ui->leaksTable->model() == NULL) {
         std::vector<consumption> leaks;
 
@@ -328,6 +337,8 @@ void MainWindow::updateAnalysisTab() {
 
                 //qDebug() << client.first << " - " << nights.size();
             }
+
+            progress.setValue(++i);
         }
         clientMap.push_back(leaks.size()); //fine dell'ultimo cliente
 
@@ -357,6 +368,7 @@ void MainWindow::updateAnalysisTab() {
                 ++i;
             }
 
+            progress.setValue(++i);
         }
         avg /= i; //non m_data.size() perché solo utenti con consumo reale (>=0)
 
@@ -370,6 +382,8 @@ void MainWindow::updateAnalysisTab() {
             if (c >= (2*avg)) {
                 devusers.push_back({client.first, QString::number(c/days, 'f', 3), QString::number(c/weeks, 'f', 3), QString::number(c/months, 'f', 3)});
             }
+
+            progress.setValue(++i);
         }
 
         avgModel.load(devusers);
