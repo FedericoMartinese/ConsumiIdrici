@@ -2,15 +2,13 @@
 
 DOCUMENTAZIONE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-- mettere solo valori definiti nella tab interrogazione
-
 - clustering nell'analisi dei consumi
 
 - controllare l'organizzazine in classi delle funzioni (in particolare datautility)
 
 - ricontrollare TUTTI i commenti, tradurli in inglese (?) e metterli dove servono
 
-- considerazioni su settimane/mesi compresi parzialmente (tab interrogazione)
+- considerazioni su settimane/mesi compresi parzialmente (tab interrogazione). controllare i valori, spiegarlo bene nella documentazione
 
 - controllare tick verticali in vari casi
 

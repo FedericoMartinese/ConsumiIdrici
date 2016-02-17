@@ -258,30 +258,50 @@ double MainWindow::avgDaysInMonth(int firstM, int lastM) {
 void MainWindow::updateQueryTab() {
     if (!hasReadFile || m_data.empty()) return;
 
-    QDate firstDate = ui->firstDate->date(), lastDate = ui->lastDate->date();
+    QDateTime firstDate(ui->firstDate->date(), QTime(0,0), Qt::TimeSpec::UTC);
+    QDateTime lastDate(ui->lastDate->date(), QTime(23,59,59), Qt::TimeSpec::UTC);
 
 
     double periodCons = 0;
 
     if (m_data.find(ui->clientID_query->text()) != m_data.end()) {
-        periodCons = m_data[ui->clientID_query->text()].getPeriodConsumption(QDateTime(firstDate, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(lastDate, QTime(23,59), Qt::TimeSpec::UTC));
-        double msecDiff = ui->lastDate->dateTime().toMSecsSinceEpoch() - ui->firstDate->dateTime().toMSecsSinceEpoch();
+        periodCons = m_data[ui->clientID_query->text()].getPeriodConsumption(firstDate, lastDate);
+        double msecDiff = lastDate.toMSecsSinceEpoch() - firstDate.toMSecsSinceEpoch();
+        unsigned daysDiff = lastDate.date().dayOfYear() - firstDate.date().dayOfYear() + 1;
+
         ui->periodTotalCons->setText(QString::number(periodCons));
-        ui->hourConsumption->setText(QString::number(periodCons / msecDiff *1000 * 60 * 60));
-        ui->dayConsumption->setText(QString::number(periodCons / msecDiff * 1000 * 60 * 60 * 24));
+        ui->hourConsumption->setText(QString::number(periodCons / (daysDiff * 24)));
 
-        //oppure si calcola il consumo giornaliero con la funzione getPeriodConsumption per ogni giorno e si mette in un vector
-        //poi si somma da lunedì a domenica in un altro vector e se ne fa la media
-        //stessa cosa sullo stesso vector dall'1 al 28/30/31 (QDate::dayofmonth() )
+        qDebug() << "Con i msec: " << (periodCons / msecDiff *1000 * 60 * 60);
+        qDebug() << "Con le ore: " << periodCons / (daysDiff * 24);
 
-        if (lastDate.dayOfYear() - firstDate.dayOfYear() >= 6) //dalle 00:00 di lunedì alle 23:59 di domenica sono 6 giorni interi, ma ha senso calcolare il consumo settimanale
+        ui->dayConsumption->setText(QString::number(periodCons / daysDiff));
+
+        qDebug() << "Con i msec: " << (periodCons / msecDiff * 1000 * 60 * 60 * 24);
+        qDebug() << "Con i giorni: " << periodCons / daysDiff;
+
+        //le settimane possono cadere anche solo parzialmente nel periodo indicato
+        ui->weekConsumption->setText(daysDiff >= 7 ? QString::number(periodCons / (lastDate.date().weekNumber() - firstDate.date().weekNumber() + 1)) : ND);
+        /* vecchio metodo
+        if (lastDate.date().dayOfYear() - firstDate.date().dayOfYear() >= 6) //dalle 00:00 di lunedì alle 23:59 di domenica sono 6 giorni interi, ma ha senso calcolare il consumo settimanale
             ui->weekConsumption->setText(QString::number(periodCons / msecDiff * 1000 * 60 * 60 * 24 * 7)); //settimane comprese parzialmente non deviano la media ma contribuiscono in base a quanti giorni sono considerati
         else
             ui->weekConsumption->setText(ND);
-        if (lastDate.month() - firstDate.month() > 1 || (firstDate.day() == 1 && lastDate.day() == lastDate.daysInMonth()))
-            ui->monthConsumption->setText(QString::number(periodCons / msecDiff * 1000 * 60 * 60 * 24 * avgDaysInMonth(firstDate.month(), lastDate.month())));
+        */
+        int monthsDiff = lastDate.date().month() - firstDate.date().month() + 1;
+        if (monthsDiff > 1 || //almeno un mese completo
+            (firstDate.date().day() == 1 && lastDate.date().day() == lastDate.date().daysInMonth())) { //un mese esatto (dall'1 all'ultimo giorno del mese
+            ui->monthConsumption->setText(QString::number(periodCons / monthsDiff));
+        } else {
+            ui->monthConsumption->setText(ND);
+        }
+
+        /* vecchio metodo
+        if (lastDate.date().month() - firstDate.date().month() > 1 || (firstDate.date().day() == 1 && lastDate.date().day() == lastDate.date().daysInMonth()))
+            ui->monthConsumption->setText(QString::number(periodCons / msecDiff * 1000 * 60 * 60 * 24 * avgDaysInMonth(firstDate.date().month(), lastDate.date().month())));
         else
             ui->monthConsumption->setText(ND);
+        */
     }
 
     if (m_data.find(ui->clientID_query->text()) == m_data.end() || periodCons < 0) {
