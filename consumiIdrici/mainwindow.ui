@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>897</width>
-    <height>611</height>
+    <height>641</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,11 +36,11 @@
       <x>30</x>
       <y>60</y>
       <width>841</width>
-      <height>531</height>
+      <height>571</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="viewTab">
      <attribute name="title">
@@ -65,7 +65,7 @@
         <x>10</x>
         <y>50</y>
         <width>801</width>
-        <height>451</height>
+        <height>481</height>
        </rect>
       </property>
       <property name="title">
@@ -141,6 +141,102 @@
          <width>761</width>
          <height>361</height>
         </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="minText_label">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>450</y>
+         <width>46</width>
+         <height>13</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Min:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="minValue_label">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>450</y>
+         <width>46</width>
+         <height>13</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="midValue_label">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>450</y>
+         <width>46</width>
+         <height>13</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="midText_label">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>450</y>
+         <width>46</width>
+         <height>13</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Medio:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="maxTest_label">
+       <property name="geometry">
+        <rect>
+         <x>370</x>
+         <y>450</y>
+         <width>46</width>
+         <height>13</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Max:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="maxValue_label">
+       <property name="geometry">
+        <rect>
+         <x>420</x>
+         <y>450</y>
+         <width>46</width>
+         <height>13</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0</string>
        </property>
       </widget>
      </widget>

@@ -53,6 +53,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->thresholdSpinbox->setMinimum(0);
     ui->thresholdSpinbox->setMaximum(99.99);
     ui->thresholdSpinbox->setValue(0.2);
+
+    updatePlotValues(false);
 }
 
 MainWindow::~MainWindow()
@@ -175,6 +177,7 @@ void MainWindow::updateViewTab() {
         ui->totalConsumption->setText("n.d");
         ui->lastUpdated->setText("");
         if (plot != nullptr) plot->clear();
+        updatePlotValues(false);
     } else {
         consumption totalCons = m_data[ui->clientID_view->text()].getLast();
         ui->totalConsumption->setText(QString::number(totalCons.value()) + " m^3");
@@ -223,10 +226,13 @@ void MainWindow::updateViewTab() {
         }
 
         if (plot != nullptr) {
-            if (hdata.empty())
+            if (hdata.empty()) {
                 plot->clear();
-            else
+                updatePlotValues(false);
+            } else {
                 plot->draw(mode, hdata);
+                updatePlotValues(true);
+            }
         }
     }
 
@@ -416,4 +422,18 @@ void MainWindow::on_thresholdSpinbox_editingFinished()
     ui->leaksClient->clear();
     clientMap.clear();
     updateAnalysisTab();
+}
+
+void MainWindow::updatePlotValues(bool visible) {
+    ui->minText_label->setVisible(visible);
+    ui->minValue_label->setVisible(visible);
+    ui->midText_label->setVisible(visible);
+    ui->midValue_label->setVisible(visible);
+    ui->maxTest_label->setVisible(visible);
+    ui->maxValue_label->setVisible(visible);
+    if (visible && plot != nullptr) {
+        ui->minValue_label->setText(QString::number(plot->getMinValue()));
+        ui->midValue_label->setText(QString::number(plot->getMidValue()));
+        ui->maxValue_label->setText(QString::number(plot->getMaxValue()));
+    }
 }

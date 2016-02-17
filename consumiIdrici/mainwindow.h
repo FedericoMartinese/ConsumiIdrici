@@ -53,6 +53,7 @@ private:
     void updateAnalysisTab();
     double avgDaysInMonth(int firstM, int lastM);
     bool hasReadFile = false;
+    void updatePlotValues(bool visible);
 
 };
 

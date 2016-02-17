@@ -1,3 +1,9 @@
+
+
+DOCUMENTAZIONE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+- mettere solo valori definiti nella tab interrogazione
+
 - clustering nell'analisi dei consumi
 
 - controllare l'organizzazine in classi delle funzioni (in particolare datautility)
@@ -65,3 +71,7 @@ http://stackoverflow.com/questions/810839/throwing-exceptions-from-constructors
 - controllare grafico utente 191 (assi da 0 a 0)
 
 - controllare i controlli sull'insert nella consSet (impossibile che metà dei dati siano sbagliati - vedi benchmark.txt)
+
+- scaricare ultima versione dei csv da beep e fare un winmerge per vedere se è cambiato qualcosa
+
+- usare sempre nullptr

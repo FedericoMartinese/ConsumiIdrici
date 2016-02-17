@@ -1,6 +1,6 @@
 #include "plot.h"
 
-Plot::Plot(QCustomPlot* plot): m_plot(plot)
+Plot::Plot(QCustomPlot* plot): m_plot(plot), minValue(0), midValue(0), maxValue(0)
 {
     if (plot == nullptr)
         throw "Null pointer";
@@ -42,7 +42,7 @@ void Plot::draw(plotMode mode, std::vector<double> data, bool showLegend, bool s
     QVector<QString> labels;
 
     int xNum = data.size(), i;
-    double minValue = data[0], medValue = data[0], maxValue = data[0];
+    minValue = data[0], midValue = data[0], maxValue = data[0];
     for (i = 1; i<=xNum; ++i) {
         ticks << i;
         switch (mode) {
@@ -57,10 +57,10 @@ void Plot::draw(plotMode mode, std::vector<double> data, bool showLegend, bool s
                 minValue = data[i];
             else if (data[i] > maxValue)
                 maxValue = data[i];
-            medValue += data[i];
+            midValue += data[i];
         }
     }
-    medValue/=i;
+    midValue/=i;
 
     m_plot->xAxis->setAutoTicks(false);
     m_plot->xAxis->setAutoTickLabels(false);
@@ -142,8 +142,8 @@ void Plot::draw(plotMode mode, std::vector<double> data, bool showLegend, bool s
             min = true;
             tickNames.push_back("Min");
         }
-        else if (medValue < tickValue && !med) {
-            tickValues.push_back(medValue);
+        else if (midValue < tickValue && !med) {
+            tickValues.push_back(midValue);
             med = true;
             tickNames.push_back("Medio");
         } else {
@@ -172,4 +172,17 @@ void Plot::clear() {
     m_plot->yAxis->setVisible(false);
     m_plot->replot();
 }
+
+double Plot::getMinValue() const {
+    return minValue;
+}
+
+double Plot::getMidValue() const {
+    return midValue;
+}
+
+double Plot::getMaxValue() const {
+    return maxValue;
+}
+
 
