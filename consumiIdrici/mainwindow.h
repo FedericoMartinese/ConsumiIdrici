@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <datautility.h>
+#include <inputfile.h>
 #include <plot.h>
 #include <leakstablemodel.h>
 #include <avgtablemodel.h>

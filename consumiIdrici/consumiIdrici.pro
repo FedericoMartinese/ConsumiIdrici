@@ -14,23 +14,23 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    datautility.cpp \
     qcustomplot.cpp \
     consumptionset.cpp \
     consumption.cpp \
     leakstablemodel.cpp \
     plot.cpp \
-    avgtablemodel.cpp
+    avgtablemodel.cpp \
+    inputfile.cpp
 
 HEADERS  += mainwindow.h \
-    datautility.h \
     qcustomplot.h \
-    plotutility.h \
     consumptionset.h \
     consumption.h \
     leakstablemodel.h \
     plot.h \
-    avgtablemodel.h
+    avgtablemodel.h \
+    inputfile.h \
+    dates.h
 
 FORMS    += mainwindow.ui
 CONFIG += C++11

@@ -1,12 +1,15 @@
 
 
 DOCUMENTAZIONE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+- nei test mettere screen di marzo (giorni) dell'utente 2 per far vedere la differenza tra la prima metà del mese in cui si hanno dati regolari e la seconda metà in cui mancano.
+controllare nel csv che sia effettivamente così
+
 
 - clustering nell'analisi dei consumi
 
 - controllare l'organizzazine in classi delle funzioni (in particolare datautility)
 
-- ricontrollare TUTTI i commenti, tradurli in inglese (?) e metterli dove servono
+- ricontrollare TUTTI i commenti e metterli dove servono
 
 - considerazioni su settimane/mesi compresi parzialmente (tab interrogazione). controllare i valori, spiegarlo bene nella documentazione
 
@@ -14,11 +17,13 @@ DOCUMENTAZIONE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 - controllare valori dei grafici
 
+- togliere include inutili
+
 - aggiungere un panel con i valori massimi, minimi e medi
 
 - maschera con barra di caricamento per l'apertura del file
 
-- sostituire tutti i qdatetime.secsto con i < > e verificarne il funzionamento
+- sostituire tutti i qdatetime.secsto con i < > e verificarne il funzionamento (ci sono nella utctodaylightsavtime)
  
  - controllare il calcolo del caso più difficile della getconsatdatesorted (modificando file magari) (quello della proporzione)
  

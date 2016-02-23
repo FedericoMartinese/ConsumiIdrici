@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QProgressDialog>
-
+#include <dates.h>
 #include <QMessageBox>
 #define SYEAR "Annuale"
 #define SMONTH_D "Mensile (giorni)"
@@ -74,7 +74,7 @@ void MainWindow::on_openFileDialog_clicked()
     QString fileName = QFileDialog::getOpenFileName(this, "Open consumptions file", QDir::current().absolutePath(), "CSV Files (*.csv)"); //seleziona un file .csv da cui leggere i dati
 
     if (!fileName.isEmpty()) { //se il file è stato selezionato
-        m_data = readFile(fileName, this);
+        m_data = InputFile(fileName).read(this);
 
         //debug test
         /*

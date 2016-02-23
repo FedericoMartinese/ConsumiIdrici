@@ -1,23 +1,21 @@
-#include "datautility.h"
+#include "inputfile.h"
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
-
-//ONLY FOR DEBUG AND TEST
-#define TESTFILENAME "consumption_some.csv"
-#define FILENAME "consumption_all.csv"
-//
-
 #include <QProgressDialog>
 #include <QFileInfo>
 #include <QApplication>
+#include <dates.h>
+InputFile::InputFile(QString fileName) : fileName(fileName)
+{
+}
 
-std::map<QString, consumptionSet> readFile(QString fileName, QWidget *parent) {
+std::map<QString, consumptionSet> InputFile::read(QWidget *parent) const {
     //legge il file di input e restituisce un vector di record
 
     std::map<QString, consumptionSet> clients;
 
-    QFile inputFile(fileName);  
+    QFile inputFile(fileName);
     if (inputFile.open(QIODevice::ReadOnly)) {
 
         QProgressDialog progress(parent);
@@ -43,7 +41,7 @@ std::map<QString, consumptionSet> readFile(QString fileName, QWidget *parent) {
                     clients.clear();
                     return clients;
                 }
-            }          
+            }
 
             //converte la stringa in formato datetime. sono presenti " all'inizio e alla fine
             //toUTC è necessario per gestire ora legale/solare (ad esempio 29-03-2015 02:00)
@@ -90,20 +88,12 @@ std::map<QString, consumptionSet> readFile(QString fileName, QWidget *parent) {
 
 }
 
-QDateTime UTCtoDayLightSavTime(QDateTime date, int UTC_offset /*fuso orario invernale default +1*/) {
+QDateTime InputFile::UTCtoDayLightSavTime(QDateTime date, int UTC_offset /*fuso orario invernale default +1*/) const {
     if (date.secsTo(dstStartDay) > 0 || date.secsTo(dstEndDay) < 0)
         return date.addSecs(UTC_offset * 3600);
     else
         return date.addSecs( (UTC_offset + 1) * 3600);
 }
 
-/* cercare di utilizzarla per dichiarare le const nel .h
-QDate getLastSunday(int month, int year) {
-    QDate sunday(year, month, QDate(year,month,1).daysInMonth());
-    while (sunday.dayOfWeek() != 7) {
-        sunday.addDays(-1);
-    }
-    return sunday;
-}*/
 
 
