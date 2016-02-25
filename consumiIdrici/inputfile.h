@@ -2,9 +2,7 @@
 #define INPUTFILE_H
 
 #include <QDateTime>
-#include <set>
 #include <consumptionset.h>
-#include <consumption.h>
 
 class InputFile
 {
@@ -14,7 +12,7 @@ private:
 
 public:
     InputFile(QString fileName);
-    std::map<QString, consumptionSet> read(QWidget *parent) const;
+    std::map<QString, ConsumptionSet> read(QWidget *parent) const;
 };
 
 

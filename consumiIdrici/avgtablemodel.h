@@ -3,14 +3,14 @@
 
 #include <QAbstractTableModel>
 
-class avgTableModel : public QAbstractTableModel
+class AvgTableModel : public QAbstractTableModel
 {
     Q_OBJECT
 private:
     std::vector<std::vector<QString>> m_cons;
 public:
-    avgTableModel(QObject *parent, std::vector<std::vector<QString>> cons);
-    avgTableModel(QObject *parent);
+    AvgTableModel(QObject *parent, std::vector<std::vector<QString>> cons);
+    AvgTableModel(QObject *parent);
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;

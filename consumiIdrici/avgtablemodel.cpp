@@ -1,26 +1,26 @@
 #include "avgtablemodel.h"
 
-avgTableModel::avgTableModel(QObject *parent, std::vector<std::vector<QString> > cons) :
+AvgTableModel::AvgTableModel(QObject *parent, std::vector<std::vector<QString> > cons) :
     QAbstractTableModel(parent), m_cons(cons)
 {
 }
 
 
-avgTableModel::avgTableModel(QObject *parent) : QAbstractTableModel(parent)
+AvgTableModel::AvgTableModel(QObject *parent) : QAbstractTableModel(parent)
 {
 }
 
-int avgTableModel::rowCount(const QModelIndex & /*parent*/) const
+int AvgTableModel::rowCount(const QModelIndex & /*parent*/) const
 {
    return m_cons.size();
 }
 
-int avgTableModel::columnCount(const QModelIndex & /*parent*/) const
+int AvgTableModel::columnCount(const QModelIndex & /*parent*/) const
 {
     return 4;
 }
 
-QVariant avgTableModel::data(const QModelIndex &index, int role) const
+QVariant AvgTableModel::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole)
     {
@@ -30,7 +30,7 @@ QVariant avgTableModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant avgTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant AvgTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role == Qt::DisplayRole)
     {
@@ -46,6 +46,6 @@ QVariant avgTableModel::headerData(int section, Qt::Orientation orientation, int
     return QVariant();
 }
 
-void avgTableModel::load(const std::vector<std::vector<QString>> &cons) {
+void AvgTableModel::load(const std::vector<std::vector<QString>> &cons) {
     m_cons = cons;
 }

@@ -1,21 +1,20 @@
 #ifndef CLIENTCONSUMPTIONS_H
 #define CLIENTCONSUMPTIONS_H
 
-#include <vector>
 #include <consumption.h>
 #include <set>
 
 //std::set wrapper with extended functions
 
-class consumptionSet
+class ConsumptionSet
 {
 private:
-    std::set<consumption> m_cons;
+    std::set<Consumption> m_cons;
 
 public:
-    consumptionSet();
+    ConsumptionSet();
 
-    bool insert(consumption cons);
+    bool insert(Consumption cons);
 
     //std::set<consumption> cons() const;
     //bool isEmpty() const;
@@ -26,15 +25,11 @@ public:
         MONTH
     };
 
-    consumption getLast() const;
+    Consumption getLast() const;
     double getPeriodConsumption(QDateTime firstDate, QDateTime lastDate) const;
     double getConsAtDate(QDateTime date) const;
     std::vector<double> getHistogramData(QDateTime begin, QDateTime end, histogramStep step) const;
-    std::vector<consumption> getNightLeaks(double threshold) const;
-
-    //get valore medio per ...
-
-
+    std::vector<Consumption> getNightLeaks(double threshold) const;
 };
 
 #endif // CLIENTCONSUMPTIONS_H

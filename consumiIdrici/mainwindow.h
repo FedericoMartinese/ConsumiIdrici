@@ -20,9 +20,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_openFileDialog_clicked();
-
-    void on_histogramModeCombo_currentIndexChanged(int index);
+    void on_openFileDialog_clicked();    
 
     void on_clientID_view_editingFinished();
 
@@ -32,7 +30,9 @@ private slots:
 
     void on_lastDate_dateChanged(const QDate &date);
 
-    void on_histogramDate_dateChanged(const QDate &date);
+    void on_histogramDate_dateChanged();
+
+    void on_histogramModeCombo_currentIndexChanged(int index);
 
     void on_tabWidget_currentChanged(int index);
 
@@ -42,17 +42,16 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    std::map<QString, consumptionSet> m_data;
-    leaksTableModel leaksModel;
-    avgTableModel avgModel;
+    std::map<QString, ConsumptionSet> m_data;
+    LeaksTableModel leaksModel;
+    AvgTableModel avgModel;
     std::vector<int> clientMap;
     Plot* plot;
+    bool hasReadFile = false;
 
     void updateViewTab();
     void updateQueryTab();
     void updateAnalysisTab();
-    double avgDaysInMonth(int firstM, int lastM);
-    bool hasReadFile = false;
     void updatePlotValues(bool visible);
 
 };

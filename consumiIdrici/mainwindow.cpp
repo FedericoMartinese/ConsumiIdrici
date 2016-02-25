@@ -3,7 +3,6 @@
 #include <QFileDialog>
 #include <QProgressDialog>
 #include <dates.h>
-#include <QMessageBox>
 #define SYEAR "Annuale"
 #define SMONTH_D "Mensile (giorni)"
 #define SMONTH_W "Mensile (settimane)"
@@ -74,41 +73,7 @@ void MainWindow::on_openFileDialog_clicked()
     QString fileName = QFileDialog::getOpenFileName(this, "Open consumptions file", QDir::current().absolutePath(), "CSV Files (*.csv)"); //seleziona un file .csv da cui leggere i dati
 
     if (!fileName.isEmpty()) { //se il file è stato selezionato
-        m_data = InputFile(fileName).read(this);
-
-        //debug test
-        /*
-        for (int i=0; i<6;++i) {
-        QString a1 = m_data->at(i).date.toString("yyyy-MM-dd HH:mm:ss");
-        QMessageBox m1(QMessageBox::Critical, "date", a1, QMessageBox::Ok);
-        m1.exec();
-        }
-
-        for (int i=12364; i<12364+6;++i) {
-        QString a1 = m_data->at(i).date.toString("yyyy-MM-dd HH:mm:ss");
-        QString a2 = QString::number(m_data->at(i).value);
-        QMessageBox m1(QMessageBox::Critical, "date", a1, QMessageBox::Ok);
-        QMessageBox m2(QMessageBox::Critical, "value", a2, QMessageBox::Ok);
-        m1.exec();
-        m2.exec();
-        }
-
-        for (int i=29879; i<29879+6;++i) {
-        QString a1 = m_data->at(i).date.toString("yyyy-MM-dd HH:mm:ss");
-        QString a2 = QString::number(m_data->at(i).value);
-        QMessageBox m1(QMessageBox::Critical, "date", a1, QMessageBox::Ok);
-        QMessageBox m2(QMessageBox::Critical, "value", a2, QMessageBox::Ok);
-        m1.exec();
-        m2.exec();
-        }
-
-        QString a2 = QString::number(m_data->at(4).value);
-        QMessageBox m2(QMessageBox::Critical, "value", a2, QMessageBox::Ok);
-        m2.exec();
-
-        QString a3 = m_data->at(4).clientID;
-        QMessageBox m3(QMessageBox::Critical, "clientID", a3, QMessageBox::Ok);
-        m3.exec();*/
+        m_data = InputFile(fileName).read(this);        
 
         if (!m_data.empty()) {
             this->ui->loadedFileName->setText(QFileInfo(fileName).fileName());
@@ -122,10 +87,10 @@ void MainWindow::on_openFileDialog_clicked()
 
     this->ui->tabWidget->setEnabled(!m_data.empty());
 
-    ui->leaksTable->setModel(NULL); //pulisce la tabella perdite per prepararla al nuovo file
+    ui->leaksTable->setModel(nullptr); //pulisce la tabella perdite per prepararla al nuovo file
     ui->leaksClient->clear();
     clientMap.clear();
-    ui->avgTable->setModel(NULL);
+    ui->avgTable->setModel(nullptr);
     ui->clientID_query->clear();
     ui->clientID_view->clear();
     updateViewTab();
@@ -134,6 +99,37 @@ void MainWindow::on_openFileDialog_clicked()
         updateAnalysisTab();
 
 
+}
+
+void MainWindow::on_clientID_view_editingFinished()
+{
+    ui->clientID_query->setText(ui->clientID_view->text());
+    updateViewTab();
+    updateQueryTab();
+}
+
+void MainWindow::on_clientID_query_editingFinished()
+{
+    ui->clientID_view->setText(ui->clientID_query->text());
+    updateViewTab();
+    updateQueryTab();
+}
+
+void MainWindow::on_firstDate_dateChanged(const QDate &date)
+{
+    ui->lastDate->setMinimumDate(date);
+    updateQueryTab();
+}
+
+void MainWindow::on_lastDate_dateChanged(const QDate &date)
+{
+    ui->firstDate->setMaximumDate(date);
+    updateQueryTab();
+}
+
+void MainWindow::on_histogramDate_dateChanged()
+{
+    updateViewTab();
 }
 
 void MainWindow::on_histogramModeCombo_currentIndexChanged(int index)
@@ -155,19 +151,31 @@ void MainWindow::on_histogramModeCombo_currentIndexChanged(int index)
     updateViewTab();
 }
 
-
-void MainWindow::on_clientID_view_editingFinished()
+void MainWindow::on_tabWidget_currentChanged(int index)
 {
-    ui->clientID_query->setText(ui->clientID_view->text());
-    updateViewTab();
-    updateQueryTab();
+    if (index == 2)
+        updateAnalysisTab();
 }
 
-void MainWindow::on_clientID_query_editingFinished()
+void MainWindow::on_leaksClient_currentIndexChanged(int index)
 {
-    ui->clientID_view->setText(ui->clientID_query->text());
-    updateViewTab();
-    updateQueryTab();
+    if (ui->leaksTable->model()!=nullptr) {
+        for (int i=0; i<ui->leaksTable->model()->rowCount(); ++i) {
+            if (i<clientMap[index] || i>=clientMap[index+1])
+                ui->leaksTable->hideRow(i);
+            else
+                ui->leaksTable->showRow(i);
+        }
+    }
+
+}
+
+void MainWindow::on_thresholdSpinbox_editingFinished()
+{
+    ui->leaksTable->setModel(nullptr); //pulisce la tabella perdite per prepararla al nuovo file
+    ui->leaksClient->clear();
+    clientMap.clear();
+    updateAnalysisTab();
 }
 
 void MainWindow::updateViewTab() {
@@ -179,30 +187,30 @@ void MainWindow::updateViewTab() {
         if (plot != nullptr) plot->clear();
         updatePlotValues(false);
     } else {
-        consumption totalCons = m_data[ui->clientID_view->text()].getLast();
+        Consumption totalCons = m_data[ui->clientID_view->text()].getLast();
         ui->totalConsumption->setText(QString::number(totalCons.value()) + " m^3");
         ui->lastUpdated->setText("aggiornato al " + totalCons.date().toString("dd/MM/yyyy hh:mm:ss"));
 
 
         Plot::plotMode mode = (Plot::plotMode)ui->histogramModeCombo->currentIndex();
-        consumptionSet::histogramStep step;
+        ConsumptionSet::histogramStep step;
         QDate first, last;
         switch (mode) {
         case Plot::YEAR:
             first = minDate;
             last = maxDate;
-            step = consumptionSet::MONTH;
+            step = ConsumptionSet::MONTH;
             break;
         case Plot::MONTH_BY_DAYS:
         case Plot::MONTH_BY_WEEKS:
             first.setDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), 1);
             last.setDate(ui->histogramDate->date().year(), ui->histogramDate->date().month(), ui->histogramDate->date().daysInMonth());
-            step = consumptionSet::DAY;
+            step = ConsumptionSet::DAY;
             break;
         case Plot::DAY:
             first = ui->histogramDate->date();
             last = ui->histogramDate->date();
-            step = consumptionSet::HOUR;
+            step = ConsumptionSet::HOUR;
             break;
         default:
             if (plot != nullptr) plot->clear();
@@ -225,6 +233,8 @@ void MainWindow::updateViewTab() {
             hdata = temp;
         }
 
+
+
         if (plot != nullptr) {
             if (hdata.empty()) {
                 plot->clear();
@@ -238,23 +248,6 @@ void MainWindow::updateViewTab() {
 
 }
 
-
-double MainWindow::avgDaysInMonth(int firstM, int lastM) {
-    double avg = 0;
-    for (int i = firstM; i<=lastM; ++i)
-        switch (i) {
-        case 2: avg += 28; break; //si considera solo il 2015
-        case 11:
-        case 4:
-        case 6:
-        case 9: avg += 30; break;
-        default: avg += 31;
-        }
-    return avg / (lastM - firstM + 1) ;
-}
-
-
-
 void MainWindow::updateQueryTab() {
     if (!hasReadFile || m_data.empty()) return;
 
@@ -266,42 +259,24 @@ void MainWindow::updateQueryTab() {
 
     if (m_data.find(ui->clientID_query->text()) != m_data.end()) {
         periodCons = m_data[ui->clientID_query->text()].getPeriodConsumption(firstDate, lastDate);
-        double msecDiff = lastDate.toMSecsSinceEpoch() - firstDate.toMSecsSinceEpoch();
-        unsigned daysDiff = lastDate.date().dayOfYear() - firstDate.date().dayOfYear() + 1;
+
+        int daysDiff = lastDate.date().dayOfYear() - firstDate.date().dayOfYear() + 1;
 
         ui->periodTotalCons->setText(QString::number(periodCons));
         ui->hourConsumption->setText(QString::number(periodCons / (daysDiff * 24)));
-
-        qDebug() << "Con i msec: " << (periodCons / msecDiff *1000 * 60 * 60);
-        qDebug() << "Con le ore: " << periodCons / (daysDiff * 24);
-
         ui->dayConsumption->setText(QString::number(periodCons / daysDiff));
-
-        qDebug() << "Con i msec: " << (periodCons / msecDiff * 1000 * 60 * 60 * 24);
-        qDebug() << "Con i giorni: " << periodCons / daysDiff;
 
         //le settimane possono cadere anche solo parzialmente nel periodo indicato
         ui->weekConsumption->setText(daysDiff >= 7 ? QString::number(periodCons / (lastDate.date().weekNumber() - firstDate.date().weekNumber() + 1)) : ND);
-        /* vecchio metodo
-        if (lastDate.date().dayOfYear() - firstDate.date().dayOfYear() >= 6) //dalle 00:00 di lunedì alle 23:59 di domenica sono 6 giorni interi, ma ha senso calcolare il consumo settimanale
-            ui->weekConsumption->setText(QString::number(periodCons / msecDiff * 1000 * 60 * 60 * 24 * 7)); //settimane comprese parzialmente non deviano la media ma contribuiscono in base a quanti giorni sono considerati
-        else
-            ui->weekConsumption->setText(ND);
-        */
+
+        //lo stesso per i mesi
         int monthsDiff = lastDate.date().month() - firstDate.date().month() + 1;
-        if (monthsDiff > 1 || //almeno un mese completo
-            (firstDate.date().day() == 1 && lastDate.date().day() == lastDate.date().daysInMonth())) { //un mese esatto (dall'1 all'ultimo giorno del mese
+        if (monthsDiff > 1 || //almeno un mese completo o
+            (firstDate.date().day() == 1 && lastDate.date().day() == lastDate.date().daysInMonth())) { //un mese esatto (dall'1 all'ultimo giorno del mese)
             ui->monthConsumption->setText(QString::number(periodCons / monthsDiff));
         } else {
             ui->monthConsumption->setText(ND);
         }
-
-        /* vecchio metodo
-        if (lastDate.date().month() - firstDate.date().month() > 1 || (firstDate.date().day() == 1 && lastDate.date().day() == lastDate.date().daysInMonth()))
-            ui->monthConsumption->setText(QString::number(periodCons / msecDiff * 1000 * 60 * 60 * 24 * avgDaysInMonth(firstDate.date().month(), lastDate.date().month())));
-        else
-            ui->monthConsumption->setText(ND);
-        */
     }
 
     if (m_data.find(ui->clientID_query->text()) == m_data.end() || periodCons < 0) {
@@ -313,34 +288,10 @@ void MainWindow::updateQueryTab() {
     }
 }
 
-
-void MainWindow::on_firstDate_dateChanged(const QDate &date)
-{
-    ui->lastDate->setMinimumDate(date);
-    updateQueryTab();
-}
-void MainWindow::on_lastDate_dateChanged(const QDate &date)
-{
-    ui->firstDate->setMaximumDate(date);
-    updateQueryTab();
-}
-
-void MainWindow::on_histogramDate_dateChanged(const QDate &date)
-{
-    updateViewTab();
-}
-
-void MainWindow::on_tabWidget_currentChanged(int index)
-{
-    if (index == 2)
-        updateAnalysisTab();
-}
-
 void MainWindow::updateAnalysisTab() {
-    qint64 temp = QDateTime::currentDateTime().toMSecsSinceEpoch();
-
     QProgressDialog progress(this);
     progress.setLabelText("Analisi consumi...");
+    progress.setWindowTitle("Consumi idrici");
     progress.setRange(0, m_data.size()*3); //quando i due cicli verranno uniti va sistemato il range
     progress.setModal(true);
     progress.setCancelButton(0);
@@ -350,18 +301,17 @@ void MainWindow::updateAnalysisTab() {
     size_t i = 0;
 
     //PERDITE NOTTURNE ~20 SECONDI PER FILE GRANDE. 1,1 SECONDI FILE PICCOLO (DEBUG)
-    if (ui->leaksTable->model() == NULL) {
-        std::vector<consumption> leaks;
+    if (ui->leaksTable->model() == nullptr) {
+        std::vector<Consumption> leaks;
 
         //SPOSTARE COME FUNZIONE MEMBRO DI CLIENTCONSUMPTIONS CHE RESTITUISCE I DUE VECTOR DI CONSUMPTION E CLIENTI ?
-        for (std::pair<const QString, consumptionSet> client : m_data) {
-            std::vector<consumption> nights = client.second.getNightLeaks(ui->thresholdSpinbox->value());
+        for (std::pair<const QString, ConsumptionSet> client : m_data) {
+            std::vector<Consumption> nights = client.second.getNightLeaks(ui->thresholdSpinbox->value());
             if (!nights.empty()) {
                 clientMap.push_back(leaks.size()); //inizio del nuovo cliente, fine del precedente
                 leaks.insert(leaks.end(), nights.begin(), nights.end());
                 ui->leaksClient->addItem(client.first);
 
-                //qDebug() << client.first << " - " << nights.size();
             }
 
             progress.setValue(++i);
@@ -374,20 +324,17 @@ void MainWindow::updateAnalysisTab() {
         if (ui->leaksClient->count() > 0)
             ui->leaksClient->setCurrentIndex(0);
 
-        qDebug() << "Perdite notturne: " << (QDateTime::currentDateTime().toMSecsSinceEpoch() - temp);
     }
 
     //UTENZE DEVIANTI ~0.8 SECONDI PER FILE GRANDE. IRRIVELANTE FILE PICCOLO
-    if (ui->avgTable->model() == NULL) {
+    if (ui->avgTable->model() == nullptr) {
 
 
         //almeno un ciclo si può spostare all'interno di quello sopra
-        temp = QDateTime::currentDateTime().toMSecsSinceEpoch();
-
         QDateTime min(minDate, QTime(0,0), Qt::TimeSpec::UTC), max(maxDate, QTime(23,59,59), Qt::TimeSpec::UTC);
         double avg = 0;
         int i = 0;
-        for (std::pair<const QString, consumptionSet> client : m_data) {
+        for (std::pair<const QString, ConsumptionSet> client : m_data) {
             double c = client.second.getPeriodConsumption(min ,max);
             if (c>=0) {
                 avg += c;
@@ -403,7 +350,7 @@ void MainWindow::updateAnalysisTab() {
         int weeks = max.date().weekNumber() - min.date().weekNumber() + 1;
         int months = max.date().month() - min.date().month() + 1;
 
-        for (std::pair<const QString, consumptionSet> client : m_data) {
+        for (std::pair<const QString, ConsumptionSet> client : m_data) {
             double c = client.second.getPeriodConsumption(min, max);
             if (c >= (2*avg)) {
                 devusers.push_back({client.first, QString::number(c/days, 'f', 3), QString::number(c/weeks, 'f', 3), QString::number(c/months, 'f', 3)});
@@ -419,29 +366,7 @@ void MainWindow::updateAnalysisTab() {
         ui->weeklyAvg->setText(QString::number(avg/weeks, 'f', 3));
         ui->monthlyAvg->setText(QString::number(avg/months, 'f', 3));
 
-        qDebug() << "Utenze devianti: " << devusers.size() << " - " << (QDateTime::currentDateTime().toMSecsSinceEpoch() - temp);
     }
-}
-
-void MainWindow::on_leaksClient_currentIndexChanged(int index)
-{
-    if (ui->leaksTable->model()!=NULL) {
-        for (int i=0; i<ui->leaksTable->model()->rowCount(); ++i) {
-            if (i<clientMap[index] || i>=clientMap[index+1])
-                ui->leaksTable->hideRow(i);
-            else
-                ui->leaksTable->showRow(i);
-        }
-    }
-
-}
-
-void MainWindow::on_thresholdSpinbox_editingFinished()
-{
-    ui->leaksTable->setModel(NULL); //pulisce la tabella perdite per prepararla al nuovo file
-    ui->leaksClient->clear();
-    clientMap.clear();
-    updateAnalysisTab();
 }
 
 void MainWindow::updatePlotValues(bool visible) {

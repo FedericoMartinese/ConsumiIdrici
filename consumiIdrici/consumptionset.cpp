@@ -1,15 +1,15 @@
 #include "consumptionset.h"
 #define MINSECSPRECISION 60 //1 minuto di precisione minima
 
-consumptionSet::consumptionSet() : m_cons()
+ConsumptionSet::ConsumptionSet() : m_cons()
 {
 }
 
-bool consumptionSet::insert(consumption cons) {
+bool ConsumptionSet::insert(Consumption cons) {
 
     if (!m_cons.empty()) { //non vuoto
 
-        std::set<consumption>::iterator next = m_cons.lower_bound(cons);
+        std::set<Consumption>::iterator next = m_cons.lower_bound(cons);
         double prev = next == m_cons.begin() ? 0 : std::prev(next)->value(); //se cons va messo per primo prev = 0
 
         if (prev > cons.value() || (next != m_cons.end() && next->value() > cons.value()))
@@ -27,25 +27,25 @@ bool consumptionSet::isEmpty() const {
     return m_cons.empty();
 }*/
 
-consumption consumptionSet::getLast() const {
+Consumption ConsumptionSet::getLast() const {
     if (m_cons.empty())
-        return consumption();
+        return Consumption();
 
     return *m_cons.rbegin(); //*--m_cons.end();
 }
 
 
-double consumptionSet::getPeriodConsumption(QDateTime firstDate, QDateTime lastDate) const {
+double ConsumptionSet::getPeriodConsumption(QDateTime firstDate, QDateTime lastDate) const {
     if (m_cons.empty()) return 0;
-    if (firstDate > lastDate) std::swap(firstDate, lastDate);
+    //if (firstDate > lastDate) std::swap(firstDate, lastDate);
 
     return getConsAtDate(lastDate) - getConsAtDate(firstDate);
 }
 
-double consumptionSet::getConsAtDate(QDateTime date) const{
+double ConsumptionSet::getConsAtDate(QDateTime date) const{
     if (m_cons.empty()) return 0;
 
-    std::set<consumption>::iterator cons = std::lower_bound(m_cons.begin(), m_cons.end(), consumption(date,0));
+    std::set<Consumption>::iterator cons = std::lower_bound(m_cons.begin(), m_cons.end(), Consumption(date,0));
 
     if (cons == m_cons.end()) //non ci sono registrazioni successive. si suppone che dall'ultima registrazione non ci siano stati consumi ulteriori
         return /*--m_cons.end()*/ m_cons.rbegin()->value(); //il consumo a quella data equivale a quello dell'ultima registrazione
@@ -54,7 +54,7 @@ double consumptionSet::getConsAtDate(QDateTime date) const{
         return cons->value();  //il consimo a quella data equivale a quello della prima registrazione
 
 
-    std::set<consumption>::iterator prev = std::prev(cons);
+    std::set<Consumption>::iterator prev = std::prev(cons);
 
     // se vengono trovate una registrazione precedene e una successiva alla data il consumo previsto al momento richiesto è
     // consumo a una data = (differenza di tempo tra le registrazioni più vicine) * (differenza di consumi tra le registrazioni più vicine) /
@@ -65,7 +65,7 @@ double consumptionSet::getConsAtDate(QDateTime date) const{
 
 }
 
-std::vector<double> consumptionSet::getHistogramData(QDateTime begin, QDateTime end, histogramStep step) const {
+std::vector<double> ConsumptionSet::getHistogramData(QDateTime begin, QDateTime end, histogramStep step) const {
     std::vector<double> hdata;
 
    if (!begin.isValid() || !end.isValid() || begin >= end)
@@ -89,16 +89,16 @@ std::vector<double> consumptionSet::getHistogramData(QDateTime begin, QDateTime 
     return hdata;
 }
 
-std::vector<consumption> consumptionSet::getNightLeaks(double threshold) const {
-    std::vector<consumption> nights;
+std::vector<Consumption> ConsumptionSet::getNightLeaks(double threshold) const {
+    std::vector<Consumption> nights;
    if (m_cons.empty()) return nights;
-   QTime start(0,0), end(5,0);
+   QTime start(0,0), end(5,0); //da specifica
 
    QDate date(m_cons.begin()->date().date());
    while (date <= (--(m_cons.end()))->date().date()) {
-       double p = getPeriodConsumption(QDateTime(date,start), QDateTime(date,end));
+       double p = getPeriodConsumption(QDateTime(date,start, Qt::TimeSpec::UTC), QDateTime(date,end, Qt::TimeSpec::UTC));
        if (p >= threshold) {
-           nights.push_back(consumption(QDateTime(date, QTime(0,0)), p));
+           nights.push_back(Consumption(QDateTime(date, QTime(0,0), Qt::TimeSpec::UTC), p));
        }
 
        date = date.addDays(1);

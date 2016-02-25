@@ -75,8 +75,8 @@ void Plot::draw(plotMode mode, std::vector<double> data, bool showLegend, bool s
     // prepare y axis:
     m_plot->yAxis->setRange(0, maxValue);
     switch (mode) {
-    case YEAR:  m_plot->yAxis->setLabel("Consumo annuale"); break;
-    case MONTH_BY_DAYS: m_plot->yAxis->setLabel("Consumo mensile"); break;
+    case YEAR:  m_plot->yAxis->setLabel("Consumo mensile"); break;
+    case MONTH_BY_DAYS: m_plot->yAxis->setLabel("Consumo giornaliero"); break;
     case MONTH_BY_WEEKS:  m_plot->yAxis->setLabel("Consumo settimanale"); break;
     case DAY:   m_plot->yAxis->setLabel("Consumo orario"); break;
     }
@@ -162,7 +162,6 @@ void Plot::draw(plotMode mode, std::vector<double> data, bool showLegend, bool s
 
 
     m_plot->replot();
-
 }
 
 void Plot::clear() {
