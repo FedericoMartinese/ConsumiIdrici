@@ -10,12 +10,11 @@ cose da dire nella documentazione:
 - il gethistogramdata funziona per step costanti. il month_by_week non ha step costante (andando non ogni 7 giorni ma da lunedì a domenica possono esserci settimane incomplete).
 	viene chiamato con uno step di 1 giorno e il cliente si somma i consumi giornalieri come preferice (fatto metterlo nella documentazione)
 - mettere nella documentazione le prove col set del progetto set_test_myclass (in documenti/qt) ????
-
+- nell'updateanalysistab sono tenuti 3 cicli distinti per semplicitià, perché si riferiscono a due tabelle diverse e perché comunque quello extra non è dispendioso (vedere se dirlo nella documentazione)
 
 da fare:
+- rinominare tutti i client/cliente/clients in user/utente/users
 - aggiungere icona goccia nella mainwindow e nella progressbar
-
-- sistemare update analysis tab
 
 - clustering nell'analisi dei consumi
 
