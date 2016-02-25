@@ -36,7 +36,7 @@ QVariant AvgTableModel::headerData(int section, Qt::Orientation orientation, int
     {
         if (orientation == Qt::Horizontal) {
             switch (section) {
-            case 0: return QString("Cliente");
+            case 0: return QString("Utente");
             case 1: return QString("Giorn.");
             case 2: return QString("Sett.");
             case 3: return QString("Mensile");

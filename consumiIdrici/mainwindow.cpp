@@ -73,7 +73,7 @@ void MainWindow::on_openFileDialog_clicked()
     QString fileName = QFileDialog::getOpenFileName(this, "Open consumptions file", QDir::current().absolutePath(), "CSV Files (*.csv)"); //seleziona un file .csv da cui leggere i dati
 
     if (!fileName.isEmpty()) { //se il file è stato selezionato
-        m_data = InputFile(fileName).read(this);        
+        m_data = InputFile(fileName).read(this);
 
         if (!m_data.empty()) {
             this->ui->loadedFileName->setText(QFileInfo(fileName).fileName());
@@ -88,11 +88,11 @@ void MainWindow::on_openFileDialog_clicked()
     this->ui->tabWidget->setEnabled(!m_data.empty());
 
     ui->leaksTable->setModel(nullptr); //pulisce la tabella perdite per prepararla al nuovo file
-    ui->leaksClient->clear();
-    clientMap.clear();
+    ui->leaksUser->clear();
+    usersMap.clear();
     ui->avgTable->setModel(nullptr);
-    ui->clientID_query->clear();
-    ui->clientID_view->clear();
+    ui->userID_query->clear();
+    ui->userID_view->clear();
     updateViewTab();
     updateQueryTab();
     if (ui->tabWidget->currentIndex() == 2)
@@ -101,16 +101,16 @@ void MainWindow::on_openFileDialog_clicked()
 
 }
 
-void MainWindow::on_clientID_view_editingFinished()
+void MainWindow::on_userID_view_editingFinished()
 {
-    ui->clientID_query->setText(ui->clientID_view->text());
+    ui->userID_query->setText(ui->userID_view->text());
     updateViewTab();
     updateQueryTab();
 }
 
-void MainWindow::on_clientID_query_editingFinished()
+void MainWindow::on_userID_query_editingFinished()
 {
-    ui->clientID_view->setText(ui->clientID_query->text());
+    ui->userID_view->setText(ui->userID_query->text());
     updateViewTab();
     updateQueryTab();
 }
@@ -157,11 +157,11 @@ void MainWindow::on_tabWidget_currentChanged(int index)
         updateAnalysisTab();
 }
 
-void MainWindow::on_leaksClient_currentIndexChanged(int index)
+void MainWindow::on_leaksUser_currentIndexChanged(int index)
 {
     if (ui->leaksTable->model()!=nullptr) {
         for (int i=0; i<ui->leaksTable->model()->rowCount(); ++i) {
-            if (i<clientMap[index] || i>=clientMap[index+1])
+            if (i<usersMap[index] || i>=usersMap[index+1])
                 ui->leaksTable->hideRow(i);
             else
                 ui->leaksTable->showRow(i);
@@ -173,21 +173,21 @@ void MainWindow::on_leaksClient_currentIndexChanged(int index)
 void MainWindow::on_thresholdSpinbox_editingFinished()
 {
     ui->leaksTable->setModel(nullptr); //pulisce la tabella perdite per prepararla al nuovo file
-    ui->leaksClient->clear();
-    clientMap.clear();
+    ui->leaksUser->clear();
+    usersMap.clear();
     updateAnalysisTab();
 }
 
 void MainWindow::updateViewTab() {
     if (!hasReadFile || m_data.empty()) return;
 
-    if (m_data.find(ui->clientID_view->text()) == m_data.end()) { //non trovato quindi vuoto
+    if (m_data.find(ui->userID_view->text()) == m_data.end()) { //non trovato quindi vuoto
         ui->totalConsumption->setText("n.d");
         ui->lastUpdated->setText("");
         if (plot != nullptr) plot->clear();
         updatePlotValues(false);
     } else {
-        Consumption totalCons = m_data[ui->clientID_view->text()].getLast();
+        Consumption totalCons = m_data[ui->userID_view->text()].getLast();
         ui->totalConsumption->setText(QString::number(totalCons.value()) + " m^3");
         ui->lastUpdated->setText("aggiornato al " + totalCons.date().toString("dd/MM/yyyy hh:mm:ss"));
 
@@ -217,7 +217,7 @@ void MainWindow::updateViewTab() {
             return;
         }
 
-        std::vector<double> hdata = m_data[ui->clientID_view->text()].getHistogramData(QDateTime(first, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(last, QTime(23,59), Qt::TimeSpec::UTC), step);
+        std::vector<double> hdata = m_data[ui->userID_view->text()].getHistogramData(QDateTime(first, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(last, QTime(23,59), Qt::TimeSpec::UTC), step);
 
         // somma i consumi da lunedì a domenica per la visualizzazione a settimane
         if (mode == Plot::MONTH_BY_WEEKS) {
@@ -257,8 +257,8 @@ void MainWindow::updateQueryTab() {
 
     double periodCons = 0;
 
-    if (m_data.find(ui->clientID_query->text()) != m_data.end()) {
-        periodCons = m_data[ui->clientID_query->text()].getPeriodConsumption(firstDate, lastDate);
+    if (m_data.find(ui->userID_query->text()) != m_data.end()) {
+        periodCons = m_data[ui->userID_query->text()].getPeriodConsumption(firstDate, lastDate);
 
         int daysDiff = lastDate.date().dayOfYear() - firstDate.date().dayOfYear() + 1;
 
@@ -279,7 +279,7 @@ void MainWindow::updateQueryTab() {
         }
     }
 
-    if (m_data.find(ui->clientID_query->text()) == m_data.end() || periodCons < 0) {
+    if (m_data.find(ui->userID_query->text()) == m_data.end() || periodCons < 0) {
         ui->periodTotalCons->setText("Dati non trovati");
         ui->hourConsumption->setText(ND);
         ui->dayConsumption->setText(ND);
@@ -292,7 +292,7 @@ void MainWindow::updateAnalysisTab() {
     QProgressDialog progress(this);
     progress.setLabelText("Analisi consumi...");
     progress.setWindowTitle("Consumi idrici");
-    progress.setRange(0, m_data.size()*3); //quando i due cicli verranno uniti va sistemato il range
+    progress.setRange(0, m_data.size()*3);
     progress.setModal(true);
     progress.setCancelButton(0);
     progress.show();
@@ -304,38 +304,34 @@ void MainWindow::updateAnalysisTab() {
     if (ui->leaksTable->model() == nullptr) {
         std::vector<Consumption> leaks;
 
-        //SPOSTARE COME FUNZIONE MEMBRO DI CLIENTCONSUMPTIONS CHE RESTITUISCE I DUE VECTOR DI CONSUMPTION E CLIENTI ?
-        for (std::pair<const QString, ConsumptionSet> client : m_data) {
-            std::vector<Consumption> nights = client.second.getNightLeaks(ui->thresholdSpinbox->value());
+        for (std::pair<const QString, ConsumptionSet> user : m_data) {
+            std::vector<Consumption> nights = user.second.getNightLeaks(ui->thresholdSpinbox->value());
             if (!nights.empty()) {
-                clientMap.push_back(leaks.size()); //inizio del nuovo cliente, fine del precedente
-                leaks.insert(leaks.end(), nights.begin(), nights.end());
-                ui->leaksClient->addItem(client.first);
-
+                usersMap.push_back(leaks.size()); //inizio del nuovo utente, fine del precedente
+                leaks.insert(leaks.end(), nights.begin(), nights.end()); //aggiunge in coda il vector
+                ui->leaksUser->addItem(user.first); //aggiunge utente alla combobox
             }
 
             progress.setValue(++i);
         }
-        clientMap.push_back(leaks.size()); //fine dell'ultimo cliente
+        usersMap.push_back(leaks.size()); //fine dell'ultimo utente
 
+        //carica la tabella
         leaksModel.load(leaks);
         ui->leaksTable->setModel(&leaksModel);
 
-        if (ui->leaksClient->count() > 0)
-            ui->leaksClient->setCurrentIndex(0);
+        if (ui->leaksUser->count() > 0)
+            ui->leaksUser->setCurrentIndex(0);
 
     }
 
     //UTENZE DEVIANTI ~0.8 SECONDI PER FILE GRANDE. IRRIVELANTE FILE PICCOLO
     if (ui->avgTable->model() == nullptr) {
-
-
-        //almeno un ciclo si può spostare all'interno di quello sopra
         QDateTime min(minDate, QTime(0,0), Qt::TimeSpec::UTC), max(maxDate, QTime(23,59,59), Qt::TimeSpec::UTC);
         double avg = 0;
         int i = 0;
-        for (std::pair<const QString, ConsumptionSet> client : m_data) {
-            double c = client.second.getPeriodConsumption(min ,max);
+        for (std::pair<const QString, ConsumptionSet> user : m_data) {
+            double c = user.second.getPeriodConsumption(min ,max);
             if (c>=0) {
                 avg += c;
                 ++i;
@@ -350,15 +346,16 @@ void MainWindow::updateAnalysisTab() {
         int weeks = max.date().weekNumber() - min.date().weekNumber() + 1;
         int months = max.date().month() - min.date().month() + 1;
 
-        for (std::pair<const QString, ConsumptionSet> client : m_data) {
-            double c = client.second.getPeriodConsumption(min, max);
+        for (std::pair<const QString, ConsumptionSet> user : m_data) {
+            double c = user.second.getPeriodConsumption(min, max);
             if (c >= (2*avg)) {
-                devusers.push_back({client.first, QString::number(c/days, 'f', 3), QString::number(c/weeks, 'f', 3), QString::number(c/months, 'f', 3)});
+                devusers.push_back({user.first, QString::number(c/days, 'f', 3), QString::number(c/weeks, 'f', 3), QString::number(c/months, 'f', 3)});
             }
 
             progress.setValue(++i);
         }
 
+        //carica tabella
         avgModel.load(devusers);
         ui->avgTable->setModel(&avgModel);
 

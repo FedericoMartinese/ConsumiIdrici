@@ -40,7 +40,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="viewTab">
      <attribute name="title">
@@ -240,7 +240,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QLineEdit" name="clientID_view">
+     <widget class="QLineEdit" name="userID_view">
       <property name="geometry">
        <rect>
         <x>130</x>
@@ -398,7 +398,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QLineEdit" name="clientID_query">
+     <widget class="QLineEdit" name="userID_query">
       <property name="geometry">
        <rect>
         <x>140</x>
@@ -485,7 +485,7 @@
        <string>Utenze con possibili perdite</string>
       </property>
      </widget>
-     <widget class="QComboBox" name="leaksClient">
+     <widget class="QComboBox" name="leaksUser">
       <property name="geometry">
        <rect>
         <x>190</x>

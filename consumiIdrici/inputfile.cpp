@@ -11,7 +11,7 @@ InputFile::InputFile(QString fileName) : fileName(fileName)
 }
 
 std::map<QString, ConsumptionSet> InputFile::read(QWidget *parent) const {
-    std::map<QString, ConsumptionSet> clients;
+    std::map<QString, ConsumptionSet> usersData;
 
     QFile inputFile(fileName);
     if (inputFile.open(QIODevice::ReadOnly)) {
@@ -37,8 +37,8 @@ std::map<QString, ConsumptionSet> InputFile::read(QWidget *parent) const {
                 QMessageBox msg(QMessageBox::Critical, "Consumi idrici", "Errore nella lettura dei dati. Formato dati errati (riga " + QString::number(c) + ")." , QMessageBox::Abort | QMessageBox::Ignore);
                 if (msg.exec() == QMessageBox::Abort) {
                     inputFile.close();
-                    clients.clear();
-                    return clients;
+                    usersData.clear();
+                    return usersData;
                 }
             }*/
 
@@ -51,14 +51,14 @@ std::map<QString, ConsumptionSet> InputFile::read(QWidget *parent) const {
 
                 if (!ok || params[2].length() == 0) throw "Cast failed";
 
-                //aggiunge consumi al cliente (se non è presente il cliente nella mappa lo crea e posiziona in ordine)
-                clients[params[2]].insert(cons);
+                //aggiunge consumi all'utente (se non è presente l'utente nella mappa lo crea e posiziona in ordine)
+                usersData[params[2]].insert(cons);
             } catch (...) {
                 QMessageBox msg(QMessageBox::Critical, "Consumi idrici", "Errore nella lettura dei dati. Dati errati alla riga " + QString::number(c), QMessageBox::Abort | QMessageBox::Ignore);
                 if (msg.exec() == QMessageBox::Abort) {
                     inputFile.close();
-                    clients.clear();
-                    return clients;
+                    usersData.clear();
+                    return usersData;
                 }
             }
 
@@ -68,8 +68,8 @@ std::map<QString, ConsumptionSet> InputFile::read(QWidget *parent) const {
 
             /*if (progress.wasCanceled()) { button annulla tolto
                 inputFile.close();
-                clients.clear();
-                return clients;
+                usersData.clear();
+                return usersData;
             }*/
             ++c;
         }
@@ -79,7 +79,7 @@ std::map<QString, ConsumptionSet> InputFile::read(QWidget *parent) const {
         QMessageBox msg(QMessageBox::Critical, "Consumi idrici", "Errore nell'apertura del file." , QMessageBox::Ok);
         msg.exec();
     }
-    return clients;
+    return usersData;
 
 }
 

@@ -13,9 +13,6 @@ cose da dire nella documentazione:
 - nell'updateanalysistab sono tenuti 3 cicli distinti per semplicitià, perché si riferiscono a due tabelle diverse e perché comunque quello extra non è dispendioso (vedere se dirlo nella documentazione)
 
 da fare:
-- rinominare tutti i client/cliente/clients in user/utente/users
-- aggiungere icona goccia nella mainwindow e nella progressbar
-
 - clustering nell'analisi dei consumi
 
 - controllare il passaggio della std::map dalla funzione read (visto che è grossa c'è un metodo migliore?)

@@ -22,9 +22,9 @@ public:
 private slots:
     void on_openFileDialog_clicked();    
 
-    void on_clientID_view_editingFinished();
+    void on_userID_view_editingFinished();
 
-    void on_clientID_query_editingFinished();
+    void on_userID_query_editingFinished();
 
     void on_firstDate_dateChanged(const QDate &date);
 
@@ -36,7 +36,7 @@ private slots:
 
     void on_tabWidget_currentChanged(int index);
 
-    void on_leaksClient_currentIndexChanged(int index);
+    void on_leaksUser_currentIndexChanged(int index);
 
     void on_thresholdSpinbox_editingFinished();
 
@@ -45,7 +45,7 @@ private:
     std::map<QString, ConsumptionSet> m_data;
     LeaksTableModel leaksModel;
     AvgTableModel avgModel;
-    std::vector<int> clientMap;
+    std::vector<int> usersMap;
     Plot* plot;
     bool hasReadFile = false;
 

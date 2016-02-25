@@ -1,5 +1,5 @@
-#ifndef CLIENTCONSUMPTIONS_H
-#define CLIENTCONSUMPTIONS_H
+#ifndef CONSUMPTIONSET_H
+#define CONSUMPTIONSET_H
 
 #include <consumption.h>
 #include <set>
@@ -32,4 +32,4 @@ public:
     std::vector<Consumption> getNightLeaks(double threshold) const;
 };
 
-#endif // CLIENTCONSUMPTIONS_H
+#endif // CONSUMPTIONSET_H
