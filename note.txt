@@ -13,6 +13,10 @@ cose da dire nella documentazione:
 - nell'updateanalysistab sono tenuti 3 cicli distinti per semplicitià, perché si riferiscono a due tabelle diverse e perché comunque quello extra non è dispendioso (vedere se dirlo nella documentazione)
 - spiegare che per le utenze devianti il periodo di riferimento è tutto l'anno, quindi non ha senso indicarlo e non ha senso dire consumo mensile/settimanale/giornaliero perché sullo stesso periodo sono semplicemente multipli (se un utente ha un consumo giornaliero triplo rispetto alla media, ha anche un consumo mensile/settimanale triplo rispetto alla media mensile/settimanale). nella tabella comunque mostro tutti e tre i consumi
 - spiegare proporzione getConsAtDate
+ questo è un ottimo esempio 
+ "2015-03-19 20:15:00",55.432,11
+"2015-03-22 07:20:00",56.837,11
+infatti il grafico in quei giorni è con tutte le ore uguali perché non ci sono registrazioni in mezzo (far vedere anche la sera del 19 e la mattina del 22)
 - come esempio per i controlli sulla insert mettere questo (utente 16), vedi ore 21
 "2015-05-28 18:00:00",44.736,16
 "2015-05-28 19:00:00",44.739,16
@@ -46,25 +50,17 @@ curiosamente tutti alle 21
 "2015-04-09 09:00:00",20.331,206
 "2015-04-09 04:00:00",38.992,176
 "2015-04-09 10:00:00",20.330,206
+- come casi particolari nella insert mettere l'utente NULL spiegando che vengono memorizzate le registrazioni in ordine (vedi file registrazioni NULL) e quindi ci sono quei picchi alle 14, alle 9 ecc. Non far notare che registrazioni diverse ma alla stessa ora vengono salvate entrambe
+- spiegare benissimo nella documentazione quali valori sono sensati nella seconda tab (in particolare le settimane, ma anche i mesi)
 
 da fare:
 - sistemare valori piccolissimi nel grafico
-
-- sistemare tab interrogazione i valori nd (vedi settimanale) oppure lasciare così e spiegare benissimo nella documentazione
 
 - controllare il passaggio della std::map dalla funzione read (visto che è grossa c'è un metodo migliore?)
 
 - controllare tick verticali in vari casi
 
 - controllare valori dei grafici 
- 
- - controllare giorni cambio ora
- 
- - guardare l'utente NULL il 7 e l'8 luglio
-
-- utilizzare tipo apposito per variabili che contengono size di set/vector (se quei valori vengono memorizzati)  (size_t)
-
-- controllare 21/03/15 dell'utente 11. consumi orari strani (tutti uguali)
 
 - provare a sostituire l'editing finished delle due caselle clientID con un evento più in tempo reale
 

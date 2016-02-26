@@ -337,7 +337,7 @@ void MainWindow::updateAnalysisTab() {
         progress.show();
         qApp->processEvents();
 
-        size_t i = 0;
+        std::size_t i = 0;
         std::vector<Consumption> leaks;
 
         for (std::pair<const QString, ConsumptionSet> user : m_data) {
@@ -370,7 +370,7 @@ void MainWindow::updateAnalysisTab() {
 
         //calcolo consumo medio
         double avg = 0;
-        int i = 0;
+        std::size_t i = 0;
         for (std::pair<const QString, ConsumptionSet> user : m_data) {
             double c = user.second.getPeriodConsumption(min ,max);
             if (c>=0) {

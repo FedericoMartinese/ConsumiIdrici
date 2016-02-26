@@ -41,7 +41,7 @@ void Plot::draw(plotMode mode, std::vector<double> data, bool showLegend, bool s
     QVector<double> ticks;
     QVector<QString> labels;
 
-    int xNum = data.size(), i;
+    std::size_t xNum = data.size(), i;
     minValue = data[0], midValue = data[0], maxValue = data[0];
     for (i = 1; i<=xNum; ++i) {
         ticks << i;
