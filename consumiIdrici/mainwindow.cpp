@@ -92,26 +92,26 @@ void MainWindow::on_openFileDialog_clicked()
             hasReadFile = true;
         } else {
             this->ui->loadedFileName->setText("Apertura fallita");
-        }
+        }        
+
+        //ripristina tutta l'interfaccia per prepararla al nuovo file
+        ui->leaksTable->setModel(nullptr);
+        ui->leaksUser->clear();
+        usersMap.clear();
+        ui->avgTable->setModel(nullptr);
+        ui->userID_query->clear();
+        ui->userID_view->clear();
+        updateViewTab();
+        updateQueryTab();
+
+        //dato che è un'operazione lunga avvia l'analisi dei consumi solo se la tab selezionata è quella di analisi
+        if (ui->tabWidget->currentIndex() == 2)
+            updateAnalysisTab();
     } else {
         this->ui->loadedFileName->setText(tmpFileLoaded); //apertura annullata, torna com'era prima
     }
 
     this->ui->tabWidget->setEnabled(!m_data.empty()); //se il file è stato letto con successo abilita l'interfaccia grafica
-
-    //ripristina tutta l'interfaccia per prepararla al nuovo file
-    ui->leaksTable->setModel(nullptr);
-    ui->leaksUser->clear();
-    usersMap.clear();
-    ui->avgTable->setModel(nullptr);
-    ui->userID_query->clear();
-    ui->userID_view->clear();
-    updateViewTab();
-    updateQueryTab();
-
-    //dato che è un'operazione lunga avvia l'analisi dei consumi solo se la tab selezionata è quella di analisi
-    if (ui->tabWidget->currentIndex() == 2)
-        updateAnalysisTab();
 
 }
 
