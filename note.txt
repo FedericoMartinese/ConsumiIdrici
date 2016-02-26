@@ -14,9 +14,10 @@ cose da dire nella documentazione:
 - spiegare che per le utenze devianti il periodo di riferimento è tutto l'anno, quindi non ha senso indicarlo e non ha senso dire consumo mensile/settimanale/giornaliero perché sullo stesso periodo sono semplicemente multipli (se un utente ha un consumo giornaliero triplo rispetto alla media, ha anche un consumo mensile/settimanale triplo rispetto alla media mensile/settimanale). nella tabella comunque mostro tutti e tre i consumi
 
 da fare:
-- sistemare tab interrogazione i valori nd (vedi settimanale)
+- mettendosi sulla tab di analisi, apri file, annulla, rifa inutilmente l'analisi
+-suddividere le due sezioni dell'analisi
+- sistemare tab interrogazione i valori nd (vedi settimanale) oppure lasciare così e spiegare benissimo nella documentazione
 - nella updateanalysistab far comparire la progressdialog solo quando serve (la prima volta, quando vengono analizzati davvero). dato che la threshold si può cambiare può servire di nuovo però. a sto punto si potrebbe mettere la progress dialog SOLO per le perdite, dato che l'altra tabella è molto più veloce. verificare. nel caso ricordarsi di togliere il *3 al range
-- clustering nell'analisi dei consumi
 
 - controllare il passaggio della std::map dalla funzione read (visto che è grossa c'è un metodo migliore?)
 

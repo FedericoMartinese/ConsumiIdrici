@@ -323,20 +323,19 @@ void MainWindow::updateQueryTab() {
 void MainWindow::updateAnalysisTab() {
     //analisi dei consumi
 
-    //maschera di avanzamento dell'analisi
-    QProgressDialog progress(this);
-    progress.setLabelText("Analisi consumi...");
-    progress.setWindowTitle("Consumi idrici");
-    progress.setRange(0, m_data.size()*3);
-    progress.setModal(true);
-    progress.setCancelButton(0);
-    progress.show();
-    qApp->processEvents();
-
-    size_t i = 0;
-
     //PERDITE
     if (ui->leaksTable->model() == nullptr) { //l'analisi va fatta solo se la tabella è vuota
+        //maschera di avanzamento dell'analisi
+        QProgressDialog progress(this, Qt::WindowTitleHint);
+        progress.setLabelText("Analisi consumi...");
+        progress.setWindowTitle("Consumi idrici");
+        progress.setRange(0, m_data.size());
+        progress.setModal(true);
+        progress.setCancelButton(0);
+        progress.show();
+        qApp->processEvents();
+
+        size_t i = 0;
         std::vector<Consumption> leaks;
 
         for (std::pair<const QString, ConsumptionSet> user : m_data) {
@@ -376,8 +375,6 @@ void MainWindow::updateAnalysisTab() {
                 avg += c;
                 ++i;
             }
-
-            progress.setValue(++i);
         }
         avg /= i;
 
@@ -393,8 +390,6 @@ void MainWindow::updateAnalysisTab() {
                 //memorizza consumo giornaliero, settimanel e mensile dell'utenza deviante
                 devusers.push_back({user.first, QString::number(c/days, 'f', 3), QString::number(c/weeks, 'f', 3), QString::number(c/months, 'f', 3)});
             }
-
-            progress.setValue(++i);
         }
 
         //carica tabella
@@ -407,6 +402,7 @@ void MainWindow::updateAnalysisTab() {
         ui->monthlyAvg->setText(QString::number(avg/months, 'f', 3));
 
     }
+
 }
 
 void MainWindow::updatePlotValues(bool visible) {

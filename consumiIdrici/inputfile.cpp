@@ -17,7 +17,7 @@ std::map<QString, ConsumptionSet> InputFile::read(QWidget *parent) const {
     QFile inputFile(fileName);
     if (inputFile.open(QIODevice::ReadOnly)) {
         //maschera che mostra la percentuale di avanzamento della lettura ed evita che il programma freezi
-        QProgressDialog progress(parent);
+        QProgressDialog progress(parent, Qt::WindowTitleHint);
         progress.setLabelText("Lettura file: " + QFileInfo(fileName).fileName());
         progress.setWindowTitle("Consumi idrici");
         progress.setRange(0, inputFile.size());
