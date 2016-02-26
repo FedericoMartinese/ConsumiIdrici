@@ -206,13 +206,7 @@ void MainWindow::on_analysisButton_clicked()
 void MainWindow::updateViewTab() {
     if (!hasReadFile || m_data.empty()) return;
 
-    if (m_data.find(ui->userID_view->text()) == m_data.end()) {
-        //utente cercato non trovato
-        ui->totalConsumption->setText("n.d");
-        ui->lastUpdated->setText("");
-        if (plot != nullptr) plot->clear(); //pulisce grafico
-        updatePlotValues(false); //nasconde i valori del grafico
-    } else {
+    if (m_data.find(ui->userID_view->text()) != m_data.end()) {
         //il consumo totale è l'ulimo in ordine temporale
         Consumption totalCons = m_data[ui->userID_view->text()].getLast();
         ui->totalConsumption->setText(QString::number(totalCons.value()) + " m^3");
@@ -273,6 +267,13 @@ void MainWindow::updateViewTab() {
                 updatePlotValues(true);
             }
         }
+    } else {
+        //utente non trovato
+        ui->totalConsumption->setText("n.d");
+        ui->lastUpdated->setText("");
+        if (plot != nullptr) plot->clear(); //pulisce grafico
+        updatePlotValues(false); //nasconde i valori del grafico
+
     }
 
 }
@@ -336,7 +337,7 @@ void MainWindow::updateAnalysisTab() {
         std::size_t i = 0;
         std::vector<Consumption> leaks;
 
-        for (std::pair<const QString, ConsumptionSet> user : m_data) {
+        for (mapIterator user : m_data) {
             //per ogni utente trova tutte le notti in cui ci sono state perdite notturne
             std::vector<Consumption> nights = user.second.getNightLeaks(ui->thresholdSpinbox->value());
             //se ce ne sono, le aggiunge al modello della tabella
@@ -367,7 +368,7 @@ void MainWindow::updateAnalysisTab() {
         //calcolo consumo medio
         double avg = 0;
         std::size_t i = 0;
-        for (std::pair<const QString, ConsumptionSet> user : m_data) {
+        for (mapIterator user : m_data) {
             double c = user.second.getPeriodConsumption(min ,max);
             if (c>=0) {
                 avg += c;
@@ -382,7 +383,7 @@ void MainWindow::updateAnalysisTab() {
         int weeks = max.date().weekNumber() - min.date().weekNumber() + 1;
         int months = max.date().month() - min.date().month() + 1;
 
-        for (std::pair<const QString, ConsumptionSet> user : m_data) {
+        for (mapIterator user : m_data) {
             double c = user.second.getPeriodConsumption(min, max);
             if (c >= (2*avg)) {
                 //memorizza consumo giornaliero, settimanel e mensile dell'utenza deviante

@@ -52,8 +52,10 @@ curiosamente tutti alle 21
 "2015-04-09 10:00:00",20.330,206
 - come casi particolari nella insert mettere l'utente NULL spiegando che vengono memorizzate le registrazioni in ordine (vedi file registrazioni NULL) e quindi ci sono quei picchi alle 14, alle 9 ecc. Non far notare che registrazioni diverse ma alla stessa ora vengono salvate entrambe
 - spiegare benissimo nella documentazione quali valori sono sensati nella seconda tab (in particolare le settimane, ma anche i mesi)
+- eccezioni nel costruttore http://stackoverflow.com/questions/810839/throwing-exceptions-from-constructors
 
 da fare:
+- con una threshold molto bassa (quindi moltissime perdite) freeza la maschera se si cambia l'utente nella combobox per la tabella
 - sistemare valori piccolissimi nel grafico
 
 - controllare il passaggio della std::map dalla funzione read (visto che è grossa c'è un metodo migliore?)
@@ -62,18 +64,10 @@ da fare:
 
 - controllare valori dei grafici 
 
-- tutte le qstring a std::string
-
-- cambiare la lettura da file da qt a quella normale del c++?
-
-- utente 319 e 323 consumi strani ad agosto (threshold > 15 e si vedono)
-- utente 191 DATI SBAGLIATI
-- controllare che non vengano aggiunti elementi vuoti alla mappa qstring-clientconsumptions
-
-
-eccezioni nel costruttore e liste di inizializzazione
-http://stackoverflow.com/questions/810839/throwing-exceptions-from-constructors
-
 - scaricare ultima versione dei csv da beep e fare un winmerge per vedere se è cambiato qualcosa
 
 - fare un controllo generale di tutto il programma
+
+solo se c'è tempo:
+- tutte le qstring a std::string
+- cambiare la lettura da file da qt a quella normale del c++?

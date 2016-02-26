@@ -43,6 +43,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     std::map<QString, ConsumptionSet> m_data;
+    typedef std::pair<const QString, ConsumptionSet> mapIterator;
     LeaksTableModel leaksModel;
     AvgTableModel avgModel;
     std::vector<int> usersMap; //traccia gli utenti nella tabella delle perdite
