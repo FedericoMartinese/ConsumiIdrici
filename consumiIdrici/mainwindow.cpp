@@ -117,19 +117,15 @@ void MainWindow::on_openFileDialog_clicked()
 
 }
 
-void MainWindow::on_userID_view_editingFinished()
+void MainWindow::on_userID_view_textChanged()
 {
-    //ricerca utente. le tab di visualizzazione e di interrogazione vengono aggiornata in parallelo
-    ui->userID_query->setText(ui->userID_view->text());
+    //ricerca utente tab visualizzazione
     updateViewTab();
-    updateQueryTab();
 }
 
-void MainWindow::on_userID_query_editingFinished()
+void MainWindow::on_userID_query_textChanged()
 {
-    //ricerca utente. le tab di visualizzazione e di interrogazione vengono aggiornata in parallelo
-    ui->userID_view->setText(ui->userID_query->text());
-    updateViewTab();
+    //ricerca utente tab interrogazione
     updateQueryTab();
 }
 

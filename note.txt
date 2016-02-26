@@ -62,8 +62,6 @@ da fare:
 
 - controllare valori dei grafici 
 
-- provare a sostituire l'editing finished delle due caselle clientID con un evento più in tempo reale
-
 - tutte le qstring a std::string
 
 - cambiare la lettura da file da qt a quella normale del c++?

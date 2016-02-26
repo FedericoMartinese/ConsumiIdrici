@@ -22,9 +22,9 @@ public:
 private slots:
     void on_openFileDialog_clicked();
 
-    void on_userID_view_editingFinished();
+    void on_userID_view_textChanged();
 
-    void on_userID_query_editingFinished();
+    void on_userID_query_textChanged();
 
     void on_firstDate_dateChanged(const QDate &date);
 
