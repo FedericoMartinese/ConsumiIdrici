@@ -11,8 +11,11 @@ cose da dire nella documentazione:
 	viene chiamato con uno step di 1 giorno e il cliente si somma i consumi giornalieri come preferice (fatto metterlo nella documentazione)
 - mettere nella documentazione le prove col set del progetto set_test_myclass (in documenti/qt) ????
 - nell'updateanalysistab sono tenuti 3 cicli distinti per semplicitià, perché si riferiscono a due tabelle diverse e perché comunque quello extra non è dispendioso (vedere se dirlo nella documentazione)
+- spiegare che per le utenze devianti il periodo di riferimento è tutto l'anno, quindi non ha senso indicarlo e non ha senso dire consumo mensile/settimanale/giornaliero perché sullo stesso periodo sono semplicemente multipli (se un utente ha un consumo giornaliero triplo rispetto alla media, ha anche un consumo mensile/settimanale triplo rispetto alla media mensile/settimanale). nella tabella comunque mostro tutti e tre i consumi
 
 da fare:
+- sistemare tab interrogazione i valori nd (vedi settimanale)
+- nella updateanalysistab far comparire la progressdialog solo quando serve (la prima volta, quando vengono analizzati davvero). dato che la threshold si può cambiare può servire di nuovo però. a sto punto si potrebbe mettere la progress dialog SOLO per le perdite, dato che l'altra tabella è molto più veloce. verificare. nel caso ricordarsi di togliere il *3 al range
 - clustering nell'analisi dei consumi
 
 - controllare il passaggio della std::map dalla funzione read (visto che è grossa c'è un metodo migliore?)
@@ -25,7 +28,9 @@ da fare:
 
 - controllare il funzionamento della utctodaylightsavtime, in particolare nei casi di date esatte (vedere se serve < o <= e > o >=), togliere il commento con i secsto
  
- - controllare il calcolo del caso più difficile della getconsatdatesorted (modificando file magari) (quello della proporzione)
+ - controllare il calcolo del caso più difficile della getconsatdate (modificando file magari) (quello della proporzione). nella stessa funzione verificare se la lower_bound si può usare come m_cons.lower_bound(Consumption(date,0))
+ 
+ - nella getnightleaks controllare se si può usare rbegin al posto del --m_cons.end()
  
  - controllare giorni cambio ora
  
@@ -54,3 +59,7 @@ http://stackoverflow.com/questions/810839/throwing-exceptions-from-constructors
 - controllare i controlli sull'insert nella consSet (impossibile che metà dei dati siano sbagliati - vedi benchmark.txt)
 
 - scaricare ultima versione dei csv da beep e fare un winmerge per vedere se è cambiato qualcosa
+
+- scegliere se mostrare il pulsante annulla nella lettura del file (se lasciandolo funziona tutto alla perfezione meglio tenerlo)
+
+- fare un controllo generale di tutto il programma

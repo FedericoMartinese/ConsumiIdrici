@@ -15,14 +15,4 @@ public:
     std::map<QString, ConsumptionSet> read(QWidget *parent) const;
 };
 
-
-
-
-
-
-
-
-
-
-
 #endif // INPUTFILE_H

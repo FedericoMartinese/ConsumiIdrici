@@ -12,7 +12,7 @@ LeaksTableModel::LeaksTableModel(QObject *parent)
 
 int LeaksTableModel::rowCount(const QModelIndex & /*parent*/) const
 {
-   return m_cons.size();
+    return m_cons.size();
 }
 
 int LeaksTableModel::columnCount(const QModelIndex & /*parent*/) const
@@ -25,8 +25,10 @@ QVariant LeaksTableModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole)
     {
         if (index.column() == 0) {
+            //nella prima colonna vengono inserite le date in cui ci sono stati consumi notturni superiori alla soglia
             return m_cons[index.row()].date().toString("yyyy-MM-dd");
         } else {
+            //nella seconda colonna vengono inseriti i consumi relativi a ciascuna data
             return QString::number(m_cons[index.row()].value());
         }
     }
@@ -37,6 +39,7 @@ QVariant LeaksTableModel::headerData(int section, Qt::Orientation orientation, i
 {
     if (role == Qt::DisplayRole)
     {
+        //header colonne
         if (orientation == Qt::Horizontal) {
             if (section == 0)
                 return QString("Data");

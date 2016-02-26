@@ -20,7 +20,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_openFileDialog_clicked();    
+    void on_openFileDialog_clicked();
 
     void on_userID_view_editingFinished();
 
@@ -45,7 +45,7 @@ private:
     std::map<QString, ConsumptionSet> m_data;
     LeaksTableModel leaksModel;
     AvgTableModel avgModel;
-    std::vector<int> usersMap;
+    std::vector<int> usersMap; //traccia gli utenti nella tabella delle perdite
     Plot* plot;
     bool hasReadFile = false;
 

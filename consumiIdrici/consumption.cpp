@@ -1,6 +1,6 @@
 #include "consumption.h"
 #include "dates.h"
-Consumption::Consumption() : m_date(minDate, QTime(0,0), Qt::TimeSpec::UTC), m_value(0)
+Consumption::Consumption() : m_date(minDate, QTime(0,0), Qt::TimeSpec::UTC), m_value(0) //valori di default
 {
 }
 
@@ -19,11 +19,8 @@ double Consumption::value() const {
     return m_value;
 }
 
-bool Consumption::isValid() const {
-    return m_date.isValid() && m_value >= 0;
-}
-
 bool Consumption::operator < (const Consumption& other) const {
+    //ordinamento per data, poi per valore
     if (m_date == other.date())
         return m_value < other.value();
 
@@ -32,23 +29,14 @@ bool Consumption::operator < (const Consumption& other) const {
 
 bool Consumption::operator <= (const Consumption& other) const {
     return !(other < *this);
-
-    //return *this < other || *this == other;
 }
 
 bool Consumption::operator > (const Consumption& other) const {
     return other < *this;
-
-    /*if (m_date == other.date())
-        return m_value > other.value();
-
-    return m_date > other.date();*/
 }
 
 bool Consumption::operator >= (const Consumption& other) const {
     return !(*this < other);
-
-    //return *this > other || *this == other;
 }
 
 bool Consumption::operator==(const Consumption& other) const {

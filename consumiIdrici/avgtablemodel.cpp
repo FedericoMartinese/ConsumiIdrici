@@ -12,7 +12,7 @@ AvgTableModel::AvgTableModel(QObject *parent) : QAbstractTableModel(parent)
 
 int AvgTableModel::rowCount(const QModelIndex & /*parent*/) const
 {
-   return m_cons.size();
+    return m_cons.size();
 }
 
 int AvgTableModel::columnCount(const QModelIndex & /*parent*/) const
@@ -24,8 +24,11 @@ QVariant AvgTableModel::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole)
     {
-        //controllare dimensioni vector e nel caso resituire stringa vuota
-        return m_cons[index.row()][index.column()];
+        //restituisce il testo da mostrare in una determinata cella
+        if (index.row() < m_cons.size() && index.column() < m_cons[index.row()].size())
+            return m_cons[index.row()][index.column()];
+
+        return "";
     }
     return QVariant();
 }
@@ -34,6 +37,7 @@ QVariant AvgTableModel::headerData(int section, Qt::Orientation orientation, int
 {
     if (role == Qt::DisplayRole)
     {
+        //header colonne
         if (orientation == Qt::Horizontal) {
             switch (section) {
             case 0: return QString("Utente");
@@ -46,6 +50,6 @@ QVariant AvgTableModel::headerData(int section, Qt::Orientation orientation, int
     return QVariant();
 }
 
-void AvgTableModel::load(const std::vector<std::vector<QString>> &cons) {
+void AvgTableModel::load(const std::vector<std::vector<QString>> &cons) { //riferimento costante perché potenzialmente sono molti dati
     m_cons = cons;
 }
