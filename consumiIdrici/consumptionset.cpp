@@ -51,14 +51,14 @@ double ConsumptionSet::getConsAtDate(QDateTime date) const{
     if (m_cons.empty()) return 0;
 
     //ricerca primo consumo successivo
-    std::set<Consumption>::iterator cons = std::lower_bound(m_cons.begin(), m_cons.end(), Consumption(date,0));
-    
+    std::set<Consumption>::iterator cons = m_cons.lower_bound(Consumption(date,0));
+
     if (cons == m_cons.end()) //non ci sono registrazioni successive. si suppone che dall'ultima registrazione non ci siano stati consumi ulteriori
         return m_cons.rbegin()->value(); //il consumo alla data richiesta equivale a quello dell'ultima registrazione
     
     if (cons == m_cons.begin()) //non ci sono registrazioni precedenti. si suppone che fino alla prima registrazione non ci siano stati consumi
         return cons->value();  //il consimo alla data cercata equivale a quello della prima registrazione
-    
+
     //ultimo consumo precedente
     std::set<Consumption>::iterator prev = std::prev(cons);
     
@@ -102,7 +102,7 @@ std::vector<Consumption> ConsumptionSet::getNightLeaks(double threshold) const {
 
     //per ogni giorno
     QDate date(m_cons.begin()->date().date());
-    while (date <= (--(m_cons.end()))->date().date()) {
+    while (date <= m_cons.rbegin()->date().date()) {
         //il consumo notturno è il consumo tra le ore 00 e 05 di un dato giorno
         double nightCons = getPeriodConsumption(QDateTime(date,start, Qt::TimeSpec::UTC), QDateTime(date,end, Qt::TimeSpec::UTC));
         if (nightCons >= threshold) {

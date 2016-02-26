@@ -101,6 +101,8 @@ void MainWindow::on_openFileDialog_clicked()
         ui->avgTable->setModel(nullptr);
         ui->userID_query->clear();
         ui->userID_view->clear();
+        plot->clear();
+        updatePlotValues(false);
         updateViewTab();
         updateQueryTab();
 

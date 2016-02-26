@@ -71,7 +71,7 @@ std::map<QString, ConsumptionSet> InputFile::read(QWidget *parent) const {
             //chiamare qui la processEvents allunga di ~10 secondi l'apertura del file grande
 
 
-            /*if (progress.wasCanceled()) { button annulla tolto
+            /*if (progress.wasCanceled()) { //button annulla tolto
                 inputFile.close();
                 usersData.clear();
                 return usersData;
