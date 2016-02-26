@@ -62,7 +62,7 @@ void Plot::draw(plotMode mode, std::vector<double> data, bool showLegend, bool s
         }
     }
     //calcolo valore medio
-    midValue/=i;
+    midValue/=xNum;
 
     //impostazione non automatica ticks e labels asse x
     m_plot->xAxis->setAutoTicks(false);

@@ -29,6 +29,8 @@ std::map<QString, ConsumptionSet> InputFile::read(QWidget *parent) const {
         QTextStream in(&inputFile);
         size_t c = 1; //contatore righe per messaggi di errore
 
+        size_t er = 0;
+
         while (!in.atEnd()) {
             QString line = in.readLine();
             QStringList params = line.split(','); //i parametri sono suddivisi da una virgola
@@ -55,7 +57,8 @@ std::map<QString, ConsumptionSet> InputFile::read(QWidget *parent) const {
                 if (!ok || params[2].length() == 0) throw "Cast failed";
 
                 //aggiunge consumi all'utente (se non è presente l'utente nella mappa lo crea e posiziona in ordine)
-                usersData[params[2]].insert(cons);
+                if (!usersData[params[2]].insert(cons))
+                    ++er;
             } catch (...) {
                 //in caso di errori l'utente può abortire la lettura del file (nel caso viene svuotata la struttura dati)
                 //o ignorare la riga con dati non validi (in questo caso non viene inserita la riga e si continua con la lettura)

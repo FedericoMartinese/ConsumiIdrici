@@ -16,7 +16,7 @@ bool ConsumptionSet::insert(Consumption cons) {
         std::set<Consumption>::iterator next = m_cons.lower_bound(cons);
         double prev = next == m_cons.begin() ? 0 : std::prev(next)->value(); //se next è il primo consumo memorizzato prev viene settato a 0
         
-        if (prev > cons.value() || (next != m_cons.end() && next->value() > cons.value()))
+        if (prev > cons.value() || (next != m_cons.end() && cons.value() > next->value()))
             return false; //se i consumi non sono crescenti (prev <= cons <= next) non viene inserito
     }
     
