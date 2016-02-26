@@ -14,12 +14,9 @@ cose da dire nella documentazione:
 - spiegare che per le utenze devianti il periodo di riferimento è tutto l'anno, quindi non ha senso indicarlo e non ha senso dire consumo mensile/settimanale/giornaliero perché sullo stesso periodo sono semplicemente multipli (se un utente ha un consumo giornaliero triplo rispetto alla media, ha anche un consumo mensile/settimanale triplo rispetto alla media mensile/settimanale). nella tabella comunque mostro tutti e tre i consumi
 
 da fare:
--suddividere le due sezioni dell'analisi
 - sistemare tab interrogazione i valori nd (vedi settimanale) oppure lasciare così e spiegare benissimo nella documentazione
 
 - controllare il passaggio della std::map dalla funzione read (visto che è grossa c'è un metodo migliore?)
-
-- ricontrollare TUTTI i commenti e metterli dove servono
 
 - controllare tick verticali in vari casi
 

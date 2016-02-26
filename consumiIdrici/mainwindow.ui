@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>897</width>
-    <height>641</height>
+    <height>652</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <widget class="QPushButton" name="openFileDialog">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>10</x>
       <y>20</y>
       <width>91</width>
       <height>31</height>
@@ -33,9 +33,9 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>60</y>
-      <width>841</width>
+      <x>10</x>
+      <y>70</y>
+      <width>870</width>
       <height>571</height>
      </rect>
     </property>
@@ -64,8 +64,8 @@
        <rect>
         <x>10</x>
         <y>50</y>
-        <width>801</width>
-        <height>481</height>
+        <width>841</width>
+        <height>491</height>
        </rect>
       </property>
       <property name="title">
@@ -102,7 +102,7 @@
         <rect>
          <x>220</x>
          <y>20</y>
-         <width>201</width>
+         <width>601</width>
          <height>20</height>
         </rect>
        </property>
@@ -138,8 +138,8 @@
         <rect>
          <x>20</x>
          <y>80</y>
-         <width>761</width>
-         <height>361</height>
+         <width>801</width>
+         <height>371</height>
         </rect>
        </property>
       </widget>
@@ -147,7 +147,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>450</y>
+         <y>460</y>
          <width>46</width>
          <height>13</height>
         </rect>
@@ -166,7 +166,7 @@
        <property name="geometry">
         <rect>
          <x>70</x>
-         <y>450</y>
+         <y>460</y>
          <width>46</width>
          <height>13</height>
         </rect>
@@ -179,7 +179,7 @@
        <property name="geometry">
         <rect>
          <x>240</x>
-         <y>450</y>
+         <y>460</y>
          <width>46</width>
          <height>13</height>
         </rect>
@@ -192,7 +192,7 @@
        <property name="geometry">
         <rect>
          <x>190</x>
-         <y>450</y>
+         <y>460</y>
          <width>46</width>
          <height>13</height>
         </rect>
@@ -211,7 +211,7 @@
        <property name="geometry">
         <rect>
          <x>370</x>
-         <y>450</y>
+         <y>460</y>
          <width>46</width>
          <height>13</height>
         </rect>
@@ -230,7 +230,7 @@
        <property name="geometry">
         <rect>
          <x>420</x>
-         <y>450</y>
+         <y>460</y>
          <width>46</width>
          <height>13</height>
         </rect>
@@ -472,196 +472,220 @@
      <attribute name="title">
       <string>Analisi</string>
      </attribute>
-     <widget class="QLabel" name="label_12">
+     <widget class="QGroupBox" name="groupBox_3">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>60</y>
-        <width>141</width>
-        <height>16</height>
+        <x>445</x>
+        <y>10</y>
+        <width>410</width>
+        <height>521</height>
        </rect>
       </property>
-      <property name="text">
-       <string>Utenze con possibili perdite</string>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="leaksUser">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>60</y>
-        <width>91</width>
-        <height>22</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_13">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>110</y>
-        <width>361</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Periodi di perdita</string>
-      </property>
-     </widget>
-     <widget class="QTableView" name="leaksTable">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>140</y>
-        <width>361</width>
-        <height>231</height>
-       </rect>
-      </property>
-      <property name="selectionMode">
-       <enum>QAbstractItemView::SingleSelection</enum>
-      </property>
-      <property name="selectionBehavior">
-       <enum>QAbstractItemView::SelectRows</enum>
-      </property>
-      <attribute name="verticalHeaderVisible">
-       <bool>false</bool>
-      </attribute>
-     </widget>
-     <widget class="QLabel" name="label_14">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>20</y>
-        <width>61</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Threshold</string>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="thresholdSpinbox">
-      <property name="geometry">
-       <rect>
-        <x>100</x>
-        <y>20</y>
-        <width>62</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="decimals">
-       <number>3</number>
-      </property>
-      <property name="singleStep">
-       <double>0.050000000000000</double>
-      </property>
-      <property name="value">
-       <double>0.200000000000000</double>
-      </property>
-     </widget>
-     <widget class="QTableView" name="avgTable">
-      <property name="geometry">
-       <rect>
-        <x>420</x>
-        <y>140</y>
-        <width>361</width>
-        <height>231</height>
-       </rect>
-      </property>
-      <property name="selectionMode">
-       <enum>QAbstractItemView::SingleSelection</enum>
-      </property>
-      <property name="selectionBehavior">
-       <enum>QAbstractItemView::SelectRows</enum>
-      </property>
-      <attribute name="verticalHeaderVisible">
-       <bool>false</bool>
-      </attribute>
-     </widget>
-     <widget class="QLabel" name="label_15">
-      <property name="geometry">
-       <rect>
-        <x>420</x>
-        <y>110</y>
-        <width>361</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
+      <property name="title">
        <string>Utenze devianti</string>
       </property>
+      <widget class="QLabel" name="monthlyAvg">
+       <property name="geometry">
+        <rect>
+         <x>300</x>
+         <y>480</y>
+         <width>46</width>
+         <height>13</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_16">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>480</y>
+         <width>46</width>
+         <height>13</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Media:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="dailyAvg">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>480</y>
+         <width>46</width>
+         <height>13</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+      <widget class="QTableView" name="avgTable">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>30</y>
+         <width>361</width>
+         <height>441</height>
+        </rect>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SingleSelection</enum>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
+       <attribute name="verticalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
+      </widget>
+      <widget class="QLabel" name="weeklyAvg">
+       <property name="geometry">
+        <rect>
+         <x>210</x>
+         <y>480</y>
+         <width>46</width>
+         <height>13</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+      <zorder>label_16</zorder>
+      <zorder>monthlyAvg</zorder>
+      <zorder>dailyAvg</zorder>
+      <zorder>avgTable</zorder>
+      <zorder>weeklyAvg</zorder>
+      <zorder>monthlyAvg</zorder>
+      <zorder>label_16</zorder>
+      <zorder>dailyAvg</zorder>
+      <zorder>avgTable</zorder>
+      <zorder>weeklyAvg</zorder>
+      <zorder>groupBox_4</zorder>
      </widget>
-     <widget class="QLabel" name="label_16">
+     <widget class="QGroupBox" name="groupBox_4">
       <property name="geometry">
        <rect>
-        <x>430</x>
-        <y>380</y>
-        <width>46</width>
-        <height>13</height>
+        <x>10</x>
+        <y>10</y>
+        <width>410</width>
+        <height>521</height>
        </rect>
       </property>
-      <property name="text">
-       <string>Media:</string>
+      <property name="title">
+       <string>Possibili perdite</string>
       </property>
-     </widget>
-     <widget class="QLabel" name="dailyAvg">
-      <property name="geometry">
-       <rect>
-        <x>520</x>
-        <y>380</y>
-        <width>46</width>
-        <height>13</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>0</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="weeklyAvg">
-      <property name="geometry">
-       <rect>
-        <x>610</x>
-        <y>380</y>
-        <width>46</width>
-        <height>13</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>0</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="monthlyAvg">
-      <property name="geometry">
-       <rect>
-        <x>700</x>
-        <y>380</y>
-        <width>46</width>
-        <height>13</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>0</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="analysisButton">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>20</y>
-        <width>75</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Cerca</string>
-      </property>
+      <widget class="QLabel" name="label_14">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>30</y>
+         <width>61</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Threshold</string>
+       </property>
+      </widget>
+      <widget class="QTableView" name="leaksTable">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>140</y>
+         <width>361</width>
+         <height>361</height>
+        </rect>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SingleSelection</enum>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
+       <attribute name="verticalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
+      </widget>
+      <widget class="QLabel" name="label_13">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>110</y>
+         <width>361</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Periodi di perdita</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="leaksUser">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>70</y>
+         <width>91</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="thresholdSpinbox">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>30</y>
+         <width>62</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="decimals">
+        <number>3</number>
+       </property>
+       <property name="singleStep">
+        <double>0.050000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.200000000000000</double>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="analysisButton">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>30</y>
+         <width>91</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Cerca</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_12">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>70</y>
+         <width>141</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Utenze con possibili perdite</string>
+       </property>
+      </widget>
      </widget>
     </widget>
    </widget>
    <widget class="QLabel" name="label_10">
     <property name="geometry">
      <rect>
-      <x>140</x>
+      <x>120</x>
       <y>23</y>
       <width>131</width>
       <height>20</height>
@@ -677,9 +701,9 @@
    <widget class="QLabel" name="loadedFileName">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>20</y>
-      <width>591</width>
+      <x>260</x>
+      <y>23</y>
+      <width>621</width>
       <height>20</height>
      </rect>
     </property>
