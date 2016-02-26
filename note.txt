@@ -17,7 +17,6 @@ da fare:
 - mettendosi sulla tab di analisi, apri file, annulla, rifa inutilmente l'analisi
 -suddividere le due sezioni dell'analisi
 - sistemare tab interrogazione i valori nd (vedi settimanale) oppure lasciare così e spiegare benissimo nella documentazione
-- nella updateanalysistab far comparire la progressdialog solo quando serve (la prima volta, quando vengono analizzati davvero). dato che la threshold si può cambiare può servire di nuovo però. a sto punto si potrebbe mettere la progress dialog SOLO per le perdite, dato che l'altra tabella è molto più veloce. verificare. nel caso ricordarsi di togliere il *3 al range
 
 - controllare il passaggio della std::map dalla funzione read (visto che è grossa c'è un metodo migliore?)
 

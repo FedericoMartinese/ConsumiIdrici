@@ -195,7 +195,7 @@ void MainWindow::on_leaksUser_currentIndexChanged(int index)
 
 }
 
-void MainWindow::on_thresholdSpinbox_editingFinished()
+void MainWindow::on_analysisButton_clicked()
 {
     //svuota la tabella perdite
     ui->leaksTable->setModel(nullptr);

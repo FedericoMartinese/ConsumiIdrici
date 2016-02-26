@@ -38,7 +38,7 @@ private slots:
 
     void on_leaksUser_currentIndexChanged(int index);
 
-    void on_thresholdSpinbox_editingFinished();
+    void on_analysisButton_clicked();
 
 private:
     Ui::MainWindow *ui;

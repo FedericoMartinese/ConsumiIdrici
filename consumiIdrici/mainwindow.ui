@@ -40,7 +40,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="viewTab">
      <attribute name="title">
@@ -641,6 +641,19 @@
       </property>
       <property name="text">
        <string>0</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="analysisButton">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>20</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cerca</string>
       </property>
      </widget>
     </widget>
