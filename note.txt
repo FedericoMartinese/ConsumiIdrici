@@ -1,16 +1,14 @@
-DOCUMENTAZIONE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-- nei test mettere screen di marzo (giorni) dell'utente 2 per far vedere la differenza tra la prima metà del mese in cui si hanno dati regolari e la seconda metà in cui mancano.
-controllare nel csv che sia effettivamente così
-- nei test mettere 22/06/15 dell'utente 11 e confrontarlo con i dati (file 11_all.csv). far vedere il saltello all'una di notte, la costanza dalle 4 alle 18, la differenza delle 18 perché il dato è delle 18:45, lo zero da lì in poi)
-
 cose da dire nella documentazione:
+NOTE DI REALIZZAZIONE: ASPETTI PARTICOLARI
+- conversione UTC CET
+- insert della set (perché serve)
+- spiegare benissimo nella documentazione quali valori sono sensati nella seconda tab (in particolare le settimane, ma anche i mesi)
+- eccezioni nel costruttore http://stackoverflow.com/questions/810839/throwing-exceptions-from-constructors
 - eccezioni: controllato, sono gestite bene
 - considerazioni su settimane/mesi compresi parzialmente (tab interrogazione). valori controllari vanno bene, spiegare bene il sistema nella documentazione
 - è tutto const correctness
 - il gethistogramdata funziona per step costanti. il month_by_week non ha step costante (andando non ogni 7 giorni ma da lunedì a domenica possono esserci settimane incomplete).
 	viene chiamato con uno step di 1 giorno e il cliente si somma i consumi giornalieri come preferice (fatto metterlo nella documentazione)
-- mettere nella documentazione le prove col set del progetto set_test_myclass (in documenti/qt) ????
-- nell'updateanalysistab sono tenuti 3 cicli distinti per semplicitià, perché si riferiscono a due tabelle diverse e perché comunque quello extra non è dispendioso (vedere se dirlo nella documentazione)
 - spiegare che per le utenze devianti il periodo di riferimento è tutto l'anno, quindi non ha senso indicarlo e non ha senso dire consumo mensile/settimanale/giornaliero perché sullo stesso periodo sono semplicemente multipli (se un utente ha un consumo giornaliero triplo rispetto alla media, ha anche un consumo mensile/settimanale triplo rispetto alla media mensile/settimanale). nella tabella comunque mostro tutti e tre i consumi
 - spiegare proporzione getConsAtDate
  questo è un ottimo esempio 
@@ -50,9 +48,13 @@ curiosamente tutti alle 21
 "2015-04-09 09:00:00",20.331,206
 "2015-04-09 04:00:00",38.992,176
 "2015-04-09 10:00:00",20.330,206
+
+PROVE DI TEST	
+- mettere nella documentazione le prove col set del progetto set_test_myclass (in documenti/qt) ????????????
 - come casi particolari nella insert mettere l'utente NULL spiegando che vengono memorizzate le registrazioni in ordine (vedi file registrazioni NULL) e quindi ci sono quei picchi alle 14, alle 9 ecc. Non far notare che registrazioni diverse ma alla stessa ora vengono salvate entrambe
-- spiegare benissimo nella documentazione quali valori sono sensati nella seconda tab (in particolare le settimane, ma anche i mesi)
-- eccezioni nel costruttore http://stackoverflow.com/questions/810839/throwing-exceptions-from-constructors
+- nei test mettere screen di marzo (giorni) dell'utente 2 per far vedere la differenza tra la prima metà del mese in cui si hanno dati regolari e la seconda metà in cui mancano.
+controllare nel csv che sia effettivamente così
+- nei test mettere 22/06/15 dell'utente 11 e confrontarlo con i dati (file 11_all.csv). far vedere il saltello all'una di notte, la costanza dalle 4 alle 18, la differenza delle 18 perché il dato è delle 18:45, lo zero da lì in poi)
 
 da fare:
 - sistemato caricamento tabella perdite. in release va benissimo, in debug con threshold 0,001 un po' lento. valutare se spostare il minimo a 0,050 (uno step)

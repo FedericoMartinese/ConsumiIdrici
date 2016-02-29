@@ -4,7 +4,7 @@
 #include <consumption.h>
 #include <set>
 
-//std::set wrapper with extended functions
+//std::set wrapper con funzioni estese
 
 class ConsumptionSet
 {
