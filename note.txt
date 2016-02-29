@@ -1,8 +1,9 @@
 cose da dire nella documentazione:
+
+- TUTTE LE "REGISTRAZIONE/I" IN "LETTURA/E" SIA CODICE SIA DOCUMENTAZIONE
 NOTE DI REALIZZAZIONE: ASPETTI PARTICOLARI
 - spiegare benissimo nella documentazione quali valori sono sensati nella seconda tab (in particolare le settimane, ma anche i mesi)
 - considerazioni su settimane/mesi compresi parzialmente (tab interrogazione). valori controllari vanno bene, spiegare bene il sistema nella documentazione
-- spiegare che per le utenze devianti il periodo di riferimento è tutto l'anno, quindi non ha senso indicarlo
 - spiegare proporzione getConsAtDate
  questo è un ottimo esempio 
  "2015-03-19 20:15:00",55.432,11

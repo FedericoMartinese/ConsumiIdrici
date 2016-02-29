@@ -307,11 +307,17 @@ void MainWindow::updateQueryTab() {
         ui->dayConsumption->setText(QString::number(periodCons / daysDiff));
 
         //le settimane possono cadere anche solo parzialmente nel periodo indicato
-        ui->weekConsumption->setText(daysDiff >= 7 ? QString::number(periodCons / (lastDate.date().weekNumber() - firstDate.date().weekNumber() + 1)) : ND);
+        int weeksDiff = lastDate.date().weekNumber() - firstDate.date().weekNumber() + 1;
+        if (weeksDiff > 1 || //appartengono a due settimane diverse o
+                (firstDate.date().dayOfWeek() == 1 && lastDate.date().dayOfWeek() == 7)) { //una settimana intera (da lunedì a domenica)
+            ui->weekConsumption->setText(QString::number(periodCons / weeksDiff));
+        }  else {
+            ui->weekConsumption->setText(ND);
+        }
 
         //lo stesso per i mesi
         int monthsDiff = lastDate.date().month() - firstDate.date().month() + 1;
-        if (monthsDiff > 1 || //almeno un mese completo o
+        if (monthsDiff > 1 || //appartengono a due mesi diversi o
                 (firstDate.date().day() == 1 && lastDate.date().day() == lastDate.date().daysInMonth())) { //un mese esatto (dall'1 all'ultimo giorno del mese)
             ui->monthConsumption->setText(QString::number(periodCons / monthsDiff));
         } else {
