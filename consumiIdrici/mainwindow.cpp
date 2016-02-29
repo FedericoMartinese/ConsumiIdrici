@@ -328,7 +328,7 @@ void MainWindow::updateAnalysisTab() {
         QProgressDialog progress(this, Qt::WindowTitleHint);
         progress.setLabelText("Analisi consumi...");
         progress.setWindowTitle("Consumi idrici");
-        progress.setRange(0, m_data.size());
+        progress.setRange(0, m_data.size() + 1);
         progress.setModal(true);
         progress.setCancelButton(0);
         progress.show();
@@ -354,14 +354,18 @@ void MainWindow::updateAnalysisTab() {
         ui->leaksUser->setEnabled(ui->leaksUser->count()>0); //abilita la combobox solo se contiene almeno un utente
 
         //carica nella tabella le perdite di tutti gli utenti
+        progress.setLabelText("Caricamento tabella...");
+        qApp->processEvents();
         leaksModel.load(leaks);
-        ui->leaksTable->setModel(&leaksModel);
+        ui->leaksTable->setModel(&leaksModel);        
 
         //mostra il primo utente
         if (ui->leaksUser->count() > 0) {
             ui->leaksUser->setCurrentIndex(0);
             on_leaksUser_currentIndexChanged(0);
         }
+
+        progress.setValue(++i);
 
     }
 

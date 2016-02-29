@@ -55,7 +55,7 @@ curiosamente tutti alle 21
 - eccezioni nel costruttore http://stackoverflow.com/questions/810839/throwing-exceptions-from-constructors
 
 da fare:
-- con una threshold molto bassa (quindi moltissime perdite) freeza la maschera se si cambia l'utente nella combobox per la tabella. molto lenta in generale. sistemare l'update della tabella perdite
+- sistemato caricamento tabella perdite. in release va benissimo, in debug con threshold 0,001 un po' lento. valutare se spostare il minimo a 0,050 (uno step)
 
 - sistemare valori piccolissimi nel grafico
 
@@ -64,8 +64,6 @@ da fare:
 - controllare tick verticali in vari casi
 
 - controllare valori dei grafici 
-
-- scaricare ultima versione dei csv da beep e fare un winmerge per vedere se è cambiato qualcosa
 
 - fare un controllo generale di tutto il programma
 
