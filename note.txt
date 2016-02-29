@@ -1,31 +1,28 @@
-cose da dire nella documentazione:
-
 - TUTTE LE "REGISTRAZIONE/I" IN "LETTURA/E" SIA CODICE SIA DOCUMENTAZIONE
+
+cose da dire nella documentazione:
 NOTE DI REALIZZAZIONE: ASPETTI PARTICOLARI
-- spiegare benissimo nella documentazione quali valori sono sensati nella seconda tab (in particolare le settimane, ma anche i mesi)
-- considerazioni su settimane/mesi compresi parzialmente (tab interrogazione). valori controllari vanno bene, spiegare bene il sistema nella documentazione
+- progress che rimane anche per il caricamento della tabella. sistema di caricamento dei dati nella tabella (tutti) che poi vengono filtrati in base all'utente scelto. scegliere se dirlo o meno
+
+PROVE DI TEST	
 - spiegare proporzione getConsAtDate
  questo è un ottimo esempio 
  "2015-03-19 20:15:00",55.432,11
 "2015-03-22 07:20:00",56.837,11
 infatti il grafico in quei giorni è con tutte le ore uguali perché non ci sono registrazioni in mezzo (far vedere anche la sera del 19 e la mattina del 22)
-- progress che rimane anche per il caricamento della tabella. sistema di caricamento dei dati nella tabella (tutti) che poi vengono filtrati in base all'utente scelto. scegliere se dirlo o meno
-
-PROVE DI TEST	
-- mettere nella documentazione le prove col set del progetto set_test_myclass (in documenti/qt) ????????????
 - come casi particolari nella insert mettere l'utente NULL spiegando che vengono memorizzate le registrazioni in ordine (vedi file registrazioni NULL) e quindi ci sono quei picchi alle 14, alle 9 ecc. Non far notare che registrazioni diverse ma alla stessa ora vengono salvate entrambe
-- nei test mettere screen di marzo (giorni) dell'utente 2 per far vedere la differenza tra la prima metà del mese in cui si hanno dati regolari e la seconda metà in cui mancano.
-controllare nel csv che sia effettivamente così
-- nei test mettere 22/06/15 dell'utente 11 e confrontarlo con i dati (file 11_all.csv). far vedere il saltello all'una di notte, la costanza dalle 4 alle 18, la differenza delle 18 perché il dato è delle 18:45, lo zero da lì in poi)
+- nei test mettere 22/06/15 dell'utente 11 e confrontarlo con i dati (file 11_all.csv). far vedere il saltello all'una di notte, la costanza dalle 4 alle 18, la differenza delle 18 perché il dato è delle 18:45, lo zero da lì in poi) PRIMA SISTEMARE TICK PERCHE' IL MAX E' SOVRAPPOSTO
 
 da fare:
+- SISTEMARE UTENZE DEVIANTI. GIOCANDO CON LE DATE MOSTRA POCHI UTENTI E RIMANGONO RIGHE VUOTE IN FONDO
+
 - sistemato caricamento tabella perdite. in release va benissimo, in debug con threshold 0,001 un po' lento. valutare se spostare il minimo a 0,050 (uno step)
 
 - sistemare valori piccolissimi nel grafico
 
 - controllare il passaggio della std::map dalla funzione read (visto che è grossa c'è un metodo migliore?)
 
-- controllare tick verticali in vari casi
+- controllare tick verticali in vari casi VEDI UTENTE 24 ALL MENSILE (GIORNI) FEBBRAIO, APRILE, MAGGIO
 
 - controllare valori dei grafici 
 

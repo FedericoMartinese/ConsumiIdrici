@@ -40,7 +40,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="viewTab">
      <attribute name="title">
@@ -146,7 +146,7 @@
       <widget class="QLabel" name="minText_label">
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>60</x>
          <y>460</y>
          <width>46</width>
          <height>13</height>
@@ -165,7 +165,7 @@
       <widget class="QLabel" name="minValue_label">
        <property name="geometry">
         <rect>
-         <x>70</x>
+         <x>110</x>
          <y>460</y>
          <width>46</width>
          <height>13</height>
@@ -178,7 +178,7 @@
       <widget class="QLabel" name="midValue_label">
        <property name="geometry">
         <rect>
-         <x>240</x>
+         <x>280</x>
          <y>460</y>
          <width>46</width>
          <height>13</height>
@@ -191,7 +191,7 @@
       <widget class="QLabel" name="midText_label">
        <property name="geometry">
         <rect>
-         <x>190</x>
+         <x>230</x>
          <y>460</y>
          <width>46</width>
          <height>13</height>
@@ -210,7 +210,7 @@
       <widget class="QLabel" name="maxTest_label">
        <property name="geometry">
         <rect>
-         <x>370</x>
+         <x>410</x>
          <y>460</y>
          <width>46</width>
          <height>13</height>
@@ -229,7 +229,7 @@
       <widget class="QLabel" name="maxValue_label">
        <property name="geometry">
         <rect>
-         <x>420</x>
+         <x>460</x>
          <y>460</y>
          <width>46</width>
          <height>13</height>
