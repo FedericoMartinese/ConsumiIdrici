@@ -40,6 +40,10 @@ private slots:
 
     void on_analysisButton_clicked();
 
+    void on_devUsers_startDate_dateChanged(const QDate &date);
+
+    void on_devUsers_endDate_dateChanged(const QDate &date);
+
 private:
     Ui::MainWindow *ui;
     std::map<QString, ConsumptionSet> m_data;
@@ -54,6 +58,7 @@ private:
     void updateQueryTab();
     void updateAnalysisTab();
     void updatePlotValues(bool visible);
+    void findDevUsers();
 
 };
 

@@ -1,6 +1,6 @@
 #include "consumption.h"
 #include "dates.h"
-Consumption::Consumption() : m_date(minDate, QTime(0,0), Qt::TimeSpec::UTC), m_value(0) //valori di default
+Consumption::Consumption() : m_date(minDate, midnightAM, Qt::TimeSpec::UTC), m_value(0) //valori di default
 {
 }
 

@@ -45,6 +45,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->histogramDate->setMinimumDate(minDate);
     ui->histogramDate->setMaximumDate(maxDate);
 
+    ui->devUsers_startDate->setMinimumDate(minDate);
+    ui->devUsers_startDate->setMaximumDate(maxDate);
+    ui->devUsers_endDate->setMinimumDate(minDate);
+    ui->devUsers_endDate->setMaximumDate(maxDate);
+    ui->devUsers_startDate->setDate(minDate);
+    ui->devUsers_endDate->setDate(maxDate);
+
     //prima tab selezionata
     ui->tabWidget->setCurrentIndex(0);
 
@@ -93,7 +100,7 @@ void MainWindow::on_openFileDialog_clicked()
             hasReadFile = true;
         } else {
             this->ui->loadedFileName->setText("Apertura fallita");
-        }        
+        }
 
         //ripristina tutta l'interfaccia per prepararla al nuovo file
         ui->leaksTable->setModel(nullptr);
@@ -242,7 +249,7 @@ void MainWindow::updateViewTab() {
         }
 
         //calcolo consumi per ogni step
-        std::vector<double> hdata = m_data[ui->userID_view->text()].getHistogramData(QDateTime(first, QTime(0,0), Qt::TimeSpec::UTC), QDateTime(last, QTime(23,59), Qt::TimeSpec::UTC), step);
+        std::vector<double> hdata = m_data[ui->userID_view->text()].getHistogramData(QDateTime(first, midnightAM, Qt::TimeSpec::UTC), QDateTime(last, midnightPM, Qt::TimeSpec::UTC), step);
 
         // somma i consumi da lunedì a domenica per la visualizzazione a settimane
         if (mode == Plot::MONTH_BY_WEEKS) {
@@ -282,8 +289,8 @@ void MainWindow::updateViewTab() {
 void MainWindow::updateQueryTab() {
     if (!hasReadFile || m_data.empty()) return;
 
-    QDateTime firstDate(ui->firstDate->date(), QTime(0,0), Qt::TimeSpec::UTC);
-    QDateTime lastDate(ui->lastDate->date(), QTime(23,59,59), Qt::TimeSpec::UTC);
+    QDateTime firstDate(ui->firstDate->date(), midnightAM, Qt::TimeSpec::UTC);
+    QDateTime lastDate(ui->lastDate->date(), midnightPM, Qt::TimeSpec::UTC);
 
     double periodCons = 0;
 
@@ -358,7 +365,7 @@ void MainWindow::updateAnalysisTab() {
         progress.setLabelText("Caricamento tabella...");
         qApp->processEvents();
         leaksModel.load(leaks);
-        ui->leaksTable->setModel(&leaksModel);        
+        ui->leaksTable->setModel(&leaksModel);
 
         //mostra il primo utente
         if (ui->leaksUser->count() > 0) {
@@ -371,45 +378,51 @@ void MainWindow::updateAnalysisTab() {
     }
 
     //UTENZE DEVIANTI
-    if (ui->avgTable->model() == nullptr) { //l'analisi va fatta solo se la tabella è vuota
-        QDateTime min(minDate, QTime(0,0), Qt::TimeSpec::UTC), max(maxDate, QTime(23,59,59), Qt::TimeSpec::UTC);
+    findDevUsers();
 
-        //calcolo consumo medio
-        double avg = 0;
-        std::size_t i = 0;
-        for (mapIterator user : m_data) {
-            double c = user.second.getPeriodConsumption(min ,max);
-            if (c>=0) {
-                avg += c;
-                ++i;
-            }
+}
+
+void MainWindow::findDevUsers() {
+    //UTENZE DEVIANTI
+
+    QDateTime min(ui->devUsers_startDate->date(), midnightAM, Qt::TimeSpec::UTC);
+    QDateTime max(ui->devUsers_endDate->date(), midnightPM, Qt::TimeSpec::UTC);
+
+    //calcolo consumo medio
+    double avg = 0;
+    std::size_t i = 0;
+    for (mapIterator user : m_data) {
+        double c = user.second.getPeriodConsumption(min ,max);
+        if (c>=0) {
+            avg += c;
+            ++i;
         }
-        avg /= i;
-
-        //ricerca utenti con consumo superiore al doppio della media
-        std::vector<std::vector<QString>> devusers;
-        int days = min.daysTo(max) + 1;
-        int weeks = max.date().weekNumber() - min.date().weekNumber() + 1;
-        int months = max.date().month() - min.date().month() + 1;
-
-        for (mapIterator user : m_data) {
-            double c = user.second.getPeriodConsumption(min, max);
-            if (c >= (2*avg)) {
-                //memorizza consumo giornaliero, settimanel e mensile dell'utenza deviante
-                devusers.push_back({user.first, QString::number(c/days, 'f', 3), QString::number(c/weeks, 'f', 3), QString::number(c/months, 'f', 3)});
-            }
-        }
-
-        //carica tabella
-        avgModel.load(devusers);
-        ui->avgTable->setModel(&avgModel);
-
-        //stampa consumi medi
-        ui->dailyAvg->setText(QString::number(avg/days, 'f', 3));
-        ui->weeklyAvg->setText(QString::number(avg/weeks, 'f', 3));
-        ui->monthlyAvg->setText(QString::number(avg/months, 'f', 3));
-
     }
+    avg /= i;
+
+    //ricerca utenti con consumo superiore al doppio della media
+    std::vector<std::vector<QString>> devusers;
+    int days = min.daysTo(max) + 1;
+    int weeks = max.date().weekNumber() - min.date().weekNumber() + 1;
+    int months = max.date().month() - min.date().month() + 1;
+
+    for (mapIterator user : m_data) {
+        double c = user.second.getPeriodConsumption(min, max);
+        if (c >= (2*avg)) {
+            //memorizza consumo giornaliero, settimanel e mensile dell'utenza deviante
+            devusers.push_back({user.first, QString::number(c/days, 'f', 3), QString::number(c/weeks, 'f', 3), QString::number(c/months, 'f', 3)});
+        }
+    }
+
+    //carica tabella
+    avgModel.load(devusers);
+    ui->avgTable->setModel(&avgModel);
+
+    //stampa consumi medi
+    ui->dailyAvg->setText(QString::number(avg/days, 'f', 3));
+    ui->weeklyAvg->setText(QString::number(avg/weeks, 'f', 3));
+    ui->monthlyAvg->setText(QString::number(avg/months, 'f', 3));
+
 
 }
 
@@ -426,4 +439,18 @@ void MainWindow::updatePlotValues(bool visible) {
         ui->midValue_label->setText(QString::number(plot->getMidValue()));
         ui->maxValue_label->setText(QString::number(plot->getMaxValue()));
     }
+}
+
+void MainWindow::on_devUsers_startDate_dateChanged(const QDate &date)
+{
+    //utenze devianti
+    ui->devUsers_endDate->setMinimumDate(date); //endDate non può avere una data precedene a startDate
+    findDevUsers();
+}
+
+void MainWindow::on_devUsers_endDate_dateChanged(const QDate &date)
+{
+    //utenze devianti
+    ui->devUsers_startDate->setMaximumDate(date); //startDate non può avere una data successiva a endDate
+    findDevUsers();
 }
