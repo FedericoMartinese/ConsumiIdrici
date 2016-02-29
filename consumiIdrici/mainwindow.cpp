@@ -58,8 +58,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //inizializzazione threshold
     ui->thresholdSpinbox->setSingleStep(0.05);
-    ui->thresholdSpinbox->setMinimum(0);
-    ui->thresholdSpinbox->setMaximum(99.99);
+    ui->thresholdSpinbox->setMinimum(0.001);
+    ui->thresholdSpinbox->setMaximum(99.999);
     ui->thresholdSpinbox->setValue(0.2);
 
     //nasconde i valori del grafico
@@ -351,13 +351,17 @@ void MainWindow::updateAnalysisTab() {
         }
         usersMap.push_back(leaks.size()); //fine dell'ultimo utente
 
+        ui->leaksUser->setEnabled(ui->leaksUser->count()>0); //abilita la combobox solo se contiene almeno un utente
+
         //carica nella tabella le perdite di tutti gli utenti
         leaksModel.load(leaks);
         ui->leaksTable->setModel(&leaksModel);
 
         //mostra il primo utente
-        if (ui->leaksUser->count() > 0)
+        if (ui->leaksUser->count() > 0) {
             ui->leaksUser->setCurrentIndex(0);
+            on_leaksUser_currentIndexChanged(0);
+        }
 
     }
 

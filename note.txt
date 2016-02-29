@@ -55,7 +55,8 @@ curiosamente tutti alle 21
 - eccezioni nel costruttore http://stackoverflow.com/questions/810839/throwing-exceptions-from-constructors
 
 da fare:
-- con una threshold molto bassa (quindi moltissime perdite) freeza la maschera se si cambia l'utente nella combobox per la tabella
+- con una threshold molto bassa (quindi moltissime perdite) freeza la maschera se si cambia l'utente nella combobox per la tabella. molto lenta in generale. sistemare l'update della tabella perdite
+
 - sistemare valori piccolissimi nel grafico
 
 - controllare il passaggio della std::map dalla funzione read (visto che è grossa c'è un metodo migliore?)

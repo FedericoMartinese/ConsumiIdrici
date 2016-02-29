@@ -8,5 +8,4 @@ const QDate maxDate(2015,12,31);
 const QDateTime dstStartDay(QDate(2015,3,29), QTime(1,0), Qt::UTC); //il passaggio avviene alle 01:00 UTC ultima domenica di marzo e ottobre
 const QDateTime dstEndDay(QDate(2015,10,25), QTime(1,0), Qt::UTC);
 
-
 #endif // DATES_H
