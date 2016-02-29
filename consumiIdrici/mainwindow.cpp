@@ -12,7 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     leaksModel(parent),
-    avgModel(parent)
+    avgModel(parent),
+    hasReadFile(false)
 {
     //inizializzazione finestra
 

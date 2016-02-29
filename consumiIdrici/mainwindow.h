@@ -48,7 +48,7 @@ private:
     AvgTableModel avgModel;
     std::vector<int> usersMap; //traccia gli utenti nella tabella delle perdite
     Plot* plot;
-    bool hasReadFile = false;
+    bool hasReadFile;
 
     void updateViewTab();
     void updateQueryTab();

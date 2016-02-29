@@ -1,53 +1,14 @@
 cose da dire nella documentazione:
 NOTE DI REALIZZAZIONE: ASPETTI PARTICOLARI
-- conversione UTC CET
-- insert della set (perché serve)
 - spiegare benissimo nella documentazione quali valori sono sensati nella seconda tab (in particolare le settimane, ma anche i mesi)
-- eccezioni nel costruttore http://stackoverflow.com/questions/810839/throwing-exceptions-from-constructors
-- eccezioni: controllato, sono gestite bene
 - considerazioni su settimane/mesi compresi parzialmente (tab interrogazione). valori controllari vanno bene, spiegare bene il sistema nella documentazione
-- è tutto const correctness
-- il gethistogramdata funziona per step costanti. il month_by_week non ha step costante (andando non ogni 7 giorni ma da lunedì a domenica possono esserci settimane incomplete).
-	viene chiamato con uno step di 1 giorno e il cliente si somma i consumi giornalieri come preferice (fatto metterlo nella documentazione)
-- spiegare che per le utenze devianti il periodo di riferimento è tutto l'anno, quindi non ha senso indicarlo e non ha senso dire consumo mensile/settimanale/giornaliero perché sullo stesso periodo sono semplicemente multipli (se un utente ha un consumo giornaliero triplo rispetto alla media, ha anche un consumo mensile/settimanale triplo rispetto alla media mensile/settimanale). nella tabella comunque mostro tutti e tre i consumi
+- spiegare che per le utenze devianti il periodo di riferimento è tutto l'anno, quindi non ha senso indicarlo
 - spiegare proporzione getConsAtDate
  questo è un ottimo esempio 
  "2015-03-19 20:15:00",55.432,11
 "2015-03-22 07:20:00",56.837,11
 infatti il grafico in quei giorni è con tutte le ore uguali perché non ci sono registrazioni in mezzo (far vedere anche la sera del 19 e la mattina del 22)
-- come esempio per i controlli sulla insert mettere questo (utente 16), vedi ore 21
-"2015-05-28 18:00:00",44.736,16
-"2015-05-28 19:00:00",44.739,16
-"2015-05-28 20:00:00",45.099,16
-"2015-05-28 21:00:00",44.739,16
-"2015-05-28 22:00:00",45.099,16
-"2015-05-28 23:00:00",45.099,16
-
-e questo
-"2015-06-10 20:00:00",54.893,16
-"2015-06-10 21:00:00",54.535,16
-"2015-06-10 22:00:00",54.893,16
-
-"2015-06-18 20:00:00",57.356,16
-"2015-06-18 21:00:00",56.988,16
-"2015-06-18 22:00:00",57.356,16
-
-"2015-06-25 20:00:00",62.356,16
-"2015-06-25 21:00:00",61.995,16
-"2015-06-25 22:00:00",62.356,16
-
-"2015-06-30 20:00:00",66.695,16
-"2015-06-30 21:00:00",66.341,16
-"2015-06-30 22:00:00",66.695,16
-
-curiosamente tutti alle 21
-
-"2015-02-04 08:25:00",23.445,112
-"2015-02-04 08:28:00",9.726,112
-
-"2015-04-09 09:00:00",20.331,206
-"2015-04-09 04:00:00",38.992,176
-"2015-04-09 10:00:00",20.330,206
+- progress che rimane anche per il caricamento della tabella. sistema di caricamento dei dati nella tabella (tutti) che poi vengono filtrati in base all'utente scelto. scegliere se dirlo o meno
 
 PROVE DI TEST	
 - mettere nella documentazione le prove col set del progetto set_test_myclass (in documenti/qt) ????????????
