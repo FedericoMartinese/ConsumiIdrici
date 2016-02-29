@@ -391,6 +391,8 @@ void MainWindow::updateAnalysisTab() {
 void MainWindow::findDevUsers() {
     //UTENZE DEVIANTI
 
+    ui->avgTable->setModel(nullptr);
+
     QDateTime min(ui->devUsers_startDate->date(), midnightAM, Qt::TimeSpec::UTC);
     QDateTime max(ui->devUsers_endDate->date(), midnightPM, Qt::TimeSpec::UTC);
 
@@ -412,13 +414,14 @@ void MainWindow::findDevUsers() {
     int weeks = max.date().weekNumber() - min.date().weekNumber() + 1;
     int months = max.date().month() - min.date().month() + 1;
 
-    for (mapIterator user : m_data) {
-        double c = user.second.getPeriodConsumption(min, max);
-        if (c >= (2*avg)) {
-            //memorizza consumo giornaliero, settimanel e mensile dell'utenza deviante
-            devusers.push_back({user.first, QString::number(c/days, 'f', 3), QString::number(c/weeks, 'f', 3), QString::number(c/months, 'f', 3)});
+    if (avg > 0)
+        for (mapIterator user : m_data) {
+            double c = user.second.getPeriodConsumption(min, max);
+            if (c >= (2*avg)) {
+                //memorizza consumo giornaliero, settimanale e mensile dell'utenza deviante
+                devusers.push_back({user.first, QString::number(c/days, 'f', 3), QString::number(c/weeks, 'f', 3), QString::number(c/months, 'f', 3)});
+            }
         }
-    }
 
     //carica tabella
     avgModel.load(devusers);

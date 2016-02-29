@@ -139,23 +139,24 @@ void Plot::draw(plotMode mode, std::vector<double> data, bool showLegend, bool s
 
     //Aggiunge ai vector i tick calcolati e quelli di minimo, medio e massimo in ordine
     double tickValue = d;
-    while ((maxValue - tickValue) > 0) {
-        if (minValue < tickValue && !min) {
-            tickValues.push_back(minValue);
-            min = true;
-            tickNames.push_back("Min");
-        }
-        else if (midValue < tickValue && !med) {
-            tickValues.push_back(midValue);
-            med = true;
-            tickNames.push_back("Medio");
-        } else {
-            tickValues.push_back(tickValue);
-            tickNames.push_back(QString::number(tickValue, 'f', digit));
-            tickValue += d;
-        }
+    if (maxValue > 0)
+        for (int j=0; j < k+1; ++j) {
+            if (minValue < tickValue && !min) {
+                tickValues.push_back(minValue);
+                min = true;
+                tickNames.push_back("Min");
+            }
+            else if (midValue < tickValue && !med) {
+                tickValues.push_back(midValue);
+                med = true;
+                tickNames.push_back("Medio");
+            } else {
+                tickValues.push_back(tickValue);
+                tickNames.push_back(QString::number(tickValue, 'f', digit));
+                tickValue += d;
+            }
 
-    }
+        }
     tickValues.push_back(maxValue);
     tickNames.push_back("Max");
 
