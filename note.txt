@@ -1,9 +1,7 @@
 - TUTTE LE "REGISTRAZIONE/I" IN "LETTURA/E" SIA CODICE SIA DOCUMENTAZIONE
 
 cose da dire nella documentazione:
-NOTE DI REALIZZAZIONE: ASPETTI PARTICOLARI
-- qcustomplot
-- progress che rimane anche per il caricamento della tabella. sistema di caricamento dei dati nella tabella (tutti) che poi vengono filtrati in base all'utente scelto. scegliere se dirlo o meno
+
 - METTERE TABELLE DOCUMENTAZIONI SENZA BORDO, IMPAGINARE TUTTO E METTERE TUTTO GIUSTIFICATO
 PROVE DI TEST	
 - nei test mettere 22/06/15 dell'utente 11 e confrontarlo con i dati (file 11_all.csv). far vedere il saltello all'una di notte, la costanza dalle 4 alle 18, la differenza delle 18 perché il dato è delle 18:45, lo zero da lì in poi)
