@@ -701,7 +701,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Cerca</string>
+        <string>Analizza</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_12">

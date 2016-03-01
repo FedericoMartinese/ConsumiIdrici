@@ -2,15 +2,10 @@
 
 cose da dire nella documentazione:
 NOTE DI REALIZZAZIONE: ASPETTI PARTICOLARI
+- qcustomplot
 - progress che rimane anche per il caricamento della tabella. sistema di caricamento dei dati nella tabella (tutti) che poi vengono filtrati in base all'utente scelto. scegliere se dirlo o meno
 - METTERE TABELLE DOCUMENTAZIONI SENZA BORDO, IMPAGINARE TUTTO E METTERE TUTTO GIUSTIFICATO
 PROVE DI TEST	
-- spiegare proporzione getConsAtDate
- questo è un ottimo esempio 
- "2015-03-19 20:15:00",55.432,11
-"2015-03-22 07:20:00",56.837,11
-infatti il grafico in quei giorni è con tutte le ore uguali perché non ci sono registrazioni in mezzo (far vedere anche la sera del 19 e la mattina del 22)
-- come casi particolari nella insert mettere l'utente NULL spiegando che vengono memorizzate le registrazioni in ordine (vedi file registrazioni NULL) e quindi ci sono quei picchi alle 14, alle 9 ecc. Non far notare che registrazioni diverse ma alla stessa ora vengono salvate entrambe
 - nei test mettere 22/06/15 dell'utente 11 e confrontarlo con i dati (file 11_all.csv). far vedere il saltello all'una di notte, la costanza dalle 4 alle 18, la differenza delle 18 perché il dato è delle 18:45, lo zero da lì in poi)
 
 da fare:
@@ -22,11 +17,7 @@ da fare:
 
 - controllare il passaggio della std::map dalla funzione read (visto che è grossa c'è un metodo migliore?)
 
-- controllare tick verticali in vari casi. forse risolto controllare bene. il med si può sovrapporre ad altri tick (o andarci molto vicino) o sovrapporsi al max se sono tutte uguali le barre (utente 11 giorno 22/1
-
 - se c'è tempo rendere più bello il codice dei tick verticali
-
-- controllare valori dei grafici 
 
 - fare un controllo generale di tutto il programma
 
