@@ -122,37 +122,55 @@ void Plot::draw(plotMode mode, std::vector<double> data, bool showLegend, bool s
     m_plot->yAxis->setAutoTickLabels(false);
     m_plot->yAxis->setAutoSubTicks(false);
 
-    const int k = 5; //numero tick da mostrare
+    const int k = 5; //numero di intervalli da mostrare
     QVector<double> tickValues;
     QVector<QString> tickNames;
     bool min = false, med = false;
     double d = maxValue/k; //differenza tra ogni tick
-    int digit;
-    if (d>=5) //in base al valore imposta la precisione da visualizzare
-        digit = 0;
-    else if (d>=2)
-        digit = 1;
-    else if (d>=0.8)
-        digit = 2;
+
+    int precision;
+    if (d >= 8)
+        precision = 0;
+    else if (d >= 5)
+        precision = 1;
+    else if (d >= 2)
+        precision = 2;
     else
-        digit = 3;
+        precision = 3;
+
+    d = std::round(d*std::pow(10,precision))/std::pow(10,precision);
+
 
     //Aggiunge ai vector i tick calcolati e quelli di minimo, medio e massimo in ordine
+    const double minDiff = 0.1; //% minima di differenza tra i due tick per scrivere. evita il sovrapporsi delle parole
     double tickValue = d;
     if (maxValue > 0)
         for (int j=0; j < k+1; ++j) {
             if (minValue < tickValue && !min) {
                 tickValues.push_back(minValue);
                 min = true;
-                tickNames.push_back("Min");
+                //il valore minimo deve discostarsi di almeno il 10% dal valore successivo e dal valore massimo
+                //se ha un valore molto vicino al valore medio, in quel caso viene mostrato il min e non il medio
+                if ((tickValue - minValue) / tickValue >= minDiff && //tick successivo
+                        (maxValue - minValue) / maxValue >= minDiff) //tick max
+                    tickNames.push_back("Min");
+                else
+                    tickNames.push_back("");
             }
             else if (midValue < tickValue && !med) {
                 tickValues.push_back(midValue);
                 med = true;
-                tickNames.push_back("Medio");
+                //il valore medio deve discostarsi di almeno il 10% dai valori dei tick in cui è compreso
+                if ((tickValue - midValue) / tickValue >= minDiff && //tick successivo
+                        (midValue - tickValue + d) / (tickValue - d) >= minDiff && //tick precedente
+                        (maxValue - midValue) / maxValue >= minDiff && //tick max
+                        (midValue - minValue) / minValue >= minDiff) //tick min
+                    tickNames.push_back("Medio");
+                else
+                    tickNames.push_back(""); //evita la sovrapposizione delle scritte
             } else {
                 tickValues.push_back(tickValue);
-                tickNames.push_back(QString::number(tickValue, 'f', digit));
+                tickNames.push_back(QString::number(tickValue, 'f', precision));
                 tickValue += d;
             }
 
