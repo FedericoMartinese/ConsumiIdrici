@@ -33,19 +33,11 @@ std::map<QString, ConsumptionSet> InputFile::read(QWidget *parent) const {
             QString line = in.readLine();
             QStringList params = line.split(','); //i parametri sono suddivisi da una virgola
 
-            //il controllo sul numero dei parametri non serve essendoci il try-catch
-            /*if (params.length() != 3) { //parametri non suddivisi correttamente o in numero errato
-                QMessageBox msg(QMessageBox::Critical, "Consumi idrici", "Errore nella lettura dei dati. Formato dati errati (riga " + QString::number(c) + ")." , QMessageBox::Abort | QMessageBox::Ignore);
-                if (msg.exec() == QMessageBox::Abort) {
-                    inputFile.close();
-                    usersData.clear();
-                    return usersData;
-                }
-            }*/
-
             bool ok;
             //conversione della riga letta nella struttura dati
             try {
+                if (params.length() != 3) throw "Incorrect number of parameters";
+
                 //converte la stringa in formato datetime. sono presenti " all'inizio e alla fine
                 //toUTC() è necessario per gestire ora legale/solare (ad esempio 29-03-2015 02:00)
                 //che viene poi convertita in CET dalla funzione UTCtoDayLightSavTime

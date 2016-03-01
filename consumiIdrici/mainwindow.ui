@@ -107,7 +107,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>gg:mm:yyyy hh:ss )</string>
+        <string> </string>
        </property>
       </widget>
       <widget class="QComboBox" name="histogramModeCombo">

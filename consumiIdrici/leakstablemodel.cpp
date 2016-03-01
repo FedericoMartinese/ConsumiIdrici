@@ -29,7 +29,7 @@ QVariant LeaksTableModel::data(const QModelIndex &index, int role) const
             return m_cons[index.row()].date().toString("yyyy-MM-dd");
         } else {
             //nella seconda colonna vengono inseriti i consumi relativi a ciascuna data
-            return QString::number(m_cons[index.row()].value());
+            return QString::number(m_cons[index.row()].value(), 'f', 3);
         }
     }
     return QVariant();

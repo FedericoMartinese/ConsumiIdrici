@@ -138,7 +138,8 @@ void Plot::draw(plotMode mode, std::vector<double> data, bool showLegend, bool s
     else
         precision = 3;
 
-    d = std::round(d*std::pow(10,precision))/std::pow(10,precision);
+    //arrotonda per eccesso con 0-3 cifre di precisione
+    d = std::ceil(d*std::pow(10,precision))/std::pow(10,precision);
 
 
     //Aggiunge ai vector i tick calcolati e quelli di minimo, medio e massimo in ordine
@@ -152,6 +153,7 @@ void Plot::draw(plotMode mode, std::vector<double> data, bool showLegend, bool s
                 //il valore minimo deve discostarsi di almeno il 10% dal valore successivo e dal valore massimo
                 //se ha un valore molto vicino al valore medio, in quel caso viene mostrato il min e non il medio
                 if ((tickValue - minValue) / tickValue >= minDiff && //tick successivo
+                        ((minValue - tickValue + d) / (tickValue - d) >= minDiff || minValue == 0) && //tick precedente
                         (maxValue - minValue) / maxValue >= minDiff) //tick max
                     tickNames.push_back("Min");
                 else
@@ -169,8 +171,10 @@ void Plot::draw(plotMode mode, std::vector<double> data, bool showLegend, bool s
                 else
                     tickNames.push_back(""); //evita la sovrapposizione delle scritte
             } else {
-                tickValues.push_back(tickValue);
-                tickNames.push_back(QString::number(tickValue, 'f', precision));
+                if (tickValue < maxValue) {
+                    tickValues.push_back(tickValue);
+                    tickNames.push_back(QString::number(tickValue, 'f', precision));
+                }
                 tickValue += d;
             }
 

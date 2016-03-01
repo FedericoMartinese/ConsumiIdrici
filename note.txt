@@ -1,13 +1,6 @@
-- TUTTE LE "REGISTRAZIONE/I" IN "LETTURA/E" SIA CODICE SIA DOCUMENTAZIONE
-
-cose da dire nella documentazione:
-
-- METTERE TABELLE DOCUMENTAZIONI SENZA BORDO, IMPAGINARE TUTTO E METTERE TUTTO GIUSTIFICATO
-PROVE DI TEST	
-- nei test mettere 22/06/15 dell'utente 11 e confrontarlo con i dati (file 11_all.csv). far vedere il saltello all'una di notte, la costanza dalle 4 alle 18, la differenza delle 18 perché il dato è delle 18:45, lo zero da lì in poi)
-
-da fare:
 - SISTEMARE UTENZE DEVIANTI. GIOCANDO CON LE DATE MOSTRA POCHI UTENTI E RIMANGONO RIGHE VUOTE IN FONDO. FORSE RISOLTO CON IL SETMODEL(NULLPTR) CONTROLLARE BENE (GUARDARE ANCHE LA DOCUMENTAZIONE DEL SETMODEL)
+
+- nelle utenze devianti i consumi settimanali e mensili risultano sempre definiti. non è un problema se chiedono dire che è voluto
 
 - sistemato caricamento tabella perdite. in release va benissimo, in debug con threshold 0,001 un po' lento. valutare se spostare il minimo a 0,050 (uno step)
 
@@ -18,7 +11,3 @@ da fare:
 - se c'è tempo rendere più bello il codice dei tick verticali
 
 - fare un controllo generale di tutto il programma
-
-solo se c'è tempo:
-- tutte le qstring a std::string
-- cambiare la lettura da file da qt a quella normale del c++?
